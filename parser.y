@@ -1,13 +1,11 @@
 %{
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-int yylex ();
-void yyerror ();
-
+#include "def.h"
+#define YYSTYPE PNODE
+PNODE root = NULL;
+extern Lexval lexval;
 %}
 
-
+%token 
 
 %%
 

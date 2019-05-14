@@ -5,16 +5,15 @@ Lexval lexval;
 %option noyywrap
 
 delimiter		[ \t\n]
-comment			"#"[^\n]*\n
+comment			"#"(.)*\n
 spacing			{delimiter}+
 uppercase		[A-Z]
 lowercase		[a-z]
 letter			{uppercase}|{lowercase}
 digit			[0-9]
 initialdigit	[1-9]
-sign 			+ | -
 charconst		\'letter\''
-intconst		(sign)?{initialdigit}{digit}*|0
+intconst		(-)?{initialdigit}{digit}*|0
 realconst		intconst\.{digit}?
 strconst		\"[^\n\"]*\"
 boolconst		false|true 
