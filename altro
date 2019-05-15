@@ -1,0 +1,8 @@
+int store_id()
+{
+	int line;
+	if(	(line = lookup(yytext)) == 0) line = insert(yytext);
+	return(line);
+}
+
+{lexval.sval = store_id(); return(ID);}

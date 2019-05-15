@@ -1,10 +1,11 @@
 %{
 #include "def.h"
+int line =	1;
 Lexval lexval;	
 %}
 %option noyywrap
 
-delimiter		[ \t\n]
+delimiter		[ \t]
 comment			"#"(.)*\n
 spacing			{delimiter}+
 uppercase		[A-Z]
@@ -22,6 +23,7 @@ id 				{letter}({letter}|{digit})*
 %%
 
 {spacing}		;
+\n 				{line++;}
 module			{return(MODULE);}
 "("				{return(LBRACE);}
 ")"				{return(RBRACE);}
@@ -64,17 +66,11 @@ not				{return(NOT);}
 {charconst}		{lexval.sval = newstring(yytext); return(CHARCONST);}
 {strconst}		{lexval.sval = newstring(yytext); return(STRCONST);}
 {boolconst}		{lexval.ival = (yytext[0]=='f' ? 0 : 1); return(BOOLCONST);}
-{id}			{lexval.sval = store_id(); return(ID);}
+{id}			{lexval.sval = newstring(yytext); return(ID);}
 .				{return(ERROR);}
 
 %%
 
-int store_id()
-{
-	int line;
-	if(	(line = lookup(yytext)) == 0) line = insert(yytext);
-	return(line);
-}
 
 char *newstring(char *s)
 {

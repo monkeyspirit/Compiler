@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
 
 #define MODULE 258
 #define ID 259
@@ -127,11 +129,10 @@ typedef struct snode
 
 typedef Node *Pnode;
 
-char *newstring(char*), *strcpy(char*, const char*);
+char *strcpy(char*, const char*);
 
-int yylex(), store_id(), lookup(char*);
 
-void strcopy(char*, const char*), match(int), next(), perserror(), treeprint(Pnode, int);
+void  strcopy(char*, const char*), match(int), next(), perserror(), treeprint(Pnode, int);
 
 Pnode nontermnode(Nonterminal), 
       idnode(), 
