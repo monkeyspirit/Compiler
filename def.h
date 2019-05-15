@@ -35,19 +35,21 @@
 #define ASSIGN 287
 #define LE 288
 #define GE 289
-#define EQ 290
-#define NEQ 291
-#define PLUS 292
-#define MINUS 293
-#define AST 294
-#define FRAC 295
-#define INTCONST 296
-#define REALCONST 297
-#define CHARCONST 298
-#define STRCONST 299
-#define BOOLCONST 300
-#define ID 301
-#define ERROR 302
+#define LT 290
+#define GT 291
+#define EQ 292
+#define NEQ 293
+#define PLUS 294
+#define MINUS 295
+#define AST 296
+#define FRAC 297
+#define INTCONST 298
+#define REALCONST 299
+#define CHARCONST 300
+#define STRCONST 301
+#define BOOLCONST 302
+#define ID 303
+#define ERROR 304
 
 /*Elenco dei non terminali*/
 typedef enum
@@ -80,12 +82,15 @@ typedef enum
 	NWRITE_STAT,
 	NEXPR_LIST,
 	NEXPR,
+	NEXPR1,
 	NBOOLOP,
 	NBOOL_TERM,
 	NRELOP,
 	NREL_TERM,
+	NREL_TERM1,
 	NLOW_BINOP,
 	NLOW_TERM,
+	NLOW_TERM1,
 	NHIGH_BINOP,
 	NFACTOR,
 	NUNARYOP,
@@ -185,7 +190,7 @@ Pnode nontermnode(Nonterminal),
 	  low_binop(),
 	  low_term(),
 	  lowterm1(),
-	  high_binop(), <------------
+	  high_binop(),
 	  factor(),
 	  unaryop(),
 	  constant(),
