@@ -65,6 +65,14 @@ Pnode idnode()
 	return(p);
 }
 
+Pnode opnode(Typenode keyword)
+{
+	Pnode p;
+	p = newnode(keyword);
+	p->value.sval = lexval.sval;
+	return(p);
+}
+
 /*Meotod che crea un nodo associato ad una costanre di tipo char*/
 Pnode charconstnode()
 {
@@ -536,11 +544,13 @@ Pnode boolop()
 {
 	Pnode p;
 	if(lookahead==AND){
-		match(AND);
+		p = opnode(T_BOOLOP);
+		next();
 		return(p);
 	} 
 	else if (lookahead==OR){
-		match(OR);
+		p = opnode(T_BOOLOP);
+		next();
 		return(p);
 	} 
 	else{
@@ -566,27 +576,33 @@ Pnode relop()
 {
 	Pnode p;
 	if(lookahead==LE){
-		match(LE);
+		p = opnode(T_RELOP);
+		next();
 		return(p);
 	} 
 	else if (lookahead==GE){
-		match(GE);
+		p = opnode(T_RELOP);
+		next();
 		return(p);
 	} 
 	else if (lookahead==EQ){
-		match(EQ);
+		p = opnode(T_RELOP);
+		next();
 		return(p);
 	}
 	else if (lookahead==NEQ){
-		match(NEQ);
+		p = opnode(T_RELOP);
+		next();
 		return(p);
 	}
 	else if (lookahead==LT){
-		match(LT);
+		p = opnode(T_RELOP);
+		next();
 		return(p);
 	}
 	else if (lookahead==GT){
-		match(GT);
+		p = opnode(T_RELOP);
+		next();
 		return(p);
 	}
 	else{
@@ -622,11 +638,13 @@ Pnode low_binop()
 {
 	Pnode p;
 	if(lookahead==PLUS){
-		match(PLUS);
+		p = opnode(T_LOWBINOP);
+		next();
 		return(p);
 	} 
 	else if (lookahead==MINUS){
-		match(MINUS);
+		p = opnode(T_LOWBINOP);
+		next();
 		return(p);
 	} 
 	else{
@@ -662,11 +680,13 @@ Pnode high_binop()
 {
 	Pnode p;
 	if(lookahead==AST){
-		match(AST);
+		p = opnode(T_HIGHBINOP);
+		next();
 		return(p);
 	} 
 	else if (lookahead==FRAC){
-		match(FRAC);
+		p = opnode(T_HIGHBINOP);
+		next();
 		return(p);
 	} 
 	else{
@@ -728,11 +748,13 @@ Pnode unaryop()
 {
 	Pnode p;
 	if(lookahead==MINUS){
-		match(MINUS);
+		p = opnode(T_UNOP);
+		next();
 		return(p);
 	} 
 	else if (lookahead==NOT){
-		match(NOT);
+		p = opnode(T_UNOP);
+		next();
 		return(p);
 	} 
 	else{

@@ -116,6 +116,11 @@ typedef enum
 	T_STRCONST,
 	T_BOOLCONST,
 	T_ID,
+	T_BOOLOP,
+	T_RELOP,
+	T_LOWBINOP,
+	T_HIGHBINOP,
+	T_UNOP,
 	T_NONTERMINAL
 } Typenode;
 
