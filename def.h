@@ -49,6 +49,7 @@
 #define ID 301
 #define ERROR 302
 
+/*Elenco dei non terminali*/
 typedef enum
 {
 	NPROGRAM,
@@ -95,6 +96,7 @@ typedef enum
 	NOPT_ELSEIF_EXPR_LIST
 } Nonterminal;
 
+/*Elenco dei tipi di nodo (che devono conservare dati)*/
 typedef enum
 {
 	T_CHAR,
@@ -112,6 +114,7 @@ typedef enum
 	T_NONTERMINAL
 } Typenode;
 
+/*Definizione della union del Lexval*/
 typedef union
 {
 	int ival;
@@ -119,18 +122,20 @@ typedef union
 	char *sval;
 } Lexval;
 
-typedef struct snode
+/*Definizione della struttura di un nodo*/
+typedef struct structNode
 {
 	Typenode type;
 	Lexval value;
-	struct snode *child, *brother;
+	struct structNode *child, *brother;
 } Node;
 
 
-typedef Node *Pnode;
+typedef Node *Pnode; /*Definisco il tipo Pnode per semplicità*/
+
+/*Elenco dei vari metodi utilizzati, solo tipo, nome e parametri*/
 
 char *strcpy(char*, const char*);
-
 
 void  strcopy(char*, const char*), match(int), next(), perserror(), treeprint(Pnode, int);
 
@@ -153,7 +158,7 @@ Pnode nontermnode(Nonterminal),
       decl_list(),
       decl(),
       id_list(),
-      const_sect(),
+      opt_const_sect(),
 	  const_list(),
 	  const_decl(),
 	  opt_module_list(),
