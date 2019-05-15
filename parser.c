@@ -510,18 +510,324 @@ Pnode expr_list()
 
 Pnode expr()
 {
-	
+	Pnode p;
+	p = nonterminalnode(NBOOL_TERM);
+	p->child = bool_term();
+	p->brother = nonterminalnode(NEXPR1);
+	p->brother->child = expr1();
+	return(p);
 }
-	  expr1(),
-	  boolop(),
-	  bool_term(),
-	  relop(),
-	  relterm(),
-	  relterm1(),
-	  low_binop(),
-	  low_term(),
-	  lowterm1(),
-	  high_binop(),
+	 
+Pnode expr1()
+{
+	Pnode p;
+	if(lookahead==AND || lookahead==OR){
+		p = nonterminalnode(NBOOLOP);
+		p->child = boolop();
+		p->brother = nonterminalnode(NBOOL_TERM);
+		p->brother->child = bool_term();
+		p->brother->brother = nonterminalnode(NEXPR1);
+		p->brother->brother->child = expr1();
+	}
+	return(p);
+}
+
+Pnode boolop()
+{
+	Pnode p;
+	if(lookahead==AND){
+		match(AND);
+		return(p);
+	} 
+	else if (lookahead==OR){
+		match(OR);
+		return(p);
+	} 
+	else{
+		parserror();
+	}
+}
+
+Pnode bool_term()
+{
+	Pnode p;
+	p = nonterminalnode(NREL_TERM);
+	p->child = relterm();
+	if(lookahead==LE || lookahead==GE || lookahead==EQ || lookahead==NEQ || lookahead==LT || lookahead==GT){
+		p->brother = nonterminalnode(NRELOP);
+		p->brother->child = relop();
+		p->brother->brother = nonterminalnode(NREL_TERM);
+		p->brother->brother->child = relterm();
+	}
+	return(p);
+}
+
+Pnode relop()
+{
+	Pnode p;
+	if(lookahead==LE){
+		match(LE);
+		return(p);
+	} 
+	else if (lookahead==GE){
+		match(GE);
+		return(p);
+	} 
+	else if (lookahead==EQ){
+		match(EQ);
+		return(p);
+	}
+	else if (lookahead==NEQ){
+		match(NEQ);
+		return(p);
+	}
+	else if (lookahead==LT){
+		match(LT);
+		return(p);
+	}
+	else if (lookahead==GT){
+		match(GT);
+		return(p);
+	}
+	else{
+		parserror();
+	}
+}
+
+Pnode relterm()
+{
+	Pnode p;
+	p = nonterminalnode(NLOW_TERM);
+	p->child = low_term();
+	p->brother = nonterminalnode(NREL_TERM1);
+	p->brother->child = relterm1();
+	return(p);
+}
+	 
+Pnode relterm1()
+{
+	Pnode p;
+	if(lookahead==PLUS || lookahead==MINUS){
+		p = nonterminalnode(NLOW_BINOP);
+		p->child = low_binop();
+		p->brother = nonterminalnode(NLOW_TERM);
+		p->brother->child = low_term();
+		p->brother->brother = nonterminalnode(NREL_TERM1);
+		p->brother->brother->child = relterm1();
+	}
+	return(p);
+}
+
+Pnode low_binop()
+{
+	Pnode p;
+	if(lookahead==PLUS){
+		match(PLUS);
+		return(p);
+	} 
+	else if (lookahead==MINUS){
+		match(MINUS);
+		return(p);
+	} 
+	else{
+		parserror();
+	}
+}
+
+Pnode low_term()
+{
+	Pnode p;
+	p = nonterminalnode(NFACTOR);
+	p->child = factor();
+	p->brother = nonterminalnode(NLOW_TERM1);
+	p->brother->child = lowterm1();
+	return(p);
+}
+
+Pnode lowterm1()
+{
+	Pnode p;
+	if(lookahead==AST || lookahead==FRAC){
+		p = nonterminalnode(NHIGH_BINOP);
+		p->child = high_binop();
+		p->brother = nonterminalnode(NFACTOR);
+		p->brother->child = factor();
+		p->brother->brother = nonterminalnode(NLOW_TERM1);
+		p->brother->brother->child = low_term1();
+	}
+	return(p);
+}
+
+Pnode high_binop()
+{
+	Pnode p;
+	if(lookahead==AST){
+		match(AST);
+		return(p);
+	} 
+	else if (lookahead==FRAC){
+		match(FRAC);
+		return(p);
+	} 
+	else{
+		parserror();
+	}
+}
+
+Pnode factor()
+{
+	Pnode p;
+	if(lookahead==MINUS || lookahead==NOT){
+		p = nonterminalnode(NUNARYOP);
+		p->child = unaryop();
+		p->brother = nonterminalnode(NFACTOR);
+		p->brother->child = factor();
+		return(p);
+	}
+	else if (lookahead==LBRACE){
+		match(LBRACE);
+		p = nonterminalnode(NEXPR);
+		p->child = expr();
+		match(RBRACE);
+		return(p);
+	}
+	else if (lookahead==ID){
+		p = idnode();
+		next();
+		if(lookahead==LBRACE){
+			p->brother = nonterminalnode(NCOND_EXPR);
+			p->brother->child = cond_expr();
+		}
+		return(p);
+	}
+	else if (lookahead==CHARCONST || lookahead == INTCONST || lookahead== REALCONST || lookahead==STRCONST || lookahead==BOOLCONST){
+		p = nonterminalnode(NCONSTANT);
+		p->child = constant();
+		return(p);
+	}
+	else if (lookahead==IF){
+		p = nonterminalnode(NMODULE_CALL);
+		p->child = module_call();
+		return(p);
+	}
+	else if (lookahead==CHAR || lookahead==INT || lookahead==REAL || lookahead==STRING || lookahead==BOOL || lookahead==VOID){
+		p = nonterminalnode(NTYPE);
+		p->child = type();
+		match(LBRACE);
+		p->brother = nonterminalnode(NEXPR);
+		p->brother->child = expr();
+		match(RBRACE);
+		return(p);
+	}
+	else{
+		parserror();
+	}
+}
+
+Pnode unaryop()
+{
+	Pnode p;
+	if(lookahead==MINUS){
+		match(MINUS);
+		return(p);
+	} 
+	else if (lookahead==NOT){
+		match(NOT);
+		return(p);
+	} 
+	else{
+		parserror();
+	}
+}
+
+Pnode constant()
+{
+	Pnode p;
+	if(lookahead==CHARCONST){
+		p = keynode(T_CHARCONST);
+		next();
+		return(p);
+	} 
+	else if (lookahead==INTCONST){
+		p = keynode(T_INTCONST);
+		next();
+		return(p);
+	} 
+	else if (lookahead==REALCONST){
+		p = keynode(T_REALCONST);
+		next();
+		return(p);
+	}
+	else if (lookahead==STRCONST){
+		p = keynode(T_STRCONST);
+		next();
+		return(p);
+	} 
+	else if (lookahead==BOOLCONST){
+		p = keynode(T_BOOLCONST);
+		next();
+		return(p);
+	}
+	else{
+		parserror();
+	}
+}
+
+Pnode module_call()
+{
+	Pnode p;
+	p = idnode();
+	next();
+	match(LBRACE);
+	p->brother = nonterminalnode(NOPT_EXPR_LIST);
+	p->brother->child = opt_expr_list();
+	match(RBRACE);
+	return(p);
+}
+
+Pnode opt_expr_list()
+{
+	Pnode p;
+	if (lookahead==MINUS || lookahead==NOT || lookahead==LBRACE || lookahead==ID || lookahead==CHARCONST || lookahead == INTCONST || lookahead== REALCONST || lookahead==STRCONST || lookahead==BOOLCONST || lookahead==IF || lookahead==CHAR || lookahead==INT || lookahead==REAL || lookahead==STRING || lookahead==BOOL || lookahead==VOID) {
+		p = nonterminalnode(NEXPR_LIST);
+		p->child = expr_list();
+	}
+	return(p);
+}
+
+Pnode cond_expr()
+{
+	Pnode p;
+	match(IF);
+	p = nonterminalnode(NEXPR);
+	p->child = expr();
+	match(THEN);
+	p->brother = nonterminalnode(NEXPR);
+	p->brother->child = expr();
+	p->brother->brother = nonterminalnode(NOPT_ELSEIF_EXPR_LIST);
+	p->brother->brother->child = opt_elseif_expr_list();
+	match(ELSE);
+	p->brother->brother->brother = nonterminalnode(NEXPR);
+	p->brother->brother->brother->child = expr();
+	match(END);
+	return(p);
+}
+
+Pnode opt_elseif_expr_list()
+{
+	Pnode p;
+	if(lookahead==ELSEIF){
+		match(ELSEIF);
+		p = nonterminalnode(NEXPR);
+		p->child = expr();
+		match(THEN);
+		p->brother = nonterminalnode(NEXPR);
+		p->brother->child = expr();
+		p->brother->brother = nonterminalnode(NOPT_ELSEIF_EXPR_LIST);
+		p->brother->brother->child = opt_elseif_expr_list();
+	}
+	return(p);
+}
 
 
 void parse(){
