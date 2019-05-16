@@ -18,7 +18,7 @@
 #define VOID 270
 #define VAR 271
 #define CONST 272
-#define BEGIN 273
+#define BEGIn 273
 #define END 274 
 #define IF 275
 #define THEN 276
@@ -48,8 +48,7 @@
 #define CHARCONST 300
 #define STRCONST 301
 #define BOOLCONST 302
-#define ID 303
-#define ERROR 304
+#define ERROR 303
 
 /*Elenco dei non terminali*/
 typedef enum
@@ -145,9 +144,11 @@ typedef Node *Pnode; /*Definisco il tipo Pnode per semplicità*/
 
 /*Elenco dei vari metodi utilizzati, solo tipo, nome e parametri*/
 
-char *strcpy(char*, const char*);
+int yylex();
 
-void  strcopy(char*, const char*), match(int), next(), perserror(), treeprint(Pnode, int);
+char *strcpy(char*, const char*), *newstring(char*);
+
+void match(int, int), next(), parserror(int), treePrint(Pnode, int);
 
 Pnode nontermnode(Nonterminal), 
       idnode(), 
@@ -157,11 +158,11 @@ Pnode nontermnode(Nonterminal),
       realconstnode(),
       strconstnode(),
       boolconstnode(),
-      newnode(Typenode);
+      newnode(Typenode),
       program(),
       module_decl(),
       opt_param_list(),
-      param_list()
+      param_list(),
       param_decl(),
       type(),
       opt_var_sect(),
@@ -173,7 +174,7 @@ Pnode nontermnode(Nonterminal),
 	  const_decl(),
 	  opt_module_list(),
 	  module_body(),
-	  stat_list()
+	  stat_list(),
 	  stat(),
 	  assign_stat(),
 	  if_stat(),
@@ -187,17 +188,17 @@ Pnode nontermnode(Nonterminal),
 	  expr_list(),
 	  expr(),
 	  expr1(),
-	  boolop(),
+	  bool_op(),
 	  bool_term(),
-	  relop(),
-	  relterm(),
-	  relterm1(),
+	  rel_op(),
+	  rel_term(),
+	  rel_term1(),
 	  low_binop(),
 	  low_term(),
-	  lowterm1(),
+	  low_term1(),
 	  high_binop(),
 	  factor(),
-	  unaryop(),
+	  unary_op(),
 	  constant(),
 	  module_call(),
 	  opt_expr_list(),

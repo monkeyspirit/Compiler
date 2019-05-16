@@ -1,0 +1,5 @@
+module x (v1: int, v2: string): int 
+var i, j, k, h, g: int;
+begin x 
+a=i+d;
+end x

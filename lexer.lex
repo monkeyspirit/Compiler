@@ -1,7 +1,7 @@
 %{
 #include "def.h"
 int line =	1;
-Lexval lexval;	
+Lexval value;	
 %}
 %option noyywrap
 
@@ -33,12 +33,12 @@ module			{return(MODULE);}
 char 			{return(CHAR);}
 int 			{return(INT);}
 real 			{return(REAL);}
-string			{retrun(STRING);}
+string			{return(STRING);}
 bool 			{return(BOOL);}
 void			{return(VOID);}
 var				{return(VAR);}
 const 			{return(CONST);}
-begin			{return(BEGIN);}
+begin			{return(BEGIn);}
 end				{return(END);}
 if				{return(IF);}
 then			{return(THEN);}
@@ -61,12 +61,12 @@ not				{return(NOT);}
 "-"				{return(MINUS);}
 "*"				{return(AST);}
 "/"				{return(FRAC);}
-{intconst}		{lexval.ival = atoi(yytext); return(INTCONST);}
-{realconst}		{lexval.rval = atof(yytext); return(REALCONST);}
-{charconst}		{lexval.sval = newstring(yytext); return(CHARCONST);}
-{strconst}		{lexval.sval = newstring(yytext); return(STRCONST);}
-{boolconst}		{lexval.ival = (yytext[0]=='f' ? 0 : 1); return(BOOLCONST);}
-{id}			{lexval.sval = newstring(yytext); return(ID);}
+{intconst}		{value.ival = atoi(yytext); return(INTCONST);}
+{realconst}		{value.rval = atof(yytext); return(REALCONST);}
+{charconst}		{value.sval = newstring(yytext); return(CHARCONST);}
+{strconst}		{value.sval = newstring(yytext); return(STRCONST);}
+{boolconst}		{value.ival = (yytext[0]=='f' ? 0 : 1); return(BOOLCONST);}
+{id}			{value.sval = newstring(yytext); return(ID);}
 .				{return(ERROR);}
 
 %%
@@ -76,6 +76,6 @@ char *newstring(char *s)
 {
 	char *p;
 	p = malloc(strlen(s)+1);
-	strcopy(p, s);
+	strcpy(p, s);
 	return(p);
 }
