@@ -152,6 +152,7 @@ void match(int, int), next(), parserror(int), treePrint(Pnode, int);
 
 Pnode nontermnode(Nonterminal), 
       idnode(), 
+      opnode(Typenode),
       keynode(Typenode), 
       charconstnode(),
       intconstnode(),
