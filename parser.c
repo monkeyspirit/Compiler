@@ -743,7 +743,6 @@ Pnode factor()
 			p->brother = nonterminalnode(NCOND_EXPR);
 			p->brother->child = cond_expr();
 		}
-		printf("%s\n",p->value.sval );
 		return(p);
 	}
 	else if (lookahead==CHARCONST || lookahead == INTCONST || lookahead== REALCONST || lookahead==STRCONST || lookahead==BOOLCONST){
