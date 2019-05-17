@@ -24,6 +24,67 @@ PROGRAM
                         ID (g)
                     TYPE
                         INT
+        OPT_CONST_SECT
+            CONST_LIST
+                CONST_DECL
+                    DECL
+                        ID_LIST
+                            ID (MAX)
+                        TYPE
+                            INT
+                    EXPR
+                        BOOL_TERM
+                            REL_TERM
+                                LOW_TERM
+                                    FACTOR
+                                        CONSTANT
+                                            INTCONST (2)
+        OPT_MODULE_LIST
+            MODULE_DECL
+                ID (y)
+                OPT_PARAM_LIST
+                    PARAM_LIST
+                        PARAM_DECL
+                            ID (v3)
+                            TYPE
+                                INT
+                TYPE
+                    REAL
+                OPT_VAR_SECT
+                    DECL_LIST
+                        DECL
+                            ID_LIST
+                                ID (i)
+                            TYPE
+                                INT
+                OPT_CONST_SECT
+                    CONST_LIST
+                        CONST_DECL
+                            DECL
+                                ID_LIST
+                                    ID (MIN)
+                                TYPE
+                                    INT
+                            EXPR
+                                BOOL_TERM
+                                    REL_TERM
+                                        LOW_TERM
+                                            FACTOR
+                                                CONSTANT
+                                                    INTCONST (2)
+                MODULE_BODY
+                    ID (y)
+                    STAT_LIST
+                        STAT
+                            ASSIGN_STAT
+                                ID (c)
+                                EXPR
+                                    BOOL_TERM
+                                        REL_TERM
+                                            LOW_TERM
+                                                FACTOR
+                                                    ID (f)
+                    ID (y)
         MODULE_BODY
             ID (x)
             STAT_LIST

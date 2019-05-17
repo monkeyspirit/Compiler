@@ -172,7 +172,6 @@ Pnode module_decl()
 	j->brother = nonterminalnode(NMODULE_BODY);
 	j->brother->child = module_body();	
 
-
 	return(p);
 }
 
@@ -337,12 +336,17 @@ Pnode const_decl()
 
 Pnode opt_module_list()
 {
-	Pnode p;
-	p = nonterminalnode(NMODULE_DECL);
-	p->child = module_decl();
-	p->brother = nonterminalnode(NOPT_MODULE_LIST);
-	p->brother->child = opt_module_list();
+	Pnode p, h;
+	while(lookahead==MODULE){
+		p = h = nonterminalnode(NMODULE_DECL);
+		p->child = module_decl();
 
+		if(lookahead==MODULE){
+			h->brother = nonterminalnode(NOPT_MODULE_LIST);
+			h->brother->child = opt_module_list();
+			h = h->brother;
+		}
+	}
 	return(p);
 }
 
