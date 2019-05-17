@@ -23,6 +23,7 @@ id 				{letter}({letter}|{digit})*
 %%
 
 {spacing}		;
+{comment}		;
 \n 				{line++;}
 module			{return(MODULE);}
 "("				{return(LBRACE);}

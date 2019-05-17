@@ -1,5 +1,6 @@
 PROGRAM
     MODULE_DECL
+        ID (x)
         OPT_PARAM_LIST
             PARAM_LIST
                 PARAM_DECL
@@ -10,21 +11,19 @@ PROGRAM
                     ID (v2)
                     TYPE
                         STRING
-        OPT_CONST_SECT
-            CONST_LIST
-                CONST_DECL
-                    DECL
-                        ID_LIST
-                            ID (MAX)
-                        TYPE
-                            INT
-                    EXPR
-                        BOOL_TERM
-                            REL_TERM
-                                LOW_TERM
-                                    FACTOR
-                                        CONSTANT
-                                            INTCONST (2)
+        TYPE
+            INT
+        OPT_VAR_SECT
+            DECL_LIST
+                DECL
+                    ID_LIST
+                        ID (i)
+                        ID (j)
+                        ID (k)
+                        ID (h)
+                        ID (g)
+                    TYPE
+                        INT
         MODULE_BODY
             ID (x)
             STAT_LIST

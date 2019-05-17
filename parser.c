@@ -131,39 +131,47 @@ Pnode program()
 
 Pnode module_decl()
 {
-	Pnode p;
+	Pnode p, d, c, h , j, m;
+	int i = 0;
 	match(MODULE);
-	p = idnode();
+	p = d = m = c = h = j = idnode();
 	next();
 	match(LBRACE);
 
-	while(lookahead==ID){
+	if(lookahead==ID){
 		p->brother = nonterminalnode(NOPT_PARAM_LIST);
-		p = p->brother;
-		p->child = opt_param_list();
+		p->brother->child = opt_param_list();
+		d = c = h = j = p->brother;
 	}
-	
+
 	match(RBRACE);
 	match(COLON);
-	p->brother = nonterminalnode(NTYPE);
-	p->brother->child = type();
 
-	while(lookahead==VAR){
-		p->brother = nonterminalnode(NOPT_VAR_SECT);
-		p->brother->child = opt_var_sect();
-		
+	d->brother = nonterminalnode(NTYPE);
+	d->brother->child = type();
+	m = c = h = j = d->brother;
+
+	if(lookahead==VAR){
+		m->brother = nonterminalnode(NOPT_VAR_SECT);
+		m->brother->child = opt_var_sect();
+		c = h = j = m->brother;
 	}
-	while (lookahead==CONST){
-		p->brother = nonterminalnode(NOPT_CONST_SECT);
-		p->brother->child = opt_const_sect();
+
+	if(lookahead==CONST){
+		c->brother = nonterminalnode(NOPT_CONST_SECT);
+		c->brother->child = opt_const_sect();
+		h = j = c->brother;
 	}
-	while(lookahead==MODULE){
-		p->brother = nonterminalnode(NOPT_MODULE_LIST);
-		p->brother->child = opt_module_list();
+
+	if(lookahead==MODULE){
+		h->brother = nonterminalnode(NOPT_MODULE_LIST);
+		h->brother->child = opt_module_list();
+		j = h->brother;
 	}
-	
-	p->brother->brother = nonterminalnode(NMODULE_BODY);
-	p->brother->brother->child = module_body();
+
+	j->brother = nonterminalnode(NMODULE_BODY);
+	j->brother->child = module_body();	
+
 
 	return(p);
 }
@@ -171,8 +179,10 @@ Pnode module_decl()
 Pnode opt_param_list()
 {
 	Pnode p;
-	p = nonterminalnode(NPARAM_LIST);
-	p->child = param_list();
+	if(lookahead==ID){
+		p = nonterminalnode(NPARAM_LIST);
+		p->child = param_list();
+	}
 	return(p);
 }
 
