@@ -1,0 +1,73 @@
+PROGRAM
+    MODULE_DECL
+        OPT_PARAM_LIST
+            PARAM_LIST
+                PARAM_DECL
+                    ID (v1)
+                    TYPE
+                        INT
+                PARAM_DECL
+                    ID (v2)
+                    TYPE
+                        STRING
+        OPT_CONST_SECT
+            CONST_LIST
+                CONST_DECL
+                    DECL
+                        ID_LIST
+                            ID (MAX)
+                        TYPE
+                            INT
+                    EXPR
+                        BOOL_TERM
+                            REL_TERM
+                                LOW_TERM
+                                    FACTOR
+                                        CONSTANT
+                                            INTCONST (2)
+        MODULE_BODY
+            ID (x)
+            STAT_LIST
+                STAT
+                    ASSIGN_STAT
+                        ID (a)
+                        EXPR
+                            BOOL_TERM
+                                REL_TERM
+                                    LOW_TERM
+                                        FACTOR
+                                            ID (i)
+                                        LOW_TERM1
+                                            HIGH_BINOP
+                                                HIGHBINOP (i)
+                                            FACTOR
+                                                ID (d)
+                            EXPR1
+                                BOOLOP
+                                    BOOLOP (d)
+                                BOOL_TERM
+                                    REL_TERM
+                                        LOW_TERM
+                                            FACTOR
+                                                ID (i)
+                                        REL_TERM1
+                                            LOW_BINOP
+                                                LOWBINOP (i)
+                                            LOW_TERM
+                                                FACTOR
+                                                    ID (c)
+                STAT
+                    ASSIGN_STAT
+                        ID (g)
+                        EXPR
+                            BOOL_TERM
+                                REL_TERM
+                                    LOW_TERM
+                                        FACTOR
+                                            ID (f)
+                                        LOW_TERM1
+                                            HIGH_BINOP
+                                                HIGHBINOP (f)
+                                            FACTOR
+                                                ID (g)
+            ID (x)
