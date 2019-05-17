@@ -54,6 +54,8 @@ or				{return(OR);}
 not				{return(NOT);}
 "="				{return(ASSIGN);}
 "<="			{return(LE);}
+"<"				{return(LT);}
+">"				{return(GT);}
 ">="			{return(GE);}
 "=="			{return(EQ);}
 "!="			{return(NEQ);}

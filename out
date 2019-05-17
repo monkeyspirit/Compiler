@@ -39,12 +39,12 @@ PROGRAM
                                             ID (i)
                                         LOW_TERM1
                                             HIGH_BINOP
-                                                HIGHBINOP (i)
+                                                AST
                                             FACTOR
                                                 ID (d)
                             EXPR1
                                 BOOLOP
-                                    BOOLOP (d)
+                                    AND
                                 BOOL_TERM
                                     REL_TERM
                                         LOW_TERM
@@ -52,7 +52,7 @@ PROGRAM
                                                 ID (i)
                                         REL_TERM1
                                             LOW_BINOP
-                                                LOWBINOP (i)
+                                                PLUS
                                             LOW_TERM
                                                 FACTOR
                                                     ID (c)
@@ -67,7 +67,7 @@ PROGRAM
                                             ID (f)
                                         LOW_TERM1
                                             HIGH_BINOP
-                                                HIGHBINOP (f)
+                                                FRAC
                                             FACTOR
                                                 ID (g)
             ID (x)

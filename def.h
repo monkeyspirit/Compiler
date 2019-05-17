@@ -115,12 +115,20 @@ typedef enum
 	T_STRCONST,
 	T_BOOLCONST,
 	T_ID,
-	T_BOOLOP,
-	T_RELOP,
-	T_LOWBINOP,
-	T_HIGHBINOP,
-	T_UNOP,
-	T_NONTERMINAL
+	T_NONTERMINAL,
+	T_AST,
+	T_FRAC,
+	T_MINUS,
+	T_PLUS,
+	T_NOT,
+	T_LE,
+	T_GE,
+	T_LT,
+	T_GT,
+	T_EQ,
+	T_NEQ,
+	T_AND,
+	T_OR
 } Typenode;
 
 /*Definizione della union del Lexval*/
@@ -148,7 +156,7 @@ int yylex();
 
 char *strcpy(char*, const char*), *newstring(char*);
 
-void match(int, int), next(), parserror(int), treePrint(Pnode, int);
+void match(int), next(), parserror(), treePrint(Pnode, int);
 
 Pnode nontermnode(Nonterminal), 
       idnode(), 
