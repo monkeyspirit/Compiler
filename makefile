@@ -1,7 +1,5 @@
-all: tdl
-
-tdl: lexer.o parser.o tree.o
-	cc -no-pie -g -o tdl lexer.o parser.o tree.o
+albero: lexer.o parser.o tree.o
+	cc -no-pie -g -o albero lexer.o parser.o tree.o
 
 parser.o: parser.c def.h
 	cc -no-pie -g -c parser.c

@@ -10,6 +10,12 @@ const MAX: int = 2;
 	c = f;
 	end y
 
+	module z (v4: bool): real 
+	
+	begin z 
+	c = p-f;
+	end z
+
 begin x 
 a = i * d and i + c ;
 g = f / g;

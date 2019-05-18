@@ -85,6 +85,36 @@ PROGRAM
                                                 FACTOR
                                                     ID (f)
                     ID (y)
+            OPT_MODULE_LIST
+                MODULE_DECL
+                    ID (z)
+                    OPT_PARAM_LIST
+                        PARAM_LIST
+                            PARAM_DECL
+                                ID (v4)
+                                TYPE
+                                    BOOL
+                    TYPE
+                        REAL
+                    MODULE_BODY
+                        ID (z)
+                        STAT_LIST
+                            STAT
+                                ASSIGN_STAT
+                                    ID (c)
+                                    EXPR
+                                        BOOL_TERM
+                                            REL_TERM
+                                                LOW_TERM
+                                                    FACTOR
+                                                        ID (p)
+                                                REL_TERM1
+                                                    LOW_BINOP
+                                                        MINUS
+                                                    LOW_TERM
+                                                        FACTOR
+                                                            ID (f)
+                        ID (z)
         MODULE_BODY
             ID (x)
             STAT_LIST
