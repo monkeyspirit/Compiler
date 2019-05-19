@@ -341,10 +341,10 @@ Pnode opt_module_list()
 		p = h = nonterminalnode(NMODULE_DECL);
 		p->child = module_decl();
 
-		if(lookahead==MODULE){
-			h->brother = nonterminalnode(NOPT_MODULE_LIST);
-			h->brother->child = opt_module_list();
-			h = h->brother;
+		while(lookahead==MODULE){
+			h->brother = nonterminalnode(NMODULE_DECL);
+			h=h->brother;
+			h->child = module_decl();
 		}
 	}
 	return(p);
@@ -370,9 +370,11 @@ Pnode stat_list()
 	head = p = nonterminalnode(NSTAT);
 	p->child = stat();
 	match(SEMICOLON);
-	if(lookahead==ID || lookahead==IF || lookahead==WHILE || lookahead==RETURN || lookahead==READ || lookahead==WRITE){
-		p->brother = nonterminalnode(NSTAT_LIST);
-		p->brother->child = stat_list();
+	while(lookahead==ID || lookahead==IF || lookahead==WHILE || lookahead==RETURN || lookahead==READ || lookahead==WRITE){
+		p->brother = nonterminalnode(NSTAT);
+		p=p->brother;
+		p->child = stat();
+		match(SEMICOLON);
 	}
 	return(head);
 }
