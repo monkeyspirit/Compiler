@@ -18,5 +18,6 @@ const MAX: int = 2;
 
 begin x 
 #a = i * d and i + c ;
-if i == a+b then j = k; end;
+if i == a+b then j = k; elseif j==a then j = l; else i=k; end;
+
 end x
