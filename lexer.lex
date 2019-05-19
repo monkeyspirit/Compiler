@@ -13,9 +13,9 @@ lowercase		[a-z]
 letter			{uppercase}|{lowercase}
 digit			[0-9]
 initialdigit	[1-9]
-charconst		\'letter\''
-intconst		(-)?{initialdigit}{digit}*|0
-realconst		intconst\.{digit}?
+charconst		\'{letter}\'
+intconst		{initialdigit}{digit}*|0
+realconst		{intconst}\.{digit}?
 strconst		\"[^\n\"]*\"
 boolconst		false|true 
 id 				{letter}({letter}|{digit})*

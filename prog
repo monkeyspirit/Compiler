@@ -18,6 +18,10 @@ const MAX: int = 2;
 
 begin x 
 #a = i * d and i + c ;
-if i == a+b then j = k; elseif j==a then j = l; else i=k; end;
-
+#if i == a+b then j = k; elseif j==a then j = l; else i=k; end;
+return ;
+return x + y;
+read(a, c);
+write(y-2);
+#while i==3 do a=i+1; end;
 end x

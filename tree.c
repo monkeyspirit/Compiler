@@ -27,7 +27,8 @@ char* tabTypes[]=
 	"EQ",
 	"NEQ",
 	"AND",
-	"OR"
+	"OR",
+	"NULL"
 };
 
 char* tabNonTerm[] =
@@ -89,7 +90,6 @@ void treePrint(Pnode root, int indent)
  
 	printf("%s", (root->type == T_NONTERMINAL ? tabNonTerm[root->value.ival] : tabTypes[root->type]));
 
-
 	if(root->type == T_ID || root->type == T_CHARCONST || root->type == T_STRCONST ){
 		printf(" (%s)", root->value.sval);
 	}
@@ -102,6 +102,10 @@ void treePrint(Pnode root, int indent)
 	else if (root->type == T_REALCONST){
 		printf(" (%f)", root->value.rval);
 	}
+	else if(root->type == T_RETURNULL){
+		printf("\n");
+	}
+
 
 	printf("\n");
 	for(p=root->child; p != NULL; p = p->brother){

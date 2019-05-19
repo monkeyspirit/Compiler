@@ -49,6 +49,7 @@
 #define STRCONST 301
 #define BOOLCONST 302
 #define ERROR 303
+#define RETURNNULL 304
 
 /*Elenco dei non terminali*/
 typedef enum
@@ -128,7 +129,8 @@ typedef enum
 	T_EQ,
 	T_NEQ,
 	T_AND,
-	T_OR
+	T_OR,
+	T_RETURNULL
 } Typenode;
 
 /*Definizione della union del Lexval*/

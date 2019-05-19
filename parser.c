@@ -370,11 +370,9 @@ Pnode stat_list()
 	head = p = nonterminalnode(NSTAT);
 	p->child = stat();
 	match(SEMICOLON);
-	while(lookahead==ID || lookahead==IF || lookahead==WHILE || lookahead==RETURN || lookahead==READ || lookahead==WRITE){
-		p->brother = nonterminalnode(NSTAT);
-		p = p->brother;
-		p->child = stat();
-		match(SEMICOLON);
+	if(lookahead==ID || lookahead==IF || lookahead==WHILE || lookahead==RETURN || lookahead==READ || lookahead==WRITE){
+		p->brother = nonterminalnode(NSTAT_LIST);
+		p->brother->child = stat_list();
 	}
 	return(head);
 }
@@ -504,9 +502,12 @@ Pnode return_stat()
 {
 	Pnode p;
 	match(RETURN);
-	if(lookahead==lookahead==MINUS || lookahead==NOT || lookahead==LBRACE || lookahead==ID || lookahead==CHARCONST || lookahead == INTCONST || lookahead== REALCONST || lookahead==STRCONST || lookahead==BOOLCONST || lookahead==IF || lookahead==CHAR || lookahead==INT || lookahead==REAL || lookahead==STRING || lookahead==BOOL || lookahead==VOID){
+	if(lookahead!=SEMICOLON){
 		p = nonterminalnode(NOPT_EXPR);
 		p->child = opt_expr();
+	}
+	else{
+		p=keynode(T_RETURNULL);
 	}
 	return(p);
 }
@@ -514,8 +515,10 @@ Pnode return_stat()
 Pnode opt_expr()
 {
 	Pnode p;
-	p = nonterminalnode(NEXPR);
-	p->child = expr();
+	if(lookahead==MINUS || lookahead==NOT || lookahead==LBRACE || lookahead==ID || lookahead==CHARCONST || lookahead == INTCONST || lookahead== REALCONST || lookahead==STRCONST || lookahead==BOOLCONST || lookahead==IF || lookahead==CHAR || lookahead==INT || lookahead==REAL || lookahead==STRING || lookahead==BOOL || lookahead==VOID){
+		p = nonterminalnode(NEXPR);
+		p->child = expr();
+	}
 	return(p);
 }
 
