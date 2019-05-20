@@ -1,27 +1,27 @@
 module x (v1: int, v2: string): int 
 var i, j, k, h, g: int;
-const MAX: int = 2;
+const MAX: int = -2;
 
-	module y (v3: int): real 
-	var i: int;
-	const MIN: int = 2;
+	#module y (v3: int): real 
+	#var i: int;
+	#const MIN: int = -2;
 	
-	begin y 
-	c = f;
-	end y
+	#begin y 
+	#c = f;
+	#end y
 
-	module z (v4: bool): real 
+	#module z (v4: bool): real 
 	
-	begin z 
-	c = p-f;
-	end z
+	#begin z 
+	#c = p-f;
+	#end z
 
 begin x 
 #a = i * d and i + c ;
 #if i == a+b then j = k; elseif j==a then j = l; else i=k; end;
-return ;
-return x + y;
-read(a, c);
-write(y-2);
-while i==3 do a=i+1; end;
+#return ;
+#return x + y;
+#read(a, c);
+write(y - -2);
+#while i==3 do a=i+1; end;
 end x

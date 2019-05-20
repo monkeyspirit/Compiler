@@ -179,10 +179,9 @@ Pnode module_decl()
 Pnode opt_param_list()
 {
 	Pnode p;
-	if(lookahead==ID){
-		p = nonterminalnode(NPARAM_LIST);
-		p->child = param_list();
-	}
+	p = nonterminalnode(NPARAM_LIST);
+	p->child = param_list();
+
 	return(p);
 }
 
@@ -338,16 +337,15 @@ Pnode const_decl()
 Pnode opt_module_list()
 {
 	Pnode p, h;
-	while(lookahead==MODULE){
-		p = h = nonterminalnode(NMODULE_DECL);
-		p->child = module_decl();
+	p = h = nonterminalnode(NMODULE_DECL);
+	p->child = module_decl();
 
-		while(lookahead==MODULE){
-			h->brother = nonterminalnode(NMODULE_DECL);
-			h=h->brother;
-			h->child = module_decl();
-		}
+	while(lookahead==MODULE){
+		h->brother = nonterminalnode(NMODULE_DECL);
+		h=h->brother;
+		h->child = module_decl();
 	}
+
 	return(p);
 }
 
