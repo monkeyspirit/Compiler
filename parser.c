@@ -48,6 +48,7 @@ Pnode nonterminalnode(Nonterminal nonterm)
 	Pnode p;
 	p = newnode(T_NONTERMINAL);
 	p->value.ival = nonterm; /*Regole di stato del parsing*/
+	return(p);
 }
 
 /*Meotod che crea un nodo associato ad una keyword*/
