@@ -1,4 +1,9 @@
-albero: lexer.o parser.o tree.o
+all: albero symb
+
+symb: symb.c def.h
+	cc -no-pie -g -o symb symb.c
+
+albero: lexer.o parser.o tree.o 
 	cc -no-pie -g -o albero lexer.o parser.o tree.o
 
 parser.o: parser.c def.h

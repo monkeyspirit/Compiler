@@ -18,7 +18,7 @@ const MAX: int = -2;
 
 begin x 
 #a = i * d and i + c ;
-#if i == a+b then j = k; elseif j==a then j = l; else i=k; end;
+if i > b then j = k; elseif j==a then j = l; else i=k; end;
 #return ;
 #return x + y;
 #read(a, c);

@@ -152,7 +152,7 @@ typedef struct structNode
 
 typedef Node *Pnode; /*Definisco il tipo Pnode per semplicità*/
 
-/*Elenco dei vari metodi utilizzati, solo tipo, nome e parametri*/
+/*Elenco dei vari metodi utilizzati nel PARSER.C, solo tipo, nome e parametri*/
 
 int yylex();
 
@@ -216,3 +216,15 @@ Pnode nontermnode(Nonterminal),
 	  cond_expr(),
 	  opt_elseif_expr_list();
 
+/* Elenco metodi e strutture usati nella SYMBOL TABLE */
+
+struct table
+{
+char var[10];
+int value;
+};
+
+struct table tb1[20];
+
+void create(), modify(), insert(),  display();
+int search(char variable[],int n);
