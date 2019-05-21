@@ -380,12 +380,23 @@ Pnode stat_list()
 
 Pnode stat()
 {
-	Pnode p;
+	Pnode p, d;
 	if (lookahead==ID){
-		p = nonterminalnode(NASSIGN_STAT);
-		p->child = assign_stat();
-
-		return(p);
+		d=idnode();
+		next();
+		if(lookahead==ASSIGN){
+			p = nonterminalnode(NASSIGN_STAT);
+			p->child = assign_stat(d);
+			return(p);
+		}
+		else if (lookahead==LBRACE){
+			p = nonterminalnode(NMODULE_CALL);
+			p->child=module_call(d);
+			return(p);
+		}
+		else{
+			parserror();
+		}
 	} 
 	else if (lookahead==IF){
 		p = nonterminalnode(NIF_STAT);
@@ -418,11 +429,9 @@ Pnode stat()
 	
 }
 
-Pnode assign_stat()
+Pnode assign_stat(Pnode p)
 {
-	Pnode p;
-	p = idnode();
-	next();
+
 	match(ASSIGN);
 	p->brother = nonterminalnode(NEXPR);
 	p->brother->child = expr();
@@ -751,7 +760,7 @@ Pnode high_binop()
 
 Pnode factor()
 {
-	Pnode p;
+	Pnode p, d;
 	if(lookahead==MINUS || lookahead==NOT){
 		p = nonterminalnode(NUNARYOP);
 		p->child = unary_op();
@@ -767,13 +776,17 @@ Pnode factor()
 		return(p);
 	}
 	else if (lookahead==ID){
-		p = idnode();
+		d = idnode();
 		next();
 		if(lookahead==LBRACE){
-			p->brother = nonterminalnode(NCOND_EXPR);
-			p->brother->child = cond_expr();
+			p = nonterminalnode(NMODULE_CALL);
+			p->child = module_call(d);
+			return(p);
 		}
-		return(p);
+		else{
+			return(d);
+		}
+
 	}
 	else if (lookahead==CHARCONST || lookahead == INTCONST || lookahead== REALCONST || lookahead==STRCONST || lookahead==BOOLCONST){
 		p = nonterminalnode(NCONSTANT);
@@ -781,8 +794,8 @@ Pnode factor()
 		return(p);
 	}
 	else if (lookahead==IF){
-		p = nonterminalnode(NMODULE_CALL);
-		p->child = module_call();
+		p = nonterminalnode(NCOND_EXPR);
+		p->child = cond_expr();
 		return(p);
 	}
 	else if (lookahead==CHAR || lookahead==INT || lookahead==REAL || lookahead==STRING || lookahead==BOOL || lookahead==VOID){
@@ -850,11 +863,8 @@ Pnode constant()
 	}
 }
 
-Pnode module_call()
+Pnode module_call(Pnode p)
 {
-	Pnode p;
-	p = idnode();
-	next();
 	match(LBRACE);
 	if(lookahead==MINUS || lookahead==NOT || lookahead==LBRACE || lookahead==ID || lookahead==CHARCONST || lookahead == INTCONST || lookahead== REALCONST || lookahead==STRCONST || lookahead==BOOLCONST || lookahead==IF || lookahead==CHAR || lookahead==INT || lookahead==REAL || lookahead==STRING || lookahead==BOOL || lookahead==VOID) {
 		p->brother = nonterminalnode(NOPT_EXPR_LIST);
