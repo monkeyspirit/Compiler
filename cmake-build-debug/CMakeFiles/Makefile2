@@ -59,10 +59,10 @@ RM = /home/maria/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/191.7141.37/bin/
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/maria/CLionProjects/untitled
+CMAKE_SOURCE_DIR = /home/maria/CLionProjects/CompilerProject
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/maria/CLionProjects/untitled/cmake-build-debug
+CMAKE_BINARY_DIR = /home/maria/CLionProjects/CompilerProject/cmake-build-debug
 
 #=============================================================================
 # Target rules for target CMakeFiles/syntaxTree.dir
@@ -71,7 +71,7 @@ CMAKE_BINARY_DIR = /home/maria/CLionProjects/untitled/cmake-build-debug
 CMakeFiles/syntaxTree.dir/all:
 	$(MAKE) -f CMakeFiles/syntaxTree.dir/build.make CMakeFiles/syntaxTree.dir/depend
 	$(MAKE) -f CMakeFiles/syntaxTree.dir/build.make CMakeFiles/syntaxTree.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/maria/CLionProjects/untitled/cmake-build-debug/CMakeFiles --progress-num=3,4,5,6 "Built target syntaxTree"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles --progress-num=3,4,5,6 "Built target syntaxTree"
 .PHONY : CMakeFiles/syntaxTree.dir/all
 
 # Include target in all.
@@ -81,9 +81,9 @@ all: CMakeFiles/syntaxTree.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/syntaxTree.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/maria/CLionProjects/untitled/cmake-build-debug/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles 4
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/syntaxTree.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/maria/CLionProjects/untitled/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles 0
 .PHONY : CMakeFiles/syntaxTree.dir/rule
 
 # Convenience name for target.
@@ -108,7 +108,7 @@ clean: CMakeFiles/syntaxTree.dir/clean
 CMakeFiles/symbolTable.dir/all:
 	$(MAKE) -f CMakeFiles/symbolTable.dir/build.make CMakeFiles/symbolTable.dir/depend
 	$(MAKE) -f CMakeFiles/symbolTable.dir/build.make CMakeFiles/symbolTable.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/maria/CLionProjects/untitled/cmake-build-debug/CMakeFiles --progress-num=1,2 "Built target symbolTable"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles --progress-num=1,2 "Built target symbolTable"
 .PHONY : CMakeFiles/symbolTable.dir/all
 
 # Include target in all.
@@ -118,9 +118,9 @@ all: CMakeFiles/symbolTable.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/symbolTable.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/maria/CLionProjects/untitled/cmake-build-debug/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles 2
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/symbolTable.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/maria/CLionProjects/untitled/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles 0
 .PHONY : CMakeFiles/symbolTable.dir/rule
 
 # Convenience name for target.

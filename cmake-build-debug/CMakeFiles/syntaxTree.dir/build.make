@@ -43,10 +43,10 @@ RM = /home/maria/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/191.7141.37/bin/
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/maria/CLionProjects/untitled
+CMAKE_SOURCE_DIR = /home/maria/CLionProjects/CompilerProject
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/maria/CLionProjects/untitled/cmake-build-debug
+CMAKE_BINARY_DIR = /home/maria/CLionProjects/CompilerProject/cmake-build-debug
 
 # Include any dependencies generated for this target.
 include CMakeFiles/syntaxTree.dir/depend.make
@@ -59,42 +59,42 @@ include CMakeFiles/syntaxTree.dir/flags.make
 
 CMakeFiles/syntaxTree.dir/tree.c.o: CMakeFiles/syntaxTree.dir/flags.make
 CMakeFiles/syntaxTree.dir/tree.c.o: ../tree.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/maria/CLionProjects/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/syntaxTree.dir/tree.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/syntaxTree.dir/tree.c.o   -c /home/maria/CLionProjects/untitled/tree.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/syntaxTree.dir/tree.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/syntaxTree.dir/tree.c.o   -c /home/maria/CLionProjects/CompilerProject/tree.c
 
 CMakeFiles/syntaxTree.dir/tree.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/syntaxTree.dir/tree.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/maria/CLionProjects/untitled/tree.c > CMakeFiles/syntaxTree.dir/tree.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/maria/CLionProjects/CompilerProject/tree.c > CMakeFiles/syntaxTree.dir/tree.c.i
 
 CMakeFiles/syntaxTree.dir/tree.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/syntaxTree.dir/tree.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/maria/CLionProjects/untitled/tree.c -o CMakeFiles/syntaxTree.dir/tree.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/maria/CLionProjects/CompilerProject/tree.c -o CMakeFiles/syntaxTree.dir/tree.c.s
 
 CMakeFiles/syntaxTree.dir/lexer.c.o: CMakeFiles/syntaxTree.dir/flags.make
 CMakeFiles/syntaxTree.dir/lexer.c.o: ../lexer.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/maria/CLionProjects/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/syntaxTree.dir/lexer.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/syntaxTree.dir/lexer.c.o   -c /home/maria/CLionProjects/untitled/lexer.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/syntaxTree.dir/lexer.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/syntaxTree.dir/lexer.c.o   -c /home/maria/CLionProjects/CompilerProject/lexer.c
 
 CMakeFiles/syntaxTree.dir/lexer.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/syntaxTree.dir/lexer.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/maria/CLionProjects/untitled/lexer.c > CMakeFiles/syntaxTree.dir/lexer.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/maria/CLionProjects/CompilerProject/lexer.c > CMakeFiles/syntaxTree.dir/lexer.c.i
 
 CMakeFiles/syntaxTree.dir/lexer.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/syntaxTree.dir/lexer.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/maria/CLionProjects/untitled/lexer.c -o CMakeFiles/syntaxTree.dir/lexer.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/maria/CLionProjects/CompilerProject/lexer.c -o CMakeFiles/syntaxTree.dir/lexer.c.s
 
 CMakeFiles/syntaxTree.dir/parser.c.o: CMakeFiles/syntaxTree.dir/flags.make
 CMakeFiles/syntaxTree.dir/parser.c.o: ../parser.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/maria/CLionProjects/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/syntaxTree.dir/parser.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/syntaxTree.dir/parser.c.o   -c /home/maria/CLionProjects/untitled/parser.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/syntaxTree.dir/parser.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/syntaxTree.dir/parser.c.o   -c /home/maria/CLionProjects/CompilerProject/parser.c
 
 CMakeFiles/syntaxTree.dir/parser.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/syntaxTree.dir/parser.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/maria/CLionProjects/untitled/parser.c > CMakeFiles/syntaxTree.dir/parser.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/maria/CLionProjects/CompilerProject/parser.c > CMakeFiles/syntaxTree.dir/parser.c.i
 
 CMakeFiles/syntaxTree.dir/parser.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/syntaxTree.dir/parser.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/maria/CLionProjects/untitled/parser.c -o CMakeFiles/syntaxTree.dir/parser.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/maria/CLionProjects/CompilerProject/parser.c -o CMakeFiles/syntaxTree.dir/parser.c.s
 
 # Object files for target syntaxTree
 syntaxTree_OBJECTS = \
@@ -110,7 +110,7 @@ syntaxTree: CMakeFiles/syntaxTree.dir/lexer.c.o
 syntaxTree: CMakeFiles/syntaxTree.dir/parser.c.o
 syntaxTree: CMakeFiles/syntaxTree.dir/build.make
 syntaxTree: CMakeFiles/syntaxTree.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/maria/CLionProjects/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking C executable syntaxTree"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking C executable syntaxTree"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/syntaxTree.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -123,6 +123,6 @@ CMakeFiles/syntaxTree.dir/clean:
 .PHONY : CMakeFiles/syntaxTree.dir/clean
 
 CMakeFiles/syntaxTree.dir/depend:
-	cd /home/maria/CLionProjects/untitled/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/maria/CLionProjects/untitled /home/maria/CLionProjects/untitled /home/maria/CLionProjects/untitled/cmake-build-debug /home/maria/CLionProjects/untitled/cmake-build-debug /home/maria/CLionProjects/untitled/cmake-build-debug/CMakeFiles/syntaxTree.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/maria/CLionProjects/CompilerProject/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/maria/CLionProjects/CompilerProject /home/maria/CLionProjects/CompilerProject /home/maria/CLionProjects/CompilerProject/cmake-build-debug /home/maria/CLionProjects/CompilerProject/cmake-build-debug /home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles/syntaxTree.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/syntaxTree.dir/depend
 

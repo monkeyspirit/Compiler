@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/home/maria/CLionProjects/untitled/symb.c" "/home/maria/CLionProjects/untitled/cmake-build-debug/CMakeFiles/symbolTable.dir/symb.c.o"
+  "/home/maria/CLionProjects/CompilerProject/symb.c" "/home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles/symbolTable.dir/symb.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

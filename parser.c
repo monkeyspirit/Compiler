@@ -935,7 +935,7 @@ void parse(){
 
 int main()
 {
-	yyin = stdin;
+	yyin = fopen("../prog", "r");
 	parse();
 	treePrint(root, 0);
 	return(0);

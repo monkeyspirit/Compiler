@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/maria/CLionProjects/untitled/def.h
+/home/maria/CLionProjects/CompilerProject/def.h
 stdio.h
 -
 stdlib.h
@@ -16,7 +16,7 @@ ctype.h
 string.h
 -
 
-/home/maria/CLionProjects/untitled/lexer.c
+/home/maria/CLionProjects/CompilerProject/lexer.c
 stdio.h
 -
 string.h
@@ -28,15 +28,15 @@ stdlib.h
 inttypes.h
 -
 def.h
-/home/maria/CLionProjects/untitled/def.h
+/home/maria/CLionProjects/CompilerProject/def.h
 unistd.h
 -
 
-/home/maria/CLionProjects/untitled/parser.c
+/home/maria/CLionProjects/CompilerProject/parser.c
 def.h
-/home/maria/CLionProjects/untitled/def.h
+/home/maria/CLionProjects/CompilerProject/def.h
 
-/home/maria/CLionProjects/untitled/tree.c
+/home/maria/CLionProjects/CompilerProject/tree.c
 def.h
-/home/maria/CLionProjects/untitled/def.h
+/home/maria/CLionProjects/CompilerProject/def.h
 
