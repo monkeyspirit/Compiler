@@ -1,0 +1,1 @@
+/usr/bin/cc -g   CMakeFiles/untitled.dir/tree.c.o CMakeFiles/untitled.dir/lexer.c.o CMakeFiles/untitled.dir/parser.c.o  -o untitled 
