@@ -217,6 +217,33 @@ symb.c.s:
 	$(MAKE) -f CMakeFiles/symbolTable.dir/build.make CMakeFiles/symbolTable.dir/symb.c.s
 .PHONY : symb.c.s
 
+symbleTable.o: symbleTable.c.o
+
+.PHONY : symbleTable.o
+
+# target to build an object file
+symbleTable.c.o:
+	$(MAKE) -f CMakeFiles/syntaxTree.dir/build.make CMakeFiles/syntaxTree.dir/symbleTable.c.o
+.PHONY : symbleTable.c.o
+
+symbleTable.i: symbleTable.c.i
+
+.PHONY : symbleTable.i
+
+# target to preprocess a source file
+symbleTable.c.i:
+	$(MAKE) -f CMakeFiles/syntaxTree.dir/build.make CMakeFiles/syntaxTree.dir/symbleTable.c.i
+.PHONY : symbleTable.c.i
+
+symbleTable.s: symbleTable.c.s
+
+.PHONY : symbleTable.s
+
+# target to generate assembly for a file
+symbleTable.c.s:
+	$(MAKE) -f CMakeFiles/syntaxTree.dir/build.make CMakeFiles/syntaxTree.dir/symbleTable.c.s
+.PHONY : symbleTable.c.s
+
 tree.o: tree.c.o
 
 .PHONY : tree.o
@@ -263,6 +290,9 @@ help:
 	@echo "... symb.o"
 	@echo "... symb.i"
 	@echo "... symb.s"
+	@echo "... symbleTable.o"
+	@echo "... symbleTable.i"
+	@echo "... symbleTable.s"
 	@echo "... tree.o"
 	@echo "... tree.i"
 	@echo "... tree.s"

@@ -80,36 +80,36 @@ char* tabNonTerm[] =
 	"OPT_ELSEIF_EXPR_LIST"
 };
 
-void treePrint(Pnode root, int indent)
+void treePrint(FILE* file, Pnode root, int indent)
 {
 	int i;
 	Pnode p;
   	
 	for(i=0; i<indent; i++)
-    	printf("    ");
+    	fprintf(file, "    ");
  
-	printf("%s", (root->type == T_NONTERMINAL ? tabNonTerm[root->value.ival] : tabTypes[root->type]));
+	fprintf(file, "%s", (root->type == T_NONTERMINAL ? tabNonTerm[root->value.ival] : tabTypes[root->type]));
 
 	if(root->type == T_ID || root->type == T_CHARCONST || root->type == T_STRCONST ){
-		printf(" (%s)", root->value.sval);
+		fprintf(file, " (%s)", root->value.sval);
 	}
 	else if (root->type == T_INTCONST){
-		printf(" (%d)", root->value.ival);
+		fprintf(file, " (%d)", root->value.ival);
 	}
 	else if (root->type == T_BOOLCONST){
-		printf(" (%s)", (root->value.ival == 0? "false" : "true"));
+		fprintf(file, " (%s)", (root->value.ival == 0? "false" : "true"));
 	}
 	else if (root->type == T_REALCONST){
-		printf(" (%f)", root->value.rval);
+		fprintf(file, " (%f)", root->value.rval);
 	}
 	else if(root->type == T_RETURNULL){
-		printf("\n");
+		fprintf(file,"\n");
 	}
 
 
-	printf("\n");
+	fprintf(file, "\n");
 	for(p=root->child; p != NULL; p = p->brother){
-		treePrint(p, indent+1);
+		treePrint(file, p, indent+1);
 	}
     
 

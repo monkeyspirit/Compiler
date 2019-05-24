@@ -3,6 +3,7 @@ extern char *yytext;
 extern Lexval value;
 extern int line;
 extern FILE *yyin;
+extern FILE *yyout;
 
 int lookahead;
 
@@ -936,8 +937,12 @@ void parse(){
 int main()
 {
 	yyin = fopen("../prog", "r");
+	yyout = fopen("../out", "w");
 	parse();
-	treePrint(root, 0);
+	treePrint(yyout, root, 0);
+	yyin = fopen("../out", "r");
+	fillTable();
+	//displayTable();
 	return(0);
 }
 

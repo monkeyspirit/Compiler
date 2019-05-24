@@ -131,6 +131,9 @@
 		<Unit filename="/home/maria/CLionProjects/CompilerProject/symb.c">
 			<Option target="symbolTable"/>
 		</Unit>
+		<Unit filename="/home/maria/CLionProjects/CompilerProject/symbleTable.c">
+			<Option target="syntaxTree"/>
+		</Unit>
 		<Unit filename="/home/maria/CLionProjects/CompilerProject/tree.c">
 			<Option target="syntaxTree"/>
 		</Unit>

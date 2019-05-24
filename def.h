@@ -158,7 +158,7 @@ int yylex();
 
 char *strcpy(char*, const char*), *newstring(char*);
 
-void match(int), next(), parserror(), treePrint(Pnode, int);
+void match(int), next(), parserror(), treePrint(FILE*, Pnode, int);
 
 Pnode nontermnode(Nonterminal), 
       idnode(), 
@@ -226,5 +226,48 @@ int value;
 
 struct table tb1[20];
 
-void create(), modify(), insert(),  display();
+void create(), modify(), display(); //insert()
 int search(char variable[],int n);
+
+/* Qui c'è la nostra symbol table... iniziamo con qualcosa di semplice*/
+
+typedef union{
+    int isymb;
+    float rsymb;
+    char *ssymb;
+
+} SymbValue;
+
+typedef enum {
+    TY_REAL,
+    TY_INT,
+    TY_VOID,
+    TY_CHAR,
+    TY_STRING,
+    TY_BOOL
+} SymbType;
+
+typedef enum{
+    C_VAR,
+    C_MOD,
+    C_CON,
+    C_PAR
+} SymbClass;
+
+typedef struct strucSymTable{
+    char* name;
+    //PUNTATORE
+    SymbClass class;
+    SymbType type;
+    SymbValue value;
+    // AMBIENTE
+    // FORMALI
+    // NEXT: PUNTATORE AL SUCCESSIVO
+
+} SymboleTable;
+
+SymboleTable symboleTable [50];
+
+void displayTable();
+int lookup(char* , SymbClass , SymbType );
+void fillTable();

@@ -2,6 +2,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/syntaxTree.dir/tree.c.o"
   "CMakeFiles/syntaxTree.dir/lexer.c.o"
   "CMakeFiles/syntaxTree.dir/parser.c.o"
+  "CMakeFiles/syntaxTree.dir/symbleTable.c.o"
   "syntaxTree.pdb"
   "syntaxTree"
 )
