@@ -1,0 +1,23 @@
+PROGRAM
+    MODULE_DECL
+        ID (Z)
+        OPT_PARAM_LIST
+            PARAM_LIST
+                PARAM_DECL
+                    ID (v1)
+                    TYPE
+                        INT
+                PARAM_DECL
+                    ID (v2)
+                    TYPE
+                        STRING
+        TYPE
+            INT
+        MODULE_BODY
+            ID (Z)
+            STAT_LIST
+                STAT
+                    RETURN_STAT
+                        NULL
+
+            ID (Z)
