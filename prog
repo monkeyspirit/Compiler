@@ -1,4 +1,4 @@
-module Z (v1: int, v2: string): int
+module S (v1: int, v2: string):bool
 
 begin Z
 

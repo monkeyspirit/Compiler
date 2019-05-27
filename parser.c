@@ -934,15 +934,32 @@ void parse(){
 	root->child = program();
 }
 
+#define TOT 4;
+
+int hash(char* id)
+{  int i, h=0;
+    for(i=0; id[i] != '\0'; i++) {
+        h = ((h << 4) + id[i]) % TOT;
+    }
+    return h;
+}
+
 int main()
 {
+    int i,k;
+
 	yyin = fopen("../prog", "r");
 	yyout = fopen("../out", "w");
 	parse();
 	treePrint(yyout, root, 0);
 	yyin = fopen("../out", "r");
-	fillTable();
+	//fillTable();
 	//displayTable();
+
+    programLine(root);
+
+
 	return(0);
 }
+
 

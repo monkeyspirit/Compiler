@@ -1,6 +1,6 @@
 PROGRAM
     MODULE_DECL
-        ID (Z)
+        ID (S)
         OPT_PARAM_LIST
             PARAM_LIST
                 PARAM_DECL
@@ -12,7 +12,7 @@ PROGRAM
                     TYPE
                         STRING
         TYPE
-            INT
+            BOOL
         MODULE_BODY
             ID (Z)
             STAT_LIST

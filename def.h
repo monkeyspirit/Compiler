@@ -216,28 +216,9 @@ Pnode nontermnode(Nonterminal),
 	  cond_expr(),
 	  opt_elseif_expr_list();
 
-/* Elenco metodi e strutture usati nella SYMBOL TABLE */
 
-struct table
-{
-char var[10];
-int value;
-};
-
-struct table tb1[20];
-
-void create(), modify(), display(); //insert()
-int search(char variable[],int n);
 
 /* Qui c'è la nostra symbol table... iniziamo con qualcosa di semplice*/
-
-typedef union{
-    int isymb;
-    float rsymb;
-    char *ssymb;
-
-} SymbValue;
-
 typedef enum {
     TY_REAL,
     TY_INT,
@@ -254,20 +235,31 @@ typedef enum{
     C_PAR
 } SymbClass;
 
-typedef struct strucSymTable{
-    char* name;
+typedef struct structLine{
+    char* id;
     //PUNTATORE
     SymbClass class;
-    SymbType type;
-    SymbValue value;
-    // AMBIENTE
-    // FORMALI
+    char* type;
+    struct structLine *bucket; // AMBIENTE
+    //Formali
+    int numParam;
     // NEXT: PUNTATORE AL SUCCESSIVO
 
-} SymboleTable;
+} Line;
 
-SymboleTable symboleTable [50];
 
+
+typedef Line *PLine;
+
+/*
 void displayTable();
 int lookup(char* , SymbClass , SymbType );
 void fillTable();
+void insertTable(char*, SymbClass , SymbType );
+*/
+
+PLine programLine(Pnode), module_declLine(Pnode p, PLine);
+void displayTable(PLine);
+
+
+int hash(char*);
