@@ -7,6 +7,9 @@ CMakeFiles/syntaxTree.dir/lexer.c.o
 CMakeFiles/syntaxTree.dir/parser.c.o
  /home/maria/CLionProjects/CompilerProject/def.h
  /home/maria/CLionProjects/CompilerProject/parser.c
+CMakeFiles/syntaxTree.dir/symbleTable.c.o
+ /home/maria/CLionProjects/CompilerProject/def.h
+ /home/maria/CLionProjects/CompilerProject/symbleTable.c
 CMakeFiles/syntaxTree.dir/tree.c.o
  /home/maria/CLionProjects/CompilerProject/def.h
  /home/maria/CLionProjects/CompilerProject/tree.c

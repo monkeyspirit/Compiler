@@ -1,7 +1,7 @@
-module x (v1: int, v2: string): int 
+module Z (v1: int, v2: string): int
 
-begin x 
+begin Z
 
 return ;
 
-end x
+end Z

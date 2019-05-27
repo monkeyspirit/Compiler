@@ -16,27 +16,7 @@ ctype.h
 string.h
 -
 
-/home/maria/CLionProjects/CompilerProject/lexer.c
-stdio.h
--
-string.h
--
-errno.h
--
-stdlib.h
--
-inttypes.h
--
-def.h
-/home/maria/CLionProjects/CompilerProject/def.h
-unistd.h
--
-
-/home/maria/CLionProjects/CompilerProject/parser.c
-def.h
-/home/maria/CLionProjects/CompilerProject/def.h
-
-/home/maria/CLionProjects/CompilerProject/tree.c
+/home/maria/CLionProjects/CompilerProject/symbleTable.c
 def.h
 /home/maria/CLionProjects/CompilerProject/def.h
 

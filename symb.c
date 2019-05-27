@@ -90,7 +90,7 @@ void insert() {
 		check:
 
 		if(tb1[i].var[0]>='0' && tb1[i].var[0]<='9'){
-			printf("\nVariable should start with alphabet\nEnter correct name\n");
+			printf("\nVariable should st1art with alphabet\nEnter correct name\n");
 			scanf("%s%d",tb1[i].var,&tb1[i].value);
 			goto check;
 		}
