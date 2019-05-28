@@ -219,26 +219,13 @@ Pnode nontermnode(Nonterminal),
 
 
 /* Qui c'è la nostra symbol table... iniziamo con qualcosa di semplice*/
-typedef enum {
-    TY_REAL,
-    TY_INT,
-    TY_VOID,
-    TY_CHAR,
-    TY_STRING,
-    TY_BOOL
-} SymbType;
 
-typedef enum{
-    C_VAR,
-    C_MOD,
-    C_CON,
-    C_PAR
-} SymbClass;
+
 
 typedef struct structLine{
     char* id;
     //PUNTATORE
-    SymbClass class;
+    char* class;
     char* type;
     struct structLine *bucket; // AMBIENTE
     //Formali
@@ -251,15 +238,22 @@ typedef struct structLine{
 
 typedef Line *PLine;
 
+PLine symbolTable[];
+
 /*
-void displayTable();
+
 int lookup(char* , SymbClass , SymbType );
 void fillTable();
-void insertTable(char*, SymbClass , SymbType );
 */
 
-PLine programLine(Pnode), module_declLine(Pnode p, PLine);
-void displayTable(PLine);
+PLine newLine();
+void displayTable(),
+    programLine(Pnode),
+    module_declLine(Pnode),
+    param_declLine(Pnode),
+    decl_listLines(int, Pnode),
+    decl_Line(int, Pnode);
 
+void addLine(PLine);
 
 int hash(char*);

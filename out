@@ -1,6 +1,6 @@
 PROGRAM
     MODULE_DECL
-        ID (S)
+        ID (BE)
         OPT_PARAM_LIST
             PARAM_LIST
                 PARAM_DECL
@@ -11,8 +11,45 @@ PROGRAM
                     ID (v2)
                     TYPE
                         STRING
+                PARAM_DECL
+                    ID (v3)
+                    TYPE
+                        BOOL
         TYPE
-            BOOL
+            REAL
+        OPT_VAR_SECT
+            DECL_LIST
+                DECL
+                    ID_LIST
+                        ID (x)
+                        ID (y)
+                        ID (z)
+                    TYPE
+                        INT
+                DECL
+                    ID_LIST
+                        ID (t)
+                        ID (h)
+                        ID (g)
+                        ID (j)
+                        ID (k)
+                    TYPE
+                        REAL
+        OPT_CONST_SECT
+            CONST_LIST
+                CONST_DECL
+                    DECL
+                        ID_LIST
+                            ID (MAX)
+                        TYPE
+                            INT
+                    EXPR
+                        BOOL_TERM
+                            REL_TERM
+                                LOW_TERM
+                                    FACTOR
+                                        CONSTANT
+                                            INTCONST (10)
         MODULE_BODY
             ID (Z)
             STAT_LIST

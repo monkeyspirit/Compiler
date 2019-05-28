@@ -1,4 +1,6 @@
-module S (v1: int, v2: string):bool
+module BE (v1: int, v2: string, v3:bool):real
+var x, y, z:int; t, h, g, j, k:real;
+const MAX:int =10;
 
 begin Z
 
