@@ -953,11 +953,9 @@ int main()
 	parse();
 	treePrint(yyout, root, 0);
 	yyin = fopen("../out", "r");
-	//fillTable();
-	//displayTable();
 
     programLine(root);
-
+    displayTable();
 
 	return(0);
 }

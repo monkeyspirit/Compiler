@@ -1,7 +1,7 @@
 //
 // Created by maria on 24/05/19.
 //
-
+#include <string.h>
 #include "def.h"
 
 
@@ -56,7 +56,7 @@ void programLine (Pnode p){
 
 
 void module_declLine(Pnode p){
-    Pnode d, h, q, w, e;
+    Pnode d, h, q;
     PLine l;
     l = newLine();
 
@@ -143,13 +143,28 @@ void module_declLine(Pnode p){
             h=h->brother;
         }
 
-        d = d->brother;                   //PUNTO A MODULE BODY
+        d = d->brother;                                  //PUNTO A MODULE BODY
     }
 
-    //----------- ANALISI MODULE BODY
+    //----------- ANALISI MODULE BODY -----------
 
+    h = d->child;                   //PUNTO A ID DI BEGIN
+    q = d->child->brother->brother; //PUNTO A ID DI END
 
-    displayTable();
+    if(strcmp(h->value.sval,q->value.sval)){
+       printf("Errore gli ID non corrispondono: \"begin %s ... end %s\"", h->value.sval, q->value.sval);
+       exit(-2);
+    }
+    else{
+        if(strcmp(h->value.sval, l->id)){
+            printf("Errore gli ID non corrispondono: \"module %s ... begin %s\"",l->id, h->value.sval);
+            exit(-3);
+        }
+        else if(strcmp(q->value.sval, l->id)){
+            printf("Errore gli ID non corrispondono: \"module %s ... end %s\"", l->id, q->value.sval);
+            exit(-4);
+        }
+    }
 }
 
 void param_declLine(Pnode p){

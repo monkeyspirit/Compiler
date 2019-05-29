@@ -1,6 +1,6 @@
 PROGRAM
     MODULE_DECL
-        ID (BE)
+        ID (Z)
         OPT_PARAM_LIST
             PARAM_LIST
                 PARAM_DECL
