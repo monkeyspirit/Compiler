@@ -42,10 +42,10 @@ PLine newLine(){
 
 void displayTable(){
 
-    printf("\nName \tType \tNumber of param \tClass\n");
+    printf("\nName        Type   \t Number of param    \tClass\n");
 
     for(int a=0; a<i; a++){
-        printf("%s \t\t%s \t\t\t%d \t\t\t%s\n", symbolTable[a]->id, symbolTable[a]->type, symbolTable[a]->numParam, symbolTable[a]->class );
+        printf("%s        \t%s \t\t\t%d   \t\t\t %s\n", symbolTable[a]->id, symbolTable[a]->type, symbolTable[a]->numParam, symbolTable[a]->class );
     }
 
 }
@@ -98,21 +98,37 @@ void module_declLine(Pnode p){
 
         h = d->child->child;                      //PUNTO AL PRIMO DECL con h
         int type_decl = h->child->brother->child->type;
-        decl_listLines(type_decl, h->child);      //PASSO ALLA FUNZIONE IL TIPO E ID_LIST
+        vardecl_listLines(type_decl, h->child);      //PASSO ALLA FUNZIONE IL TIPO E ID_LIST
 
         h=h->brother;
         while(h!=NULL){
 
             int type_decl = h->child->brother->child->type;
-            decl_listLines(type_decl, h->child);
+            vardecl_listLines(type_decl, h->child);
             h=h->brother;
         }
 
-        d = d->brother;                           //PUNTO A OPT-VAR/OPT-CONST/OPT-MODULE/TYPE
+        d = d->brother;                           //PUNTO A OPT-CONST/OPT-MODULE/TYPE
     }
 
     //----------- VERIFICA PRESENZA OPT-CONST-LIST -----------
 
+    if(d->value.ival==NOPT_CONST_SECT){
+
+        h = d->child->child;                      //PUNTO AL PRIMO CONST_DECL con h
+        int type_decl = h->child->child->brother->child->type;
+        constdecl_listLines(type_decl, h->child->child);      //PASSO ALLA FUNZIONE IL TIPO E ID_LIST
+
+        h=h->brother;
+        while(h!=NULL){
+
+            int type_decl = h->child->child->brother->child->type;
+            constdecl_listLines(type_decl, h->child->child);
+            h=h->brother;
+        }
+
+        d = d->brother;                           //PUNTO A OPT-MODULE/TYPE
+    }
 
     //----------- VERIFICA PRESENZA OPT-MODULE-LIST -----------
 
@@ -135,18 +151,18 @@ void param_declLine(Pnode p){
 
 }
 
-void decl_listLines(int type, Pnode p){
+void vardecl_listLines(int type, Pnode p){
 
-    decl_Line(type, p->child);              //p punta ad ID_LIST, p->child punta ad ID
+    vardecl_Line(type, p->child);              //p punta ad ID_LIST, p->child punta ad ID
     p = p->child->brother;                  // p->child->brother punta al secondo ID della lista se esiste
     while(p!=NULL){
-        decl_Line(type, p);
+        vardecl_Line(type, p);
         p = p->brother;
     }
 
 }
 
-void decl_Line(int type, Pnode p){
+void vardecl_Line(int type, Pnode p){
 
     PLine l;
     l = newLine();
@@ -156,5 +172,24 @@ void decl_Line(int type, Pnode p){
     l->id = p->value.sval;
 }
 
+void constdecl_listLines(int type, Pnode p){
 
+    constdecl_Line(type, p->child);              //p punta ad ID_LIST, p->child punta ad ID
+    p = p->child->brother;                  // p->child->brother punta al secondo ID della lista se esiste
+    while(p!=NULL){
+        constdecl_Line(type, p);
+        p = p->brother;
+    }
+
+}
+
+void constdecl_Line(int type, Pnode p){
+
+    PLine l;
+    l = newLine();
+
+    l->type = tableTypes[type];
+    l->class = tableClass[2];
+    l->id = p->value.sval;
+}
 

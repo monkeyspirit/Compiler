@@ -50,6 +50,20 @@ PROGRAM
                                     FACTOR
                                         CONSTANT
                                             INTCONST (10)
+                CONST_DECL
+                    DECL
+                        ID_LIST
+                            ID (a)
+                            ID (b)
+                        TYPE
+                            BOOL
+                    EXPR
+                        BOOL_TERM
+                            REL_TERM
+                                LOW_TERM
+                                    FACTOR
+                                        CONSTANT
+                                            BOOLCONST (false)
         MODULE_BODY
             ID (Z)
             STAT_LIST

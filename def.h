@@ -238,7 +238,7 @@ typedef struct structLine{
 
 typedef Line *PLine;
 
-PLine symbolTable[];
+PLine symbolTable[20];
 
 /*
 
@@ -251,8 +251,10 @@ void displayTable(),
     programLine(Pnode),
     module_declLine(Pnode),
     param_declLine(Pnode),
-    decl_listLines(int, Pnode),
-    decl_Line(int, Pnode);
+    vardecl_listLines(int, Pnode),
+    vardecl_Line(int, Pnode),
+    constdecl_listLines(int, Pnode),
+    constdecl_Line(int, Pnode);
 
 void addLine(PLine);
 
