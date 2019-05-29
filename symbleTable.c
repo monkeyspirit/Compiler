@@ -108,16 +108,16 @@ void module_declLine(Pnode p){
             h=h->brother;
         }
 
-        d = d->brother;                           //PUNTO A OPT-CONST/OPT-MODULE/TYPE
+        d = d->brother;                           //PUNTO A OPT-CONST/OPT-MODULE/MODULE BODY
     }
 
     //----------- VERIFICA PRESENZA OPT-CONST-LIST -----------
 
     if(d->value.ival==NOPT_CONST_SECT){
 
-        h = d->child->child;                      //PUNTO AL PRIMO CONST_DECL con h
+        h = d->child->child;                                   //PUNTO AL PRIMO CONST_DECL con h
         int type_decl = h->child->child->brother->child->type;
-        constdecl_listLines(type_decl, h->child->child);      //PASSO ALLA FUNZIONE IL TIPO E ID_LIST
+        constdecl_listLines(type_decl, h->child->child);       //PASSO ALLA FUNZIONE IL TIPO E ID_LIST
 
         h=h->brother;
         while(h!=NULL){
@@ -127,11 +127,24 @@ void module_declLine(Pnode p){
             h=h->brother;
         }
 
-        d = d->brother;                           //PUNTO A OPT-MODULE/TYPE
+        d = d->brother;                                        //PUNTO A OPT-MODULE/MODULE BODY
     }
 
     //----------- VERIFICA PRESENZA OPT-MODULE-LIST -----------
 
+    if(d->value.ival==NOPT_MODULE_LIST){
+
+        h = d->child;                                    //PUNTO AL PRIMO MODULE_DECL con h
+        module_declLine(h);                              //PASSO ALLA FUNZIONE IL MODULE_DECL
+
+        h=h->brother;
+        while(h!=NULL){
+            module_declLine(h);
+            h=h->brother;
+        }
+
+        d = d->brother;                   //PUNTO A MODULE BODY
+    }
 
     //----------- ANALISI MODULE BODY
 

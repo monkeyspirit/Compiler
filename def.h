@@ -238,7 +238,7 @@ typedef struct structLine{
 
 typedef Line *PLine;
 
-PLine symbolTable[20];
+PLine symbolTable[50];
 
 /*
 

@@ -64,6 +64,45 @@ PROGRAM
                                     FACTOR
                                         CONSTANT
                                             BOOLCONST (false)
+        OPT_MODULE_LIST
+            MODULE_DECL
+                ID (f1)
+                TYPE
+                    INT
+                OPT_VAR_SECT
+                    DECL_LIST
+                        DECL
+                            ID_LIST
+                                ID (c)
+                            TYPE
+                                REAL
+                MODULE_BODY
+                    ID (f1)
+                    STAT_LIST
+                        STAT
+                            RETURN_STAT
+                                NULL
+
+                    ID (f1)
+            MODULE_DECL
+                ID (f2)
+                TYPE
+                    INT
+                OPT_VAR_SECT
+                    DECL_LIST
+                        DECL
+                            ID_LIST
+                                ID (d)
+                            TYPE
+                                REAL
+                MODULE_BODY
+                    ID (f2)
+                    STAT_LIST
+                        STAT
+                            RETURN_STAT
+                                NULL
+
+                    ID (f2)
         MODULE_BODY
             ID (Z)
             STAT_LIST
