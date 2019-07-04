@@ -928,10 +928,13 @@ Pnode opt_elseif_expr_list()
 
 
 
-void parse(){
+Pnode parse(){
+    yyin = fopen("../prog", "r");
+    yyout = fopen("../out", "w");
 	next();
 	root = nonterminalnode(NPROGRAM);
 	root->child = program();
+    return root;
 }
 
 #define TOT 4;
@@ -944,20 +947,5 @@ int hash(char* id)
     return h;
 }
 
-int main()
-{
-    int i,k;
-
-	yyin = fopen("../prog", "r");
-	yyout = fopen("../out", "w");
-	parse();
-	treePrint(yyout, root, 0);
-	yyin = fopen("../out", "r");
-
-    programLine(root);
-    displayTable();
-
-	return(0);
-}
 
 

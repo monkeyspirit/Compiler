@@ -1,1 +1,1 @@
-/usr/bin/cc -g   CMakeFiles/symbolTable.dir/symb.c.o  -o symbolTable 
+/usr/bin/cc -g   CMakeFiles/symbolTable.dir/symbEsempio.c.o  -o symbolTable 

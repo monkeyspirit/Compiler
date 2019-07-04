@@ -158,7 +158,7 @@ int yylex();
 
 char *strcpy(char*, const char*), *newstring(char*);
 
-void match(int), next(), parserror(), treePrint(FILE*, Pnode, int);
+void match(int), next(), parserror(), treePrint(FILE*, Pnode, int), syntaxTree(Pnode);
 
 Pnode nontermnode(Nonterminal), 
       idnode(), 
@@ -214,7 +214,8 @@ Pnode nontermnode(Nonterminal),
 	  module_call(Pnode),
 	  opt_expr_list(),
 	  cond_expr(),
-	  opt_elseif_expr_list();
+	  opt_elseif_expr_list(),
+	  parse();
 
 
 

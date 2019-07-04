@@ -57,27 +57,27 @@ include CMakeFiles/symbolTable.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/symbolTable.dir/flags.make
 
-CMakeFiles/symbolTable.dir/symb.c.o: CMakeFiles/symbolTable.dir/flags.make
-CMakeFiles/symbolTable.dir/symb.c.o: ../symb.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/symbolTable.dir/symb.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/symbolTable.dir/symb.c.o   -c /home/maria/CLionProjects/CompilerProject/symb.c
+CMakeFiles/symbolTable.dir/symbEsempio.c.o: CMakeFiles/symbolTable.dir/flags.make
+CMakeFiles/symbolTable.dir/symbEsempio.c.o: ../symbEsempio.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/symbolTable.dir/symbEsempio.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/symbolTable.dir/symbEsempio.c.o   -c /home/maria/CLionProjects/CompilerProject/symbEsempio.c
 
-CMakeFiles/symbolTable.dir/symb.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/symbolTable.dir/symb.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/maria/CLionProjects/CompilerProject/symb.c > CMakeFiles/symbolTable.dir/symb.c.i
+CMakeFiles/symbolTable.dir/symbEsempio.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/symbolTable.dir/symbEsempio.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/maria/CLionProjects/CompilerProject/symbEsempio.c > CMakeFiles/symbolTable.dir/symbEsempio.c.i
 
-CMakeFiles/symbolTable.dir/symb.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/symbolTable.dir/symb.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/maria/CLionProjects/CompilerProject/symb.c -o CMakeFiles/symbolTable.dir/symb.c.s
+CMakeFiles/symbolTable.dir/symbEsempio.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/symbolTable.dir/symbEsempio.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/maria/CLionProjects/CompilerProject/symbEsempio.c -o CMakeFiles/symbolTable.dir/symbEsempio.c.s
 
 # Object files for target symbolTable
 symbolTable_OBJECTS = \
-"CMakeFiles/symbolTable.dir/symb.c.o"
+"CMakeFiles/symbolTable.dir/symbEsempio.c.o"
 
 # External object files for target symbolTable
 symbolTable_EXTERNAL_OBJECTS =
 
-symbolTable: CMakeFiles/symbolTable.dir/symb.c.o
+symbolTable: CMakeFiles/symbolTable.dir/symbEsempio.c.o
 symbolTable: CMakeFiles/symbolTable.dir/build.make
 symbolTable: CMakeFiles/symbolTable.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable symbolTable"

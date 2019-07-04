@@ -1,4 +1,5 @@
 #include"def.h"
+extern FILE *yyout;
 
 char* tabTypes[]=
 {
@@ -79,6 +80,10 @@ char* tabNonTerm[] =
 	"COND_EXPR",
 	"OPT_ELSEIF_EXPR_LIST"
 };
+
+void syntaxTree(Pnode root){
+    treePrint(yyout, root, 0);
+}
 
 void treePrint(FILE* file, Pnode root, int indent)
 {

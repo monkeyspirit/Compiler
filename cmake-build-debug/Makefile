@@ -56,17 +56,6 @@ CMAKE_BINARY_DIR = /home/maria/CLionProjects/CompilerProject/cmake-build-debug
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/home/maria/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/191.7141.37/bin/cmake/linux/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
-
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -77,6 +66,17 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
+
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/home/maria/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/191.7141.37/bin/cmake/linux/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named syntaxTree
+# Target rules for targets named main
 
 # Build rule for target.
-syntaxTree: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 syntaxTree
-.PHONY : syntaxTree
+main: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 main
+.PHONY : main
 
 # fast build rule for target.
-syntaxTree/fast:
-	$(MAKE) -f CMakeFiles/syntaxTree.dir/build.make CMakeFiles/syntaxTree.dir/build
-.PHONY : syntaxTree/fast
+main/fast:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
+.PHONY : main/fast
 
 #=============================================================================
 # Target rules for targets named symbolTable
@@ -142,7 +142,7 @@ lexer.o: lexer.c.o
 
 # target to build an object file
 lexer.c.o:
-	$(MAKE) -f CMakeFiles/syntaxTree.dir/build.make CMakeFiles/syntaxTree.dir/lexer.c.o
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/lexer.c.o
 .PHONY : lexer.c.o
 
 lexer.i: lexer.c.i
@@ -151,7 +151,7 @@ lexer.i: lexer.c.i
 
 # target to preprocess a source file
 lexer.c.i:
-	$(MAKE) -f CMakeFiles/syntaxTree.dir/build.make CMakeFiles/syntaxTree.dir/lexer.c.i
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/lexer.c.i
 .PHONY : lexer.c.i
 
 lexer.s: lexer.c.s
@@ -160,8 +160,35 @@ lexer.s: lexer.c.s
 
 # target to generate assembly for a file
 lexer.c.s:
-	$(MAKE) -f CMakeFiles/syntaxTree.dir/build.make CMakeFiles/syntaxTree.dir/lexer.c.s
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/lexer.c.s
 .PHONY : lexer.c.s
+
+main.o: main.c.o
+
+.PHONY : main.o
+
+# target to build an object file
+main.c.o:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.c.o
+.PHONY : main.c.o
+
+main.i: main.c.i
+
+.PHONY : main.i
+
+# target to preprocess a source file
+main.c.i:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.c.i
+.PHONY : main.c.i
+
+main.s: main.c.s
+
+.PHONY : main.s
+
+# target to generate assembly for a file
+main.c.s:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.c.s
+.PHONY : main.c.s
 
 parser.o: parser.c.o
 
@@ -169,7 +196,7 @@ parser.o: parser.c.o
 
 # target to build an object file
 parser.c.o:
-	$(MAKE) -f CMakeFiles/syntaxTree.dir/build.make CMakeFiles/syntaxTree.dir/parser.c.o
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/parser.c.o
 .PHONY : parser.c.o
 
 parser.i: parser.c.i
@@ -178,7 +205,7 @@ parser.i: parser.c.i
 
 # target to preprocess a source file
 parser.c.i:
-	$(MAKE) -f CMakeFiles/syntaxTree.dir/build.make CMakeFiles/syntaxTree.dir/parser.c.i
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/parser.c.i
 .PHONY : parser.c.i
 
 parser.s: parser.c.s
@@ -187,89 +214,89 @@ parser.s: parser.c.s
 
 # target to generate assembly for a file
 parser.c.s:
-	$(MAKE) -f CMakeFiles/syntaxTree.dir/build.make CMakeFiles/syntaxTree.dir/parser.c.s
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/parser.c.s
 .PHONY : parser.c.s
 
-symb.o: symb.c.o
+symbEsempio.o: symbEsempio.c.o
 
-.PHONY : symb.o
-
-# target to build an object file
-symb.c.o:
-	$(MAKE) -f CMakeFiles/symbolTable.dir/build.make CMakeFiles/symbolTable.dir/symb.c.o
-.PHONY : symb.c.o
-
-symb.i: symb.c.i
-
-.PHONY : symb.i
-
-# target to preprocess a source file
-symb.c.i:
-	$(MAKE) -f CMakeFiles/symbolTable.dir/build.make CMakeFiles/symbolTable.dir/symb.c.i
-.PHONY : symb.c.i
-
-symb.s: symb.c.s
-
-.PHONY : symb.s
-
-# target to generate assembly for a file
-symb.c.s:
-	$(MAKE) -f CMakeFiles/symbolTable.dir/build.make CMakeFiles/symbolTable.dir/symb.c.s
-.PHONY : symb.c.s
-
-symbleTable.o: symbleTable.c.o
-
-.PHONY : symbleTable.o
+.PHONY : symbEsempio.o
 
 # target to build an object file
-symbleTable.c.o:
-	$(MAKE) -f CMakeFiles/syntaxTree.dir/build.make CMakeFiles/syntaxTree.dir/symbleTable.c.o
-.PHONY : symbleTable.c.o
+symbEsempio.c.o:
+	$(MAKE) -f CMakeFiles/symbolTable.dir/build.make CMakeFiles/symbolTable.dir/symbEsempio.c.o
+.PHONY : symbEsempio.c.o
 
-symbleTable.i: symbleTable.c.i
+symbEsempio.i: symbEsempio.c.i
 
-.PHONY : symbleTable.i
+.PHONY : symbEsempio.i
 
 # target to preprocess a source file
-symbleTable.c.i:
-	$(MAKE) -f CMakeFiles/syntaxTree.dir/build.make CMakeFiles/syntaxTree.dir/symbleTable.c.i
-.PHONY : symbleTable.c.i
+symbEsempio.c.i:
+	$(MAKE) -f CMakeFiles/symbolTable.dir/build.make CMakeFiles/symbolTable.dir/symbEsempio.c.i
+.PHONY : symbEsempio.c.i
 
-symbleTable.s: symbleTable.c.s
+symbEsempio.s: symbEsempio.c.s
 
-.PHONY : symbleTable.s
+.PHONY : symbEsempio.s
 
 # target to generate assembly for a file
-symbleTable.c.s:
-	$(MAKE) -f CMakeFiles/syntaxTree.dir/build.make CMakeFiles/syntaxTree.dir/symbleTable.c.s
-.PHONY : symbleTable.c.s
+symbEsempio.c.s:
+	$(MAKE) -f CMakeFiles/symbolTable.dir/build.make CMakeFiles/symbolTable.dir/symbEsempio.c.s
+.PHONY : symbEsempio.c.s
 
-tree.o: tree.c.o
+symboleTable.o: symboleTable.c.o
 
-.PHONY : tree.o
+.PHONY : symboleTable.o
 
 # target to build an object file
-tree.c.o:
-	$(MAKE) -f CMakeFiles/syntaxTree.dir/build.make CMakeFiles/syntaxTree.dir/tree.c.o
-.PHONY : tree.c.o
+symboleTable.c.o:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/symboleTable.c.o
+.PHONY : symboleTable.c.o
 
-tree.i: tree.c.i
+symboleTable.i: symboleTable.c.i
 
-.PHONY : tree.i
+.PHONY : symboleTable.i
 
 # target to preprocess a source file
-tree.c.i:
-	$(MAKE) -f CMakeFiles/syntaxTree.dir/build.make CMakeFiles/syntaxTree.dir/tree.c.i
-.PHONY : tree.c.i
+symboleTable.c.i:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/symboleTable.c.i
+.PHONY : symboleTable.c.i
 
-tree.s: tree.c.s
+symboleTable.s: symboleTable.c.s
 
-.PHONY : tree.s
+.PHONY : symboleTable.s
 
 # target to generate assembly for a file
-tree.c.s:
-	$(MAKE) -f CMakeFiles/syntaxTree.dir/build.make CMakeFiles/syntaxTree.dir/tree.c.s
-.PHONY : tree.c.s
+symboleTable.c.s:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/symboleTable.c.s
+.PHONY : symboleTable.c.s
+
+syntaxTree.o: syntaxTree.c.o
+
+.PHONY : syntaxTree.o
+
+# target to build an object file
+syntaxTree.c.o:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/syntaxTree.c.o
+.PHONY : syntaxTree.c.o
+
+syntaxTree.i: syntaxTree.c.i
+
+.PHONY : syntaxTree.i
+
+# target to preprocess a source file
+syntaxTree.c.i:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/syntaxTree.c.i
+.PHONY : syntaxTree.c.i
+
+syntaxTree.s: syntaxTree.c.s
+
+.PHONY : syntaxTree.s
+
+# target to generate assembly for a file
+syntaxTree.c.s:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/syntaxTree.c.s
+.PHONY : syntaxTree.c.s
 
 # Help Target
 help:
@@ -277,25 +304,28 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... syntaxTree"
+	@echo "... edit_cache"
+	@echo "... main"
 	@echo "... symbolTable"
 	@echo "... lexer.o"
 	@echo "... lexer.i"
 	@echo "... lexer.s"
+	@echo "... main.o"
+	@echo "... main.i"
+	@echo "... main.s"
 	@echo "... parser.o"
 	@echo "... parser.i"
 	@echo "... parser.s"
-	@echo "... symb.o"
-	@echo "... symb.i"
-	@echo "... symb.s"
-	@echo "... symbleTable.o"
-	@echo "... symbleTable.i"
-	@echo "... symbleTable.s"
-	@echo "... tree.o"
-	@echo "... tree.i"
-	@echo "... tree.s"
+	@echo "... symbEsempio.o"
+	@echo "... symbEsempio.i"
+	@echo "... symbEsempio.s"
+	@echo "... symboleTable.o"
+	@echo "... symboleTable.i"
+	@echo "... symboleTable.s"
+	@echo "... syntaxTree.o"
+	@echo "... syntaxTree.i"
+	@echo "... syntaxTree.s"
 .PHONY : help
 
 

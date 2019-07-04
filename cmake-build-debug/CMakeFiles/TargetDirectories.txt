@@ -1,4 +1,4 @@
-/home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles/edit_cache.dir
 /home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles/syntaxTree.dir
+/home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles/main.dir
 /home/maria/CLionProjects/CompilerProject/cmake-build-debug/CMakeFiles/symbolTable.dir

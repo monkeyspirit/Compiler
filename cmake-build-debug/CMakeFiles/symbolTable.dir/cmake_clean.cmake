@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/symbolTable.dir/symb.c.o"
+  "CMakeFiles/symbolTable.dir/symbEsempio.c.o"
   "symbolTable.pdb"
   "symbolTable"
 )

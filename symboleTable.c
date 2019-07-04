@@ -51,6 +51,8 @@ void displayTable(){
 }
 
 void programLine (Pnode p){
+
+    yyin = fopen("../out", "r");
     module_declLine(p->child);                  //passo MODULE-DECL
 }
 

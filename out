@@ -1,20 +1,12 @@
 PROGRAM
     MODULE_DECL
-        ID (Z)
+        ID (XX)
         OPT_PARAM_LIST
             PARAM_LIST
                 PARAM_DECL
                     ID (v1)
                     TYPE
                         INT
-                PARAM_DECL
-                    ID (v2)
-                    TYPE
-                        STRING
-                PARAM_DECL
-                    ID (v3)
-                    TYPE
-                        BOOL
         TYPE
             REAL
         OPT_VAR_SECT
@@ -26,15 +18,6 @@ PROGRAM
                         ID (z)
                     TYPE
                         INT
-                DECL
-                    ID_LIST
-                        ID (t)
-                        ID (h)
-                        ID (g)
-                        ID (j)
-                        ID (k)
-                    TYPE
-                        REAL
         OPT_CONST_SECT
             CONST_LIST
                 CONST_DECL
@@ -84,30 +67,11 @@ PROGRAM
                                 NULL
 
                     ID (f1)
-            MODULE_DECL
-                ID (f2)
-                TYPE
-                    INT
-                OPT_VAR_SECT
-                    DECL_LIST
-                        DECL
-                            ID_LIST
-                                ID (d)
-                            TYPE
-                                REAL
-                MODULE_BODY
-                    ID (f2)
-                    STAT_LIST
-                        STAT
-                            RETURN_STAT
-                                NULL
-
-                    ID (f2)
         MODULE_BODY
-            ID (Z)
+            ID (XX)
             STAT_LIST
                 STAT
                     RETURN_STAT
                         NULL
 
-            ID (Z)
+            ID (XX)

@@ -17,16 +17,6 @@
 					<DistClean command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="edit_cache">
-				<Option working_dir="/home/maria/CLionProjects/CompilerProject/cmake-build-debug"/>
-				<Option type="4"/>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
 			<Target title="rebuild_cache">
 				<Option working_dir="/home/maria/CLionProjects/CompilerProject/cmake-build-debug"/>
 				<Option type="4"/>
@@ -37,28 +27,18 @@
 					<DistClean command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="syntaxTree">
-				<Option output="/home/maria/CLionProjects/CompilerProject/cmake-build-debug/syntaxTree" prefix_auto="0" extension_auto="0"/>
+			<Target title="edit_cache">
 				<Option working_dir="/home/maria/CLionProjects/CompilerProject/cmake-build-debug"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/8/include"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
+				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 syntaxTree"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
 					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
 					<Clean command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 					<DistClean command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="syntaxTree/fast">
-				<Option output="/home/maria/CLionProjects/CompilerProject/cmake-build-debug/syntaxTree" prefix_auto="0" extension_auto="0"/>
+			<Target title="main">
+				<Option output="/home/maria/CLionProjects/CompilerProject/cmake-build-debug/main" prefix_auto="0" extension_auto="0"/>
 				<Option working_dir="/home/maria/CLionProjects/CompilerProject/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
@@ -71,7 +51,27 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 syntaxTree/fast"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 main"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="main/fast">
+				<Option output="/home/maria/CLionProjects/CompilerProject/cmake-build-debug/main" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/maria/CLionProjects/CompilerProject/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/8/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 main/fast"/>
 					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
 					<Clean command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 					<DistClean command="/usr/bin/make -j4 -f &quot;/home/maria/CLionProjects/CompilerProject/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
@@ -119,23 +119,29 @@
 			</Target>
 		</Build>
 		<Unit filename="/home/maria/CLionProjects/CompilerProject/def.h">
-			<Option target="syntaxTree"/>
+			<Option target="main"/>
 			<Option target="symbolTable"/>
 		</Unit>
 		<Unit filename="/home/maria/CLionProjects/CompilerProject/lexer.c">
-			<Option target="syntaxTree"/>
+			<Option target="main"/>
+		</Unit>
+		<Unit filename="/home/maria/CLionProjects/CompilerProject/main.c">
+			<Option target="main"/>
 		</Unit>
 		<Unit filename="/home/maria/CLionProjects/CompilerProject/parser.c">
-			<Option target="syntaxTree"/>
+			<Option target="main"/>
 		</Unit>
-		<Unit filename="/home/maria/CLionProjects/CompilerProject/symb.c">
+		<Unit filename="/home/maria/CLionProjects/CompilerProject/symbEsempio.c">
 			<Option target="symbolTable"/>
 		</Unit>
-		<Unit filename="/home/maria/CLionProjects/CompilerProject/symbleTable.c">
-			<Option target="syntaxTree"/>
+		<Unit filename="/home/maria/CLionProjects/CompilerProject/symboleTable.c">
+			<Option target="main"/>
 		</Unit>
-		<Unit filename="/home/maria/CLionProjects/CompilerProject/tree.c">
-			<Option target="syntaxTree"/>
+		<Unit filename="/home/maria/CLionProjects/CompilerProject/symboleTable.h">
+			<Option target="main"/>
+		</Unit>
+		<Unit filename="/home/maria/CLionProjects/CompilerProject/syntaxTree.c">
+			<Option target="main"/>
 		</Unit>
 		<Unit filename="/home/maria/CLionProjects/CompilerProject/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
