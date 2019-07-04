@@ -1,6 +1,6 @@
 PROGRAM
     MODULE_DECL
-        ID (XX)
+        ID (H)
         OPT_PARAM_LIST
             PARAM_LIST
                 PARAM_DECL
@@ -68,10 +68,10 @@ PROGRAM
 
                     ID (f1)
         MODULE_BODY
-            ID (XX)
+            ID (H)
             STAT_LIST
                 STAT
                     RETURN_STAT
                         NULL
 
-            ID (XX)
+            ID (H)

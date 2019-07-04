@@ -1,4 +1,4 @@
-module XX (v1: int):real
+module H (v1: int):real
     var x, y, z:int;
     const MAX:int =10; a,b: bool =false;
 
@@ -9,8 +9,8 @@ module XX (v1: int):real
     end f1
 
 
-begin XX
+begin H
 
     return ;
 
-end XX
+end H

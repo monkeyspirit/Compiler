@@ -119,7 +119,6 @@
 			</Target>
 		</Build>
 		<Unit filename="/home/maria/CLionProjects/CompilerProject/def.h">
-			<Option target="main"/>
 			<Option target="symbolTable"/>
 		</Unit>
 		<Unit filename="/home/maria/CLionProjects/CompilerProject/lexer.c">
@@ -131,16 +130,22 @@
 		<Unit filename="/home/maria/CLionProjects/CompilerProject/parser.c">
 			<Option target="main"/>
 		</Unit>
+		<Unit filename="/home/maria/CLionProjects/CompilerProject/parser.h">
+			<Option target="main"/>
+		</Unit>
 		<Unit filename="/home/maria/CLionProjects/CompilerProject/symbEsempio.c">
 			<Option target="symbolTable"/>
 		</Unit>
-		<Unit filename="/home/maria/CLionProjects/CompilerProject/symboleTable.c">
+		<Unit filename="/home/maria/CLionProjects/CompilerProject/symbolTable.c">
 			<Option target="main"/>
 		</Unit>
-		<Unit filename="/home/maria/CLionProjects/CompilerProject/symboleTable.h">
+		<Unit filename="/home/maria/CLionProjects/CompilerProject/symbolTable.h">
 			<Option target="main"/>
 		</Unit>
 		<Unit filename="/home/maria/CLionProjects/CompilerProject/syntaxTree.c">
+			<Option target="main"/>
+		</Unit>
+		<Unit filename="/home/maria/CLionProjects/CompilerProject/syntaxTree.h">
 			<Option target="main"/>
 		</Unit>
 		<Unit filename="/home/maria/CLionProjects/CompilerProject/CMakeLists.txt">

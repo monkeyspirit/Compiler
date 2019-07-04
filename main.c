@@ -4,6 +4,9 @@
 
 
 #include "def.h"
+#include "parser.h"
+#include "syntaxTree.h"
+#include "symbolTable.h"
 
 int main()
 {

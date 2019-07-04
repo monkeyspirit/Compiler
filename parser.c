@@ -1,4 +1,5 @@
 #include "def.h"
+#include "parser.h"
 extern char *yytext;
 extern Lexval value;
 extern int line;

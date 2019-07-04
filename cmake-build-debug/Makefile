@@ -244,32 +244,32 @@ symbEsempio.c.s:
 	$(MAKE) -f CMakeFiles/symbolTable.dir/build.make CMakeFiles/symbolTable.dir/symbEsempio.c.s
 .PHONY : symbEsempio.c.s
 
-symboleTable.o: symboleTable.c.o
+symbolTable.o: symbolTable.c.o
 
-.PHONY : symboleTable.o
+.PHONY : symbolTable.o
 
 # target to build an object file
-symboleTable.c.o:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/symboleTable.c.o
-.PHONY : symboleTable.c.o
+symbolTable.c.o:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/symbolTable.c.o
+.PHONY : symbolTable.c.o
 
-symboleTable.i: symboleTable.c.i
+symbolTable.i: symbolTable.c.i
 
-.PHONY : symboleTable.i
+.PHONY : symbolTable.i
 
 # target to preprocess a source file
-symboleTable.c.i:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/symboleTable.c.i
-.PHONY : symboleTable.c.i
+symbolTable.c.i:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/symbolTable.c.i
+.PHONY : symbolTable.c.i
 
-symboleTable.s: symboleTable.c.s
+symbolTable.s: symbolTable.c.s
 
-.PHONY : symboleTable.s
+.PHONY : symbolTable.s
 
 # target to generate assembly for a file
-symboleTable.c.s:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/symboleTable.c.s
-.PHONY : symboleTable.c.s
+symbolTable.c.s:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/symbolTable.c.s
+.PHONY : symbolTable.c.s
 
 syntaxTree.o: syntaxTree.c.o
 
@@ -320,9 +320,9 @@ help:
 	@echo "... symbEsempio.o"
 	@echo "... symbEsempio.i"
 	@echo "... symbEsempio.s"
-	@echo "... symboleTable.o"
-	@echo "... symboleTable.i"
-	@echo "... symboleTable.s"
+	@echo "... symbolTable.o"
+	@echo "... symbolTable.i"
+	@echo "... symbolTable.s"
 	@echo "... syntaxTree.o"
 	@echo "... syntaxTree.i"
 	@echo "... syntaxTree.s"

@@ -3,6 +3,7 @@
 //
 #include <string.h>
 #include "def.h"
+#include "symbolTable.h"
 
 
 int n;

@@ -3,4 +3,4 @@ project(Compilatore C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(main def.h lexer.c parser.c syntaxtree.c symboltable.c main.c)
+add_executable(main lexer.c parser.c syntaxtree.c symboltable.c main.c)
