@@ -154,3 +154,5 @@ typedef Node *Pnode; /*Definisco il tipo Pnode per semplicità*/
 
 /*Metodi usati dal lexer.lex -> NON TOCCARE*/
 char *strcpy(char*, const char*), *newstring(char*);
+
+int hash(char*);

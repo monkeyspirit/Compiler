@@ -4,11 +4,9 @@
 #include <string.h>
 #include "def.h"
 #include "symbolTable.h"
-
+#define TOT 100;
 
 int n;
-int i=0;
-
 extern FILE *yyin;
 
 
@@ -29,24 +27,84 @@ char* tableClass[]={
     "PAR"
 };
 
-void addLine(PLine l){
-    symbolTable[i]=l;
-    i++;
+/*
+ * Metodi di utilità per l'analisi e inserimento
+ */
+
+//Metodo che calcola l'hash
+int hash(char* id)
+{
+    int i, h=0;
+    int tot=TOT;
+
+    for(i=0; id[i] != '\0'; i++) {
+        h = ((h << tot) + id[i]) % TOT;
+    }
+    return h;
 }
+
+//Metodo che dice se a quell'indice di hash c'è già un elemento:
+// - 1 se c'è qualcuno
+// - 0 se non c'è nessuno
+int search(int hash){
+
+    if(symbolTable[hash]!=NULL){
+        return 1;
+    }
+    else{
+        return 0;
+    }
+
+}
+
+
+void addLine(PLine l, char* id){
+
+    int index = hash(id);
+    PLine p;
+    int flag = search(index);
+    if(flag==1){
+        p = symbolTable[index];
+        while(p->next!=NULL){
+            p = p->next;
+        }
+        p->next = l;
+    }
+    else{
+        symbolTable[index]=l;
+    }
+
+}
+
+
+
+/*
+ * Metodi per analizzare l'albero
+ */
 
 PLine newLine(){
     PLine l;
     l=(PLine) malloc(sizeof(Line));
-    addLine(l); // In questo modo aggiungo il puntatore alla linea direttamente alla tabella quando la creo
     return(l);
 }
 
 void displayTable(){
 
-    printf("\nName        Type   \t Number of param    \tClass\n");
+    printf("\nName        Type   \t Number of param    \tClass \tHash\n");
 
-    for(int a=0; a<i; a++){
-        printf("%s        \t%s \t\t\t%d   \t\t\t %s\n", symbolTable[a]->id, symbolTable[a]->type, symbolTable[a]->numParam, symbolTable[a]->class );
+    int tot = TOT;
+
+    for(int a=0; a<tot; a++){
+        if(symbolTable[a]!=NULL){
+            int r = hash(symbolTable[a]->id);
+            printf("%s        \t%s \t\t\t%d   \t\t\t %s \t %d\n", symbolTable[a]->id, symbolTable[a]->type, symbolTable[a]->numParam, symbolTable[a]->class, r );
+            PLine next = symbolTable[a]->next;
+            while(next!=NULL){
+                int r = hash(next->id);
+                printf("\t\t%s        \t%s \t\t\t%d   \t\t\t %s \t %d\n",next->id, next->type, next->numParam, next->class, r );
+                next=next->next;
+            }
+        }
     }
 
 }
@@ -68,6 +126,10 @@ void module_declLine(Pnode p){
 
     l->class = tableClass[1];
     l->id = p->value.sval;
+
+    //Inserisco nella symbol table
+    addLine(l, l->id);
+
     d = p->brother;                             //PUNTO AD OPT_PARAM_LIST se esiste
 
     int j=0;
@@ -176,6 +238,10 @@ void param_declLine(Pnode p){
 
     //----------- RICONOSCIMENTO ID E TYPE DEL PARAMETRO
     l->id = p->value.sval;
+
+    //Inserisco nella symbol table
+    addLine(l, l->id);
+
     l->type=tableTypes[p->brother->child->type];
     l->class=tableClass[3];
 
@@ -197,10 +263,13 @@ void vardecl_Line(int type, Pnode p){
 
     PLine l;
     l = newLine();
-
     l->type = tableTypes[type];
     l->class = tableClass[0];
     l->id = p->value.sval;
+
+    //Inserisco nella symbol table
+    addLine(l, l->id);
+
 }
 
 void constdecl_listLines(int type, Pnode p){
@@ -218,9 +287,13 @@ void constdecl_Line(int type, Pnode p){
 
     PLine l;
     l = newLine();
-
     l->type = tableTypes[type];
     l->class = tableClass[2];
     l->id = p->value.sval;
+
+
+    //Inserisco nella symbol table
+    addLine(l, l->id);
+
 }
 

@@ -13,7 +13,7 @@ typedef struct structLine{
     struct structLine *bucket; // AMBIENTE
     //Formali
     int numParam;
-    // NEXT: PUNTATORE AL SUCCESSIVO
+    struct structLine *next;
 
 } Line;
 
@@ -23,9 +23,7 @@ typedef struct structLine{
  */
 typedef Line *PLine;
 
-PLine symbolTable[50];
-
-PLine newLine();
+PLine symbolTable[50], newLine();
 void displayTable(),
         programLine(Pnode),
         module_declLine(Pnode),
@@ -33,6 +31,7 @@ void displayTable(),
         vardecl_listLines(int, Pnode),
         vardecl_Line(int, Pnode),
         constdecl_listLines(int, Pnode),
-        constdecl_Line(int, Pnode);
+        constdecl_Line(int, Pnode),
+        addLine(PLine,char* );
 
-void addLine(PLine);
+int hash(char*), search(int );

@@ -68,4 +68,3 @@ Pnode nontermnode(Nonterminal),
         opt_elseif_expr_list(),
         parse();
 
-int hash(char*);
