@@ -1,0 +1,21 @@
+module Z (v1: int, v2: string, v3:bool):real
+    var x, y, z:int; t, h, g, j, k:real;
+    const MAX:int =10; a,b: bool =false;
+
+    module f1():int
+        var c:real;
+    begin  f1
+        return ;
+    end f1
+
+    module f2():int
+        var d:real;
+    begin  f2
+        return ;
+    end f2
+
+begin Z
+
+    return ;
+
+end Z
