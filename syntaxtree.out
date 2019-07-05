@@ -32,7 +32,7 @@ PROGRAM
                                 LOW_TERM
                                     FACTOR
                                         CONSTANT
-                                            INTCONST (10)
+                                            INTCONST (3)
                 CONST_DECL
                     DECL
                         ID_LIST

@@ -4,6 +4,7 @@
 #include <string.h>
 #include "def.h"
 #include "symbolTable.h"
+#include "semantic.h"
 
 int n;
 extern FILE *yyin;
@@ -181,12 +182,16 @@ void module_declLine(Pnode p){
 
         h = d->child->child;                                   //PUNTO AL PRIMO CONST_DECL con h
         int type_decl = h->child->child->brother->child->type;
+
+        constantDeclaration(type_decl, h);
+
         constdecl_listLines(type_decl, h->child->child);       //PASSO ALLA FUNZIONE IL TIPO E ID_LIST
 
         h=h->brother;
         while(h!=NULL){
 
             int type_decl = h->child->child->brother->child->type;
+            constantDeclaration(type_decl, h);
             constdecl_listLines(type_decl, h->child->child);
             h=h->brother;
         }
@@ -215,20 +220,9 @@ void module_declLine(Pnode p){
     h = d->child;                   //PUNTO A ID DI BEGIN
     q = d->child->brother->brother; //PUNTO A ID DI END
 
-    if(strcmp(h->value.sval,q->value.sval)){
-       printf("Errore gli ID non corrispondono: \"begin %s ... end %s\"", h->value.sval, q->value.sval);
-       exit(-2);
-    }
-    else{
-        if(strcmp(h->value.sval, l->id)){
-            printf("Errore gli ID non corrispondono: \"module %s ... begin %s\"",l->id, h->value.sval);
-            exit(-3);
-        }
-        else if(strcmp(q->value.sval, l->id)){
-            printf("Errore gli ID non corrispondono: \"module %s ... end %s\"", l->id, q->value.sval);
-            exit(-4);
-        }
-    }
+    moduleNameControl(h->value.sval, q->value.sval, l->id);
+
+
 }
 
 void param_declLine(Pnode p){
@@ -289,7 +283,6 @@ void constdecl_Line(int type, Pnode p){
     l->type = tableTypes[type];
     l->class = tableClass[2];
     l->id = p->value.sval;
-
 
     //Inserisco nella symbol table
     addLine(l, l->id);

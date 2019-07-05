@@ -1,6 +1,6 @@
 module H (v1: int):real
     var x, y, z:int;
-    const MAX:int =10; a,b: bool =false;
+    const MAX:int = 3; a,b: bool =false;
 
     module f1():int
         var c:real;

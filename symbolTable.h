@@ -1,9 +1,11 @@
 /*
  * Header file del symbolTable.c
  */
+#ifndef UNTITLED_SYMBOLTABLE_H
+#define UNTITLED_SYMBOLTABLE_H
 
+#include "def.h"
 #define TOT 50
-
 /*
  * Definizione della symbolTable
  */
@@ -37,4 +39,6 @@ void displayTable(),
         constdecl_Line(int, Pnode),
         addLine(PLine,char* );
 
-int hash(char*), search(int );
+int hash(char*), search(int);
+
+#endif

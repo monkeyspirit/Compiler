@@ -1,3 +1,6 @@
+#ifndef UNTITLED_DEF_H
+#define UNTITLED_DEF_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -159,3 +162,5 @@ typedef Node *Pnode; /*Definisco il tipo Pnode per semplicità*/
 char *strcpy(char*, const char*), *newstring(char*);
 
 int hash(char*);
+
+#endif

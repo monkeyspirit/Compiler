@@ -1,5 +1,6 @@
 #include"def.h"
 #include "syntaxTree.h"
+#include "semantic.h"
 
 // extern FILE *yyout;
 
@@ -99,16 +100,27 @@ void treePrint(FILE* file, Pnode root, int indent)
  
 	fprintf(file, "%s", (root->type == T_NONTERMINAL ? tabNonTerm[root->value.ival] : tabTypes[root->type]));
 
-	if(root->type == T_ID || root->type == T_CHARCONST || root->type == T_STRCONST ){
-		fprintf(file, " (%s)", root->value.sval);
+	if(root->type == T_ID ){
+        fprintf(file, " (%s)", root->value.sval);
+	}
+	else if(root->type == T_CHARCONST){
+
+        fprintf(file, " (%s)", root->value.sval);
+	}
+	else if(root->type == T_STRCONST){
+
+        fprintf(file, " (%s)", root->value.sval);
 	}
 	else if (root->type == T_INTCONST){
+
 		fprintf(file, " (%d)", root->value.ival);
 	}
 	else if (root->type == T_BOOLCONST){
+
 		fprintf(file, " (%s)", (root->value.ival == 0? "false" : "true"));
 	}
 	else if (root->type == T_REALCONST){
+
 		fprintf(file, " (%f)", root->value.rval);
 	}
 	else if(root->type == T_RETURNULL){

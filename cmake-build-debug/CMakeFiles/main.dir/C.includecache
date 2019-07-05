@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-C:/Users/Claudio/Projects/C/CLionProjects/Compiler/def.h
+/home/maria/CLionProjects/CompilerProject/def.h
 stdio.h
 -
 stdlib.h
@@ -16,11 +16,15 @@ ctype.h
 string.h
 -
 
-C:/Users/Claudio/Projects/C/CLionProjects/Compiler/parser.c
-def.h
-C:/Users/Claudio/Projects/C/CLionProjects/Compiler/def.h
-parser.h
-C:/Users/Claudio/Projects/C/CLionProjects/Compiler/parser.h
+/home/maria/CLionProjects/CompilerProject/semantic.c
+semantic.h
+/home/maria/CLionProjects/CompilerProject/semantic.h
 
-C:/Users/Claudio/Projects/C/CLionProjects/Compiler/parser.h
+/home/maria/CLionProjects/CompilerProject/semantic.h
+def.h
+/home/maria/CLionProjects/CompilerProject/def.h
+ctype.h
+-
+stdbool.h
+-
 

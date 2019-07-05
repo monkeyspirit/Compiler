@@ -1,7 +1,8 @@
 /*
  * Header file del parser.c
  */
-
+#ifndef UNTITLED_PARSER_H
+#define UNTITLED_PARSER_H
 /*
  * Definizione metodi e tipi
  */
@@ -68,3 +69,4 @@ Pnode nontermnode(Nonterminal),
         opt_elseif_expr_list(),
         parse();
 
+#endif

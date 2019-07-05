@@ -1,5 +1,7 @@
 #include "def.h"
 #include "parser.h"
+#include "semantic.h"
+
 extern char *yytext;
 extern Lexval value;
 extern int line;
@@ -74,6 +76,7 @@ Pnode charconstnode()
 	Pnode p;
 	p = newnode(T_CHARCONST);
 	p->value.sval = value.sval; /*Regole di stato del parsing*/
+
 	return(p);
 }
 
