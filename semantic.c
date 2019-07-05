@@ -49,7 +49,7 @@ void constantDeclaration(int type, Pnode h){
 
     switch (type){
         case T_CHAR:
-            if(expr->type!=T_CHARCONST){
+            if(expr->type!=T_CHARCONST  && expr->type!=T_ID ){
                 printf("Errore: id \"%s\" ci si aspetta un CHAR\n", id);
                 exit(-3);
             }
