@@ -12,7 +12,8 @@ int main()
 {
 
     Pnode root = parse();
-    syntaxTree(root);
+
+    syntaxTree(root); // stampa su file l'albero sintattico
 
     programLine(root);
     displayTable();

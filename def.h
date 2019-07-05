@@ -3,6 +3,9 @@
 #include <ctype.h>
 #include <string.h>
 
+
+#define INPUT_FILE_NAME "../prog.tela"
+
 #define MODULE 258
 #define ID 259
 #define LBRACE 260

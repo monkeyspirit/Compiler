@@ -4,7 +4,6 @@
 #include <string.h>
 #include "def.h"
 #include "symbolTable.h"
-#define TOT 50;
 
 int n;
 extern FILE *yyin;

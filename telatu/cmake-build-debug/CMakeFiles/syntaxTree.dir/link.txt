@@ -1,3 +1,0 @@
-"C:\Program Files\JetBrains\CLion 2019.1.4\bin\cmake\win\bin\cmake.exe" -E remove -f CMakeFiles\syntaxTree.dir/objects.a
-C:\MinGW\bin\ar.exe cr CMakeFiles\syntaxTree.dir/objects.a @CMakeFiles\syntaxTree.dir\objects1.rsp
-C:\MinGW\bin\gcc.exe -g   -Wl,--whole-archive CMakeFiles\syntaxTree.dir/objects.a -Wl,--no-whole-archive  -o syntaxTree.exe -Wl,--out-implib,libsyntaxTree.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\syntaxTree.dir\linklibs.rsp

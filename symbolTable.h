@@ -2,6 +2,8 @@
  * Header file del symbolTable.c
  */
 
+#define TOT 50
+
 /*
  * Definizione della symbolTable
  */
@@ -23,7 +25,8 @@ typedef struct structLine{
  */
 typedef Line *PLine;
 
-PLine symbolTable[50], newLine();
+PLine symbolTable[TOT], newLine();
+
 void displayTable(),
         programLine(Pnode),
         module_declLine(Pnode),

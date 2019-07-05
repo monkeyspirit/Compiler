@@ -1,6 +1,7 @@
 #include"def.h"
 #include "syntaxTree.h"
-extern FILE *yyout;
+
+// extern FILE *yyout;
 
 char* tabTypes[]=
         {
@@ -85,7 +86,7 @@ char* tabNonTerm[] =
 
 
 void syntaxTree(Pnode root){
-    treePrint(yyout, root, 0);
+    treePrint(fopen(OUTPUT_TREE_FILE, "w"), root, 0);
 }
 
 void treePrint(FILE* file, Pnode root, int indent)

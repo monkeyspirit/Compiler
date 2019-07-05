@@ -930,8 +930,8 @@ Pnode opt_elseif_expr_list()
 
 
 Pnode parse(){
-    yyin = fopen("../prog", "r");
-    yyout = fopen("../out", "w");
+    yyin = fopen(INPUT_FILE_NAME, "r");
+    yyout = fopen("../yyout", "w");
 	next();
 	root = nonterminalnode(NPROGRAM);
 	root->child = program();
