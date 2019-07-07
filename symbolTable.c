@@ -16,6 +16,7 @@ char *tableTypes[] = {
         "PAR"
 };
 
+
 // Fine Definizioni
 
 int hash(char *id) {
@@ -59,7 +60,6 @@ PLine createParamLine(Pnode paramNode) {
     paramLine->id = paramNode->child->value.sval;
     paramLine->class = tableClasses[3];
     paramLine->type = tableTypes[paramNode->child->brother->child->type];
-    paramLine->oid = 0; // questo è ancora da fare
     return paramLine;
 }
 
@@ -69,7 +69,6 @@ PLine createVarLine(Pnode idNode, int type) {
     varLine->id = idNode->value.sval;
     varLine->type = tableTypes[type];
     varLine->class = tableClasses[0];
-    varLine->oid = 0;
     return varLine;
 }
 
@@ -79,9 +78,11 @@ PLine createConstLine(Pnode idNode, int type) {
     varLine->id = idNode->value.sval;
     varLine->type = tableTypes[type];
     varLine->class = tableClasses[2];
-    varLine->oid = 0;
     return varLine;
 }
+
+
+int global_oid = 0; // oid dei modulia
 
 // crea una riga per un modulo a partire dal nodo
 PLine createModuleLine(Pnode moduleNode) {
@@ -89,8 +90,11 @@ PLine createModuleLine(Pnode moduleNode) {
     Pnode iterNode = moduleNode->child; // nodo che itera nel modulo
     moduleLine->id = iterNode->value.sval; // setta l'id
     moduleLine->class = tableClasses[1]; // setta la classe
+    moduleLine->oid = ++global_oid;
 
     iterNode = iterNode->brother;
+
+    int local_oid = 0; // oid per le righe locali
 
     moduleLine->numParam = 0;
     // controlliamo se ci sono dei parametri formali
@@ -99,7 +103,7 @@ PLine createModuleLine(Pnode moduleNode) {
         Pnode paramNode = iterNode->child->child;
         while (paramNode != NULL) { // cicliamo su tutti i parametri
             PLine paramLine = createParamLine(paramNode);
-
+            paramLine->oid = ++local_oid;
             insertLine(moduleLine->bucket, paramLine); // li inseriamo nel bucket
 
 //            NON FUNZIONA ANCORA :(
@@ -129,6 +133,7 @@ PLine createModuleLine(Pnode moduleNode) {
             Pnode idNode = declNode->child->child;
             while(idNode != NULL){ // cicliamo su tutte le variabili
                 PLine varLine = createVarLine(idNode, decl_type);
+                varLine->oid = ++local_oid;
                 insertLine(moduleLine->bucket, varLine);
                 idNode = idNode->brother;
             }
@@ -147,8 +152,9 @@ PLine createModuleLine(Pnode moduleNode) {
             int decl_type = constDeclNode->child->child->brother->child->type;
             Pnode idNode = constDeclNode->child->child->child;
             while(idNode != NULL){
-                PLine varLine = createConstLine(idNode, decl_type);
-                insertLine(moduleLine->bucket, varLine);
+                PLine constLine = createConstLine(idNode, decl_type);
+                constLine->oid = ++local_oid;
+                insertLine(moduleLine->bucket, constLine);
                 idNode = idNode->brother;
             }
 
