@@ -16,7 +16,7 @@ int main() {
     syntaxTree(root); // stampa su file l'albero sintattico
 
     PLine rootLine = symbolTable(root);
-    semanticControl(rootLine);
+    semanticControl(rootLine, root);
     displayTable();
 
     return(0);

@@ -5,7 +5,7 @@
 #include "semantic.h"
 #include "symbolTable.h"
 
-void semanticControl(PLine rootLine){
+void semanticControl(PLine rootLine, Pnode root){
 
 }
 

@@ -9,7 +9,7 @@
 #include <stdbool.h>
 
 
-void semanticControl(PLine),
+void semanticControl(PLine, Pnode),
      moduleNameControl(char*, char*, char*),
      constantDeclaration(int, char*, Pnode);
 
