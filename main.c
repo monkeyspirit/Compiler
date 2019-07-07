@@ -3,6 +3,7 @@
 #include "parser.h"
 #include "syntaxTree.h"
 #include "symbolTable.h"
+#include "semantic.h"
 
 struct S {
     int i, j, k;
@@ -14,7 +15,8 @@ int main() {
 
     syntaxTree(root); // stampa su file l'albero sintattico
 
-    symbolTable(root);
+    PLine rootLine = symbolTable(root);
+    semanticControl(rootLine);
     displayTable();
 
     return(0);

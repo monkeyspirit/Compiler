@@ -1,5 +1,5 @@
-//#ifndef UNTITLED_SYMBOLTABLE_H
-//#define UNTITLED_SYMBOLTABLE_H
+#ifndef UNTITLED_SYMBOLTABLE_H
+#define UNTITLED_SYMBOLTABLE_H
 
 #include "def.h"
 
@@ -28,4 +28,4 @@ typedef struct structLine *PLine;
 PLine symbolTable(Pnode root);
 void displayTable();
 
-//#endif
+#endif

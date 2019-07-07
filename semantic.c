@@ -3,7 +3,11 @@
 
 
 #include "semantic.h"
+#include "symbolTable.h"
 
+void semanticControl(PLine rootLine){
+
+}
 
 /*
  * Controlli:

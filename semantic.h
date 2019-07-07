@@ -4,11 +4,13 @@
 #ifndef UNTITLED_SEMANTIC_H
 #define UNTITLED_SEMANTIC_H
 #include "def.h"
+#include "symbolTable.h"
 #include <ctype.h>
 #include <stdbool.h>
 
 
-void moduleNameControl(char*, char*, char*),
+void semanticControl(PLine),
+     moduleNameControl(char*, char*, char*),
      constantDeclaration(int, char*, Pnode);
 
 #endif
