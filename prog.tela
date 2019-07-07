@@ -9,6 +9,12 @@ module H (p1: int, p2: char, p3: int, p4: bool): real
         return ;
     end f1
 
+        module f2(t: int):int
+            var c:real;
+        begin f2
+            return ;
+        end f2
+
 
 begin H
 

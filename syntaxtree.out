@@ -102,6 +102,31 @@ PROGRAM
                                 NULL
 
                     ID (f1)
+            MODULE_DECL
+                ID (f2)
+                OPT_PARAM_LIST
+                    PARAM_LIST
+                        PARAM_DECL
+                            ID (t)
+                            TYPE
+                                INT
+                TYPE
+                    INT
+                OPT_VAR_SECT
+                    DECL_LIST
+                        DECL
+                            ID_LIST
+                                ID (c)
+                            TYPE
+                                REAL
+                MODULE_BODY
+                    ID (f2)
+                    STAT_LIST
+                        STAT
+                            RETURN_STAT
+                                NULL
+
+                    ID (f2)
         MODULE_BODY
             ID (H)
             STAT_LIST

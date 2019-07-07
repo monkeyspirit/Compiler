@@ -7,6 +7,105 @@
 
 void semanticControl(PLine rootLine, Pnode root){
 
+
+    Pnode iterNode = root->child; // punta a ID
+    char* idMod = iterNode->value.sval;
+
+    iterNode = iterNode->brother;
+
+
+    if(iterNode -> value.ival==NOPT_PARAM_LIST){
+
+        Pnode paramNode = iterNode->child->child;
+
+        while (paramNode != NULL) {
+
+            paramNode = paramNode->brother;
+        }
+
+        iterNode = iterNode->brother;
+    }
+
+    iterNode = iterNode->brother;
+
+
+    if(iterNode->value.ival==NOPT_VAR_SECT){
+
+        Pnode declNode = iterNode->child->child;
+
+        while (declNode!=NULL) {
+
+            int decl_type = declNode->child->brother->child->type;
+            Pnode idNode = declNode->child->child;
+
+            while(idNode != NULL){
+
+                idNode = idNode->brother;
+            }
+
+            declNode = declNode->brother;
+        }
+
+        iterNode = iterNode->brother;
+    }
+
+
+    if(iterNode->value.ival==NOPT_CONST_SECT){
+
+        Pnode constDeclNode = iterNode->child->child;
+
+        while(constDeclNode != NULL) {
+
+            int decl_type = constDeclNode->child->child->brother->child->type;
+            Pnode idNode = constDeclNode->child->child->child;
+
+            while(idNode != NULL){
+
+                idNode = idNode->brother;
+            }
+
+            constDeclNode = constDeclNode->brother;
+        }
+
+        iterNode = iterNode->brother;                                        //PUNTO A OPT-MODULE/MODULE BODY
+    }
+
+
+    if(iterNode->value.ival==NOPT_MODULE_LIST){
+
+        Pnode modNode = iterNode->child;
+
+        while (modNode != NULL) {
+
+            PLine nextModule = findModuleById(modNode->child->value.sval, rootLine->bucket);
+            semanticControl(nextModule,modNode);
+            modNode = modNode->brother;
+        }
+
+        iterNode = iterNode->brother;
+    }
+
+    moduleNameControl(iterNode->child->value.sval, iterNode->child->brother->brother->value.sval, idMod);
+
+
+}
+
+PLine findModuleById(char* id, PLine table[]){
+    PLine nextModule;
+
+    int i = 0;
+    while(table[i]!=NULL){
+
+        if(strcmp(table[i]->class, "MOD")){
+            if(strcmp(table[i]->id, id)){
+                return table[i];
+            }
+        }
+
+        i++;
+    }
+    printf("Errore il modulo non è presente, ma dovrebbe");
+    exit(-5);
 }
 
 /*
