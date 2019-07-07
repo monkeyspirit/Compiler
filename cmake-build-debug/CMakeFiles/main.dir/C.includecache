@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/maria/CLionProjects/CompilerProject/def.h
+C:/Users/Claudio/Projects/CLionProjects/Compiler/def.h
 stdio.h
 -
 stdlib.h
@@ -16,15 +16,37 @@ ctype.h
 string.h
 -
 
-/home/maria/CLionProjects/CompilerProject/semantic.c
-semantic.h
-/home/maria/CLionProjects/CompilerProject/semantic.h
-
-/home/maria/CLionProjects/CompilerProject/semantic.h
+C:/Users/Claudio/Projects/CLionProjects/Compiler/main.c
 def.h
-/home/maria/CLionProjects/CompilerProject/def.h
+C:/Users/Claudio/Projects/CLionProjects/Compiler/def.h
+parser.h
+C:/Users/Claudio/Projects/CLionProjects/Compiler/parser.h
+syntaxTree.h
+C:/Users/Claudio/Projects/CLionProjects/Compiler/syntaxTree.h
+symbolTable.h
+C:/Users/Claudio/Projects/CLionProjects/Compiler/symbolTable.h
+
+C:/Users/Claudio/Projects/CLionProjects/Compiler/parser.c
+def.h
+C:/Users/Claudio/Projects/CLionProjects/Compiler/def.h
+parser.h
+C:/Users/Claudio/Projects/CLionProjects/Compiler/parser.h
+semantic.h
+C:/Users/Claudio/Projects/CLionProjects/Compiler/semantic.h
+
+C:/Users/Claudio/Projects/CLionProjects/Compiler/parser.h
+
+C:/Users/Claudio/Projects/CLionProjects/Compiler/semantic.h
+def.h
+C:/Users/Claudio/Projects/CLionProjects/Compiler/def.h
 ctype.h
 -
 stdbool.h
 -
+
+C:/Users/Claudio/Projects/CLionProjects/Compiler/symbolTable.h
+def.h
+C:/Users/Claudio/Projects/CLionProjects/Compiler/def.h
+
+C:/Users/Claudio/Projects/CLionProjects/Compiler/syntaxTree.h
 

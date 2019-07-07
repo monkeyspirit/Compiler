@@ -58,8 +58,7 @@
 #define RETURNNULL 304
 
 /*Elenco dei non terminali*/
-typedef enum
-{
+typedef enum {
 	NPROGRAM,
 	NMODULE_DECL,
 	NOPT_PARAM_LIST,
@@ -108,8 +107,7 @@ typedef enum
 } Nonterminal;
 
 /*Elenco dei tipi di nodo (che devono conservare dati)*/
-typedef enum
-{
+typedef enum {
 	T_CHAR,
 	T_INT,
 	T_REAL,
@@ -140,27 +138,22 @@ typedef enum
 } Typenode;
 
 /*Definizione della union del Lexval*/
-typedef union
-{
+typedef union {
 	int ival;
 	float rval;
 	char *sval;
 } Lexval;
 
 /*Definizione della struttura di un nodo*/
-typedef struct structNode
-{
+typedef struct structNode {
 	Typenode type;
 	Lexval value;
 	struct structNode *child, *brother;
 } Node;
 
-
 typedef Node *Pnode; /*Definisco il tipo Pnode per semplicità*/
 
 /*Metodi usati dal lexer.lex -> NON TOCCARE*/
 char *strcpy(char*, const char*), *newstring(char*);
-
-int hash(char*);
 
 #endif

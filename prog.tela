@@ -1,8 +1,9 @@
-module H (v1: int):real
-    var x, y, z:int;
+module H (p1: int, p2: char, p3: int, p4: bool): real
+    var x, y, z: int;
+    veroofalso: bool;
     const MAX:int = 3; a,b: bool = true; RR: char = a;
 
-    module f1():int
+    module f1(t: int):int
         var c:real;
     begin  f1
         return ;

@@ -1,291 +1,228 @@
-//
-// Created by maria on 24/05/19.
-//
 #include <string.h>
-#include "def.h"
 #include "symbolTable.h"
-#include "semantic.h"
 
-int n;
-extern FILE *yyin;
-
-
-char* tableTypes[]=
-{
+// Definizioni
+char *tableTypes[] = {
         "CHAR",
         "INT",
         "REAL",
         "STRING",
         "BOOL",
         "VOID"
+}, *tableClasses[] = {
+        "VAR",
+        "MOD",
+        "CON",
+        "PAR"
 };
 
-char* tableClass[]={
-    "VAR",
-    "MOD",
-    "CON",
-    "PAR"
-};
+// Fine Definizioni
 
-/*
- * Metodi di utilità per l'analisi e inserimento
- */
+int hash(char *id) {
+    int h=0;
 
-//Metodo che calcola l'hash
-int hash(char* id)
-{
-    int i, h=0;
-    int tot=TOT;
+    do h = ((h << 4) + *id) % BUCKET_SIZE;
+    while(*++id != '\0');
 
-    for(i=0; id[i] != '\0'; i++) {
-        h = ((h << tot) + id[i]) % TOT;
-    }
+    // for(int i=0; id[i] != '\0'; i++)
+    //    h = ((h << 4) + id[i]) % BUCKET_SIZE;
+
     return h;
 }
 
-//Metodo che dice se a quell'indice di hash c'è già un elemento:
-// - 1 se c'è qualcuno
-// - 0 se non c'è nessuno
-int search(int hash){
-
-    if(symbolTable[hash]!=NULL){
-        return 1;
-    }
-    else{
-        return 0;
-    }
-
+// Alloca la memoria per una nuova riga e la inizializza
+PLine newLine() {
+    PLine p = (PLine) malloc(sizeof(Line));
+    for(int b=0; b<BUCKET_SIZE; b++)
+        p->bucket[b] = 0; // devo metterli tutti a zero se no non li vede NULL
+    return p;
 }
 
-
-void addLine(PLine l, char* id){
-
+// inserisce una riga in una tabella (se la riga è vuota tutto ok,
+// altrimenti la inserisce in coda a quella già presente)
+int insertLine(PLine table[], PLine line) {
+    char *id = line->id;
     int index = hash(id);
-    PLine p;
-    int flag = search(index);
-    if(flag==1){
-        p = symbolTable[index];
-        while(p->next!=NULL){
-            p = p->next;
+    if (table[index] == NULL)
+        table[index] = line;
+    else {
+        PLine nextB = table[index];
+        while(nextB->next != NULL)
+            nextB = nextB->next;
+        nextB->next = line;
+    }
+}
+
+// crea una riga per un parametro a partire dal nodo
+PLine createParamLine(Pnode paramNode) {
+    PLine paramLine = newLine();
+    paramLine->id = paramNode->child->value.sval;
+    paramLine->class = tableClasses[3];
+    paramLine->type = tableTypes[paramNode->child->brother->child->type];
+    paramLine->oid = 0; // questo è ancora da fare
+    return paramLine;
+}
+
+// crea una riga per una variabile a partire dal nodo
+PLine createVarLine(Pnode idNode, int type) {
+    PLine varLine = newLine();
+    varLine->id = idNode->value.sval;
+    varLine->type = tableTypes[type];
+    varLine->class = tableClasses[0];
+    varLine->oid = 0;
+    return varLine;
+}
+
+// crea una riga per una costante a partire dal nodo
+PLine createConstLine(Pnode idNode, int type) {
+    PLine varLine = newLine();
+    varLine->id = idNode->value.sval;
+    varLine->type = tableTypes[type];
+    varLine->class = tableClasses[2];
+    varLine->oid = 0;
+    return varLine;
+}
+
+// crea una riga per un modulo a partire dal nodo
+PLine createModuleLine(Pnode moduleNode) {
+    PLine moduleLine = newLine(); // alloca memoria
+    Pnode iterNode = moduleNode->child; // nodo che itera nel modulo
+    moduleLine->id = iterNode->value.sval; // setta l'id
+    moduleLine->class = tableClasses[1]; // setta la classe
+
+    iterNode = iterNode->brother;
+
+    moduleLine->numParam = 0;
+    // controlliamo se ci sono dei parametri formali
+    if(iterNode -> value.ival==NOPT_PARAM_LIST){
+
+        Pnode paramNode = iterNode->child->child;
+        while (paramNode != NULL) { // cicliamo su tutti i parametri
+            PLine paramLine = createParamLine(paramNode);
+
+            insertLine(moduleLine->bucket, paramLine); // li inseriamo nel bucket
+
+//            NON FUNZIONA ANCORA :(
+//             inserimento dei riferimenti anche nell'array di params
+//            PLine nextParam = moduleLine->params[0];
+//            while(nextParam!=NULL)
+//                nextParam++ // scorro avanti finchè è vuoto
+//            nextParam = paramLine;
+
+            moduleLine->numParam++;
+            paramNode = paramNode->brother;
         }
-        p->next = l;
-    }
-    else{
-        symbolTable[index]=l;
+
+        iterNode = iterNode->brother;
     }
 
-}
+    moduleLine->type = tableTypes[iterNode->child->type]; // setta il tipo
 
+    iterNode = iterNode->brother;
 
+    //controlliamo se ci sono variabili
+    if(iterNode->value.ival==NOPT_VAR_SECT){
 
-/*
- * Metodi per analizzare l'albero
- */
-
-PLine newLine(){
-    PLine l;
-    l=(PLine) malloc(sizeof(Line));
-    return(l);
-}
-
-void displayTable(){
-
-    printf("\nName        Type   \t Number of param    \tClass \tHash\n");
-
-    int tot = TOT;
-
-    for(int a=0; a<tot; a++){
-        if(symbolTable[a]!=NULL){
-            int r = hash(symbolTable[a]->id);
-            printf("%s        \t%s \t\t\t%d   \t\t\t %s \t %d\n", symbolTable[a]->id, symbolTable[a]->type, symbolTable[a]->numParam, symbolTable[a]->class, r );
-            PLine next = symbolTable[a]->next;
-            while(next!=NULL){
-                int r = hash(next->id);
-                printf("\t\t%s        \t%s \t\t\t%d   \t\t\t %s \t %d\n",next->id, next->type, next->numParam, next->class, r );
-                next=next->next;
+        Pnode declNode = iterNode->child->child;
+        while (declNode!=NULL) { // cicliamo sulle dichiarazioni
+            int decl_type = declNode->child->brother->child->type;
+            Pnode idNode = declNode->child->child;
+            while(idNode != NULL){ // cicliamo su tutte le variabili
+                PLine varLine = createVarLine(idNode, decl_type);
+                insertLine(moduleLine->bucket, varLine);
+                idNode = idNode->brother;
             }
-        }
-    }
 
-}
-
-void programLine (Pnode p){
-
-    yyin = fopen("../out", "r");
-    module_declLine(p->child);                  //passo MODULE-DECL
-}
-
-
-void module_declLine(Pnode p){
-    Pnode d, h, q;
-    PLine l;
-    l = newLine();
-
-    p = p->child;                               //PUNTO AD ID
-    //----------- RICONOSCIMENTO ID, CLASS -----------
-
-    l->class = tableClass[1];
-    l->id = p->value.sval;
-
-    //Inserisco nella symbol table
-    addLine(l, l->id);
-
-    d = p->brother;                             //PUNTO AD OPT_PARAM_LIST se esiste
-
-    int j=0;
-
-    //----------- VERIFICA PRESENZA OPT-PARAM-LIST -----------
-
-    if(d->value.ival==NOPT_PARAM_LIST){
-
-        h = d->child->child;                      //PUNTO AL PRIMO PARAM_DECL
-        param_declLine(h->child);                 //h->child è ID
-        j++;
-        while(h->brother!=NULL){
-            j++;
-            h = h->brother;                       //PUNTO AI VARI PARAM_DECL
-            param_declLine(h->child);
+            declNode = declNode->brother;
         }
 
-        d = d->brother;                           //PUNTO A TYPE
+        iterNode = iterNode->brother;
     }
 
-    l->numParam = j;
+    // controlliamo se ci sono costanti
+    if(iterNode->value.ival==NOPT_CONST_SECT){
 
-    l->type = tableTypes[d->child->type];         //PUNTO AL TIPO CHE STA SOTTO TYPE (COME FIGLIO)
-    d = d->brother;                               //PUNTO AL FRATELLO CHE PUO ESSERE OPT-VAR OPT-CONST OPT-MODULE MODULE BODY
+        Pnode constDeclNode = iterNode->child->child;
+        while(constDeclNode != NULL) {
+            int decl_type = constDeclNode->child->child->brother->child->type;
+            Pnode idNode = constDeclNode->child->child->child;
+            while(idNode != NULL){
+                PLine varLine = createConstLine(idNode, decl_type);
+                insertLine(moduleLine->bucket, varLine);
+                idNode = idNode->brother;
+            }
 
+            // constantDeclaration(decl_type, h); // in my opinion non va fatto qui
 
-
-    //----------- VERIFICA PRESENZA OPT-VAR-LIST -----------
-
-    if(d->value.ival==NOPT_VAR_SECT){
-
-        h = d->child->child;                      //PUNTO AL PRIMO DECL con h
-        int type_decl = h->child->brother->child->type;
-        vardecl_listLines(type_decl, h->child);      //PASSO ALLA FUNZIONE IL TIPO E ID_LIST
-
-        h=h->brother;
-        while(h!=NULL){
-
-            int type_decl = h->child->brother->child->type;
-            vardecl_listLines(type_decl, h->child);
-            h=h->brother;
+            constDeclNode = constDeclNode->brother;
         }
 
-        d = d->brother;                           //PUNTO A OPT-CONST/OPT-MODULE/MODULE BODY
+        iterNode = iterNode->brother;                                        //PUNTO A OPT-MODULE/MODULE BODY
     }
 
-    //----------- VERIFICA PRESENZA OPT-CONST-LIST -----------
+    // controlliamo se ci sono moduli
+    if(iterNode->value.ival==NOPT_MODULE_LIST){
 
-    if(d->value.ival==NOPT_CONST_SECT){
-
-        h = d->child->child;                                   //PUNTO AL PRIMO CONST_DECL con h
-        int type_decl = h->child->child->brother->child->type;
-
-        constantDeclaration(type_decl, h);
-
-        constdecl_listLines(type_decl, h->child->child);       //PASSO ALLA FUNZIONE IL TIPO E ID_LIST
-
-        h=h->brother;
-        while(h!=NULL){
-
-            int type_decl = h->child->child->brother->child->type;
-            constantDeclaration(type_decl, h);
-            constdecl_listLines(type_decl, h->child->child);
-            h=h->brother;
+        Pnode modNode = iterNode->child;
+        while (modNode != NULL) {
+            insertLine(moduleLine->bucket, createModuleLine(modNode));
+            modNode = modNode->brother;
         }
 
-        d = d->brother;                                        //PUNTO A OPT-MODULE/MODULE BODY
+        iterNode = iterNode->brother;
     }
 
-    //----------- VERIFICA PRESENZA OPT-MODULE-LIST -----------
-
-    if(d->value.ival==NOPT_MODULE_LIST){
-
-        h = d->child;                                    //PUNTO AL PRIMO MODULE_DECL con h
-        module_declLine(h);                              //PASSO ALLA FUNZIONE IL MODULE_DECL
-
-        h=h->brother;
-        while(h!=NULL){
-            module_declLine(h);
-            h=h->brother;
-        }
-
-        d = d->brother;                                  //PUNTO A MODULE BODY
-    }
-
+    /* questo vedremo dove ripiazzarlo
     //----------- ANALISI MODULE BODY -----------
 
     h = d->child;                   //PUNTO A ID DI BEGIN
     q = d->child->brother->brother; //PUNTO A ID DI END
 
     moduleNameControl(h->value.sval, q->value.sval, l->id);
+    */
 
-
+    return moduleLine;
 }
 
-void param_declLine(Pnode p){
-    PLine l;
-    l = newLine();
-
-    //----------- RICONOSCIMENTO ID E TYPE DEL PARAMETRO
-    l->id = p->value.sval;
-
-    //Inserisco nella symbol table
-    addLine(l, l->id);
-
-    l->type=tableTypes[p->brother->child->type];
-    l->class=tableClass[3];
-
-
+PLine rootLine;
+void symbolTable(Pnode root){
+    rootLine = createModuleLine(root->child);
 }
 
-void vardecl_listLines(int type, Pnode p){
+// METODI PER STAMPARE LA TABELLA
 
-    vardecl_Line(type, p->child);              //p punta ad ID_LIST, p->child punta ad ID
-    p = p->child->brother;                  // p->child->brother punta al secondo ID della lista se esiste
-    while(p!=NULL){
-        vardecl_Line(type, p);
-        p = p->brother;
+// stampa una sola riga (usato nella ricorsione)
+void printLine(PLine line, int indent) {
+    // tabbiamo con la giusta iNdeNtazione
+    for(int tab=0; tab<indent; tab++) printf("\t");
+
+    printf("[%d] class:%s, id:%s, type:%s, oid:%d", hash(line->id), line->class, line->id, line->type, line->oid);
+    if(line->class==tableClasses[1])
+        printf(", # params:%d", line->numParam);
+    printf("\n");
+}
+
+// stampa un intero bucket
+void printTable(PLine table[], int indent){
+//    for(int tab=0; tab<indent; tab++) printf("\t");
+//    printf("[hash] Name, Type, # Params, Class\n");
+
+    for(int i=0; i<BUCKET_SIZE; i++){
+        PLine toPrint = table[i];
+        while(toPrint!=NULL){
+            printLine(toPrint, indent);
+
+            if(toPrint->class == tableClasses[1]) // se è un modulo stampo pure il suo bucket
+                printTable(toPrint->bucket, indent+1);
+
+            toPrint = toPrint->next;
+        }
     }
-
 }
 
-void vardecl_Line(int type, Pnode p){
-
-    PLine l;
-    l = newLine();
-    l->type = tableTypes[type];
-    l->class = tableClass[0];
-    l->id = p->value.sval;
-
-    //Inserisco nella symbol table
-    addLine(l, l->id);
-
-}
-
-void constdecl_listLines(int type, Pnode p){
-
-    constdecl_Line(type, p->child);              //p punta ad ID_LIST, p->child punta ad ID
-    p = p->child->brother;                  // p->child->brother punta al secondo ID della lista se esiste
-    while(p!=NULL){
-        constdecl_Line(type, p);
-        p = p->brother;
-    }
-
-}
-
-void constdecl_Line(int type, Pnode p){
-
-    PLine l;
-    l = newLine();
-    l->type = tableTypes[type];
-    l->class = tableClass[2];
-    l->id = p->value.sval;
-
-    //Inserisco nella symbol table
-    addLine(l, l->id);
-
+// stampa tutto a partire dalla rootline
+void displayTable(){
+    printLine(rootLine, 0);
+    printTable(rootLine->bucket, 1);
 }
 

@@ -1,1 +1,3 @@
-/usr/bin/cc -g   CMakeFiles/main.dir/main.c.o CMakeFiles/main.dir/semantic.c.o CMakeFiles/main.dir/syntaxTree.c.o CMakeFiles/main.dir/lexer.c.o CMakeFiles/main.dir/parser.c.o CMakeFiles/main.dir/symbolTable.c.o  -o main 
+"C:\Program Files\JetBrains\CLion 2019.1.4\bin\cmake\win\bin\cmake.exe" -E remove -f CMakeFiles\main.dir/objects.a
+C:\MinGW\bin\ar.exe cr CMakeFiles\main.dir/objects.a @CMakeFiles\main.dir\objects1.rsp
+C:\MinGW\bin\gcc.exe -g   -Wl,--whole-archive CMakeFiles\main.dir/objects.a -Wl,--no-whole-archive  -o main.exe -Wl,--out-implib,libmain.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\main.dir\linklibs.rsp
