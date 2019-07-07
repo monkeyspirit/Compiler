@@ -1,5 +1,6 @@
 #include <string.h>
 #include "symbolTable.h"
+#include "semantic.h"
 
 // Definizioni
 char *tableTypes[] = {
@@ -86,6 +87,7 @@ int global_oid = 0; // oid dei modulia
 
 // crea una riga per un modulo a partire dal nodo
 PLine createModuleLine(Pnode moduleNode) {
+
     PLine moduleLine = newLine(); // alloca memoria
     Pnode iterNode = moduleNode->child; // nodo che itera nel modulo
     moduleLine->id = iterNode->value.sval; // setta l'id
@@ -97,6 +99,7 @@ PLine createModuleLine(Pnode moduleNode) {
     int local_oid = 0; // oid per le righe locali
 
     moduleLine->numParam = 0;
+
     // controlliamo se ci sono dei parametri formali
     if(iterNode -> value.ival==NOPT_PARAM_LIST){
 
@@ -158,8 +161,6 @@ PLine createModuleLine(Pnode moduleNode) {
                 idNode = idNode->brother;
             }
 
-            // constantDeclaration(decl_type, h); // in my opinion non va fatto qui
-
             constDeclNode = constDeclNode->brother;
         }
 
@@ -177,15 +178,6 @@ PLine createModuleLine(Pnode moduleNode) {
 
         iterNode = iterNode->brother;
     }
-
-    /* questo vedremo dove ripiazzarlo
-    //----------- ANALISI MODULE BODY -----------
-
-    h = d->child;                   //PUNTO A ID DI BEGIN
-    q = d->child->brother->brother; //PUNTO A ID DI END
-
-    moduleNameControl(h->value.sval, q->value.sval, l->id);
-    */
 
     return moduleLine;
 }

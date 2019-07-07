@@ -5,7 +5,7 @@ module H (p1: int, p2: char, p3: int, p4: bool): real
 
     module f1(t: int):int
         var c:real;
-    begin  f1
+    begin f1
         return ;
     end f1
 

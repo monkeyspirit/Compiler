@@ -8,7 +8,7 @@
 #include <stdbool.h>
 
 
-void moduleNameControl(char*, char*,char*),
-     constantDeclaration(int, Pnode);
+void moduleNameControl(char*, char*, char*),
+     constantDeclaration(int, char*, Pnode);
 
 #endif

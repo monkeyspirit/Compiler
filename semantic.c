@@ -38,15 +38,7 @@ void moduleNameControl(char* h, char* q, char* id){
 }
 
 //2. Definizione delle costanti nella sezione const: compatibilità del valore con il tipo dichiarato
-void constantDeclaration(int type, Pnode h){
-
-    char* id = h->child->child->child->value.sval;
-    Pnode expr = h->child->brother;
-
-    while(expr->child!=NULL){
-        expr = expr->child;
-    }
-
+void constantDeclaration(int type, char*id, Pnode expr){
     switch (type){
         case T_CHAR:
             if(expr->type!=T_CHARCONST  && expr->type!=T_ID ){
