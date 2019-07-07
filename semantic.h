@@ -12,5 +12,5 @@
 void semanticControl(PLine, Pnode),
      moduleNameControl(char*, char*, char*),
      constantDeclaration(int, char*, Pnode);
-PLine findModuleById(char*, PLine*);
+PLine findLineByIdAndClass(char*, char*, PLine*);
 #endif

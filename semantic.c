@@ -58,6 +58,8 @@ void semanticControl(PLine rootLine, Pnode root){
 
             int decl_type = constDeclNode->child->child->brother->child->type;
             Pnode idNode = constDeclNode->child->child->child;
+            Pnode expr = constDeclNode->child->brother;
+            constantDeclaration(decl_type, idNode->value.sval, expr);
 
             while(idNode != NULL){
 
@@ -77,7 +79,7 @@ void semanticControl(PLine rootLine, Pnode root){
 
         while (modNode != NULL) {
 
-            PLine nextModule = findModuleById(modNode->child->value.sval, rootLine->bucket);
+            PLine nextModule = findLineByIdAndClass(modNode->child->value.sval, "MOD", rootLine->bucket);
             semanticControl(nextModule,modNode);
             modNode = modNode->brother;
         }
@@ -90,8 +92,7 @@ void semanticControl(PLine rootLine, Pnode root){
 
 }
 
-PLine findModuleById(char* id, PLine table[]){
-    PLine nextModule;
+PLine findLineByIdAndClass(char* id, char* class, PLine table[]){
 
     int i = 0;
     while(table[i]!=NULL){
@@ -104,7 +105,7 @@ PLine findModuleById(char* id, PLine table[]){
 
         i++;
     }
-    printf("Errore il modulo non è presente, ma dovrebbe");
+    printf("Errore la riga non è presente, ma dovrebbe");
     exit(-5);
 }
 
@@ -122,7 +123,7 @@ PLine findModuleById(char* id, PLine table[]){
  * Type inference: computazione del tipo risultante di ogni operazione
  */
 
-//1. Uguaglianza del nome del modulo con i nomi che delimitano il corpo del modulo
+//1.
 void moduleNameControl(char* h, char* q, char* id){
     if(strcmp(h,q)){
         printf("Errore gli ID non corrispondono: \"begin %s ... end %s\"", h, q);
@@ -140,8 +141,13 @@ void moduleNameControl(char* h, char* q, char* id){
     }
 }
 
-//2. Definizione delle costanti nella sezione const: compatibilità del valore con il tipo dichiarato
+//2.
 void constantDeclaration(int type, char*id, Pnode expr){
+
+    while(expr->child!=NULL){
+        expr=expr->child;
+    }
+
     switch (type){
         case T_CHAR:
             if(expr->type!=T_CHARCONST  && expr->type!=T_ID ){

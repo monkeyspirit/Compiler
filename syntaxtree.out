@@ -49,7 +49,7 @@ PROGRAM
                                 LOW_TERM
                                     FACTOR
                                         CONSTANT
-                                            INTCONST (3)
+                                            INTCONST (4)
                 CONST_DECL
                     DECL
                         ID_LIST
@@ -119,6 +119,21 @@ PROGRAM
                                 ID (c)
                             TYPE
                                 REAL
+                OPT_CONST_SECT
+                    CONST_LIST
+                        CONST_DECL
+                            DECL
+                                ID_LIST
+                                    ID (P)
+                                TYPE
+                                    INT
+                            EXPR
+                                BOOL_TERM
+                                    REL_TERM
+                                        LOW_TERM
+                                            FACTOR
+                                                CONSTANT
+                                                    INTCONST (5)
                 MODULE_BODY
                     ID (f2)
                     STAT_LIST

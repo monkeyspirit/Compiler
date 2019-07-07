@@ -1,7 +1,7 @@
 module H (p1: int, p2: char, p3: int, p4: bool): real
     var x, y, z: int;
     veroofalso: bool;
-    const MAX:int = 3; a,b: bool = true; RR: char = a;
+    const MAX:int = 4; a,b: bool = true; RR: char = a;
 
     module f1(t: int):int
         var c:real;
@@ -11,6 +11,7 @@ module H (p1: int, p2: char, p3: int, p4: bool): real
 
         module f2(t: int):int
             var c:real;
+            const P:int=5;
         begin f2
             return ;
         end f2
