@@ -1,15 +1,17 @@
-module H (p1: int, p2: char, p3: int, p4: bool): real
+module H (p1: int, p2: int): real
     var x, y, z: int;
     veroofalso: bool;
     const MAX:int = 4; a,b: bool = true; RR: char = a;
 
-    module f1(t: int):int
+    module f1(t: string):int
         var c:real;
+        k,l:int;
     begin f1
+        H(k,l,m);
         return ;
     end f1
 
-        module f2(t: int):int
+        module f2(t: real):int
             var c:real;
             const P:int=5;
         begin f2

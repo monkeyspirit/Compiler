@@ -11,6 +11,8 @@
 
 void semanticControl(PLine, Pnode),
      moduleNameControl(char*, char*, char*),
-     constantDeclaration(int, char*, Pnode);
+     constantDeclaration(int, char*, Pnode),
+     controlOfStatment(Pnode, Pnode, PLine),
+     controlFormalPar(Pnode, PLine);
 PLine findLineByIdAndClass(char*, char*, PLine*);
 #endif

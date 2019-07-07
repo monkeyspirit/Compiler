@@ -562,15 +562,16 @@ Pnode write_stat()
 
 Pnode expr_list()
 {
-	Pnode p;
-	p = nonterminalnode(NEXPR);
+	Pnode head, p;
+	head = p = nonterminalnode(NEXPR);
 	p->child = expr();
-	while(lookahead==MINUS || lookahead==NOT || lookahead==LBRACE || lookahead==ID || lookahead==CHARCONST || lookahead == INTCONST || lookahead== REALCONST || lookahead==STRCONST || lookahead==BOOLCONST || lookahead==IF || lookahead==CHAR || lookahead==INT || lookahead==REAL || lookahead==STRING || lookahead==BOOL || lookahead==VOID){
+	while(lookahead==COMMA){
 		match(COMMA);
 		p->brother = nonterminalnode(NEXPR);
 		p->brother->child = expr();
+		p=p->brother;
 	}
-	return(p);
+	return(head);
 }
 
 Pnode expr()

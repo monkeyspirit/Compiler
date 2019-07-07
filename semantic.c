@@ -5,21 +5,24 @@
 #include "semantic.h"
 #include "symbolTable.h"
 
+
+
 void semanticControl(PLine rootLine, Pnode root){
 
 
-    Pnode iterNode = root->child; // punta a ID
+    Pnode iterNode, paramNode, declNode, constDeclNode, modNode;
+    iterNode = root->child; // punta a ID
     char* idMod = iterNode->value.sval;
 
     iterNode = iterNode->brother;
 
 
+
     if(iterNode -> value.ival==NOPT_PARAM_LIST){
 
-        Pnode paramNode = iterNode->child->child;
+        paramNode = iterNode->child->child;
 
         while (paramNode != NULL) {
-
             paramNode = paramNode->brother;
         }
 
@@ -31,7 +34,7 @@ void semanticControl(PLine rootLine, Pnode root){
 
     if(iterNode->value.ival==NOPT_VAR_SECT){
 
-        Pnode declNode = iterNode->child->child;
+        declNode = iterNode->child->child;
 
         while (declNode!=NULL) {
 
@@ -52,7 +55,7 @@ void semanticControl(PLine rootLine, Pnode root){
 
     if(iterNode->value.ival==NOPT_CONST_SECT){
 
-        Pnode constDeclNode = iterNode->child->child;
+        constDeclNode = iterNode->child->child;
 
         while(constDeclNode != NULL) {
 
@@ -75,7 +78,7 @@ void semanticControl(PLine rootLine, Pnode root){
 
     if(iterNode->value.ival==NOPT_MODULE_LIST){
 
-        Pnode modNode = iterNode->child;
+        modNode = iterNode->child;
 
         while (modNode != NULL) {
 
@@ -89,6 +92,9 @@ void semanticControl(PLine rootLine, Pnode root){
 
     moduleNameControl(iterNode->child->value.sval, iterNode->child->brother->brother->value.sval, idMod);
 
+    // controllo negli stament
+
+    controlOfStatment(iterNode, paramNode, rootLine);
 
 }
 
@@ -107,6 +113,38 @@ PLine findLineByIdAndClass(char* id, char* class, PLine table[]){
     }
     printf("Errore la riga non è presente, ma dovrebbe");
     exit(-5);
+}
+
+void controlOfStatment(Pnode moduleBody, Pnode paramNode, PLine moduleLine){
+
+    Pnode stat = moduleBody->child->brother->child;
+
+    while(stat->brother!=NULL){
+        int statType = stat->child->type;
+
+        switch (statType){
+            case NASSIGN_STAT:
+                break;
+            case NMODULE_CALL:
+                controlFormalPar(paramNode, moduleLine);
+                break;
+            case NIF_STAT:
+                break;
+            case NWHILE_STAT:
+                break;
+            case NRETURN_STAT:
+                break;
+            case NREAD_STAT:
+                break;
+            case NWRITE_STAT:
+                break;
+
+
+        }
+
+        stat= stat->brother;
+    }
+
 }
 
 /*
@@ -187,6 +225,34 @@ void constantDeclaration(int type, char*id, Pnode expr){
 //3. Visibilità degli identificatori referenziati (nella gerarchia degli ambienti)
 
 //4. Compatibilità in numero e tipo dei parametri attuali con i parametri formali
+void controlFormalPar(Pnode paramNode, PLine rootLine){
+    int numPar = 0;
+    Pnode paramNumberNode, typeParamNode;
+    paramNumberNode = typeParamNode = paramNode;
+
+    while(paramNumberNode!=NULL){
+        ++numPar;
+        paramNumberNode= paramNumberNode->brother;
+    }
+
+    int types[numPar];
+    int i = 0;
+    while(typeParamNode!=NULL){
+        types[i]= typeParamNode->child->brother->child->type;
+        typeParamNode=typeParamNode->brother;
+        i++;
+    }
+
+    printf("%d %d",rootLine->numParam,numPar );
+
+    if(rootLine->numParam!=numPar){
+        printf("Errore: nel modulo %s il numero di parametri formali non corrisponde a quello dichiarato",rootLine->id);
+        exit(-6);
+    }
+
+    // controllo sui tipi
+
+}
 
 //5. Compatibilità delle espressioni di ritorno con il tipo del valore di ritorno del modulo
 
