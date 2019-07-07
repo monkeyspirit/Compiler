@@ -183,8 +183,9 @@ PLine createModuleLine(Pnode moduleNode) {
 }
 
 PLine rootLine;
-void symbolTable(Pnode root){
+PLine symbolTable(Pnode root){
     rootLine = createModuleLine(root->child);
+    return  rootLine;
 }
 
 // METODI PER STAMPARE LA TABELLA

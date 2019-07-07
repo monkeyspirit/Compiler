@@ -25,7 +25,7 @@ typedef struct structLine *PLine;
 
 // Metodi
 
-void symbolTable(Pnode root);
+PLine symbolTable(Pnode root);
 void displayTable();
 
 //#endif
