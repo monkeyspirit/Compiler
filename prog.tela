@@ -1,4 +1,4 @@
-module H (p1: int, p2: int): real
+module H (p1: int, p2: string): real
     var p, y, z: int;
     veroofalso: bool;
     const MAX:int = 4; a,b: bool = true; RR: char = a;
@@ -14,12 +14,13 @@ module H (p1: int, p2: int): real
             var c:real;
             const P:int=3;
         begin f2
-            c = 4 ;
+            c = 5.7 * 5.5;
         end f2
 
 
 begin H
     f1(p);
-    return ;
+    veroofalso = a;
+    return a;
 
 end H

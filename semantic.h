@@ -9,11 +9,18 @@
 #include <stdbool.h>
 
 
+
 void semanticControl(PLine, Pnode),
      moduleNameControl(char*, char*, char*),
      constantDeclaration(int, char*, Pnode),
      controlFormalPar(Pnode, PLine, PLine*);
+
+char *typeOfExpr(Pnode , PLine* );
+
+char *operationChecking(int, char *, char *);
+
 bool  controlOfStatment(Pnode, PLine);
+
 PLine findLineByIdAndClass(char*, char*, PLine*),
       findLineByIdFromPCV(char* , PLine*);
 #endif

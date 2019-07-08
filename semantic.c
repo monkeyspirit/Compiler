@@ -119,7 +119,7 @@ PLine findLineByIdAndClass(char* id, char* class, PLine *table){
         }
 
 
-    printf("Errore la riga non è presente, ma dovrebbe");
+    printf("Errore la riga di %s non è presente, ma dovrebbe\n", id);
     exit(-5);
 }
 
@@ -147,12 +147,18 @@ bool controlOfStatment(Pnode moduleBody, PLine moduleLine){
     Pnode stat = moduleBody->child->brother->child;
     bool thereIsReturn =  false;
 
-    while(stat!=NULL){
+    while(stat!=NULL){ //punta a stat
 
         int statType = stat->child->value.ival;
+        char *type;
 
         switch (statType){
             case NASSIGN_STAT:
+                type = findLineByIdAndClass(stat->child->child->value.sval, "VAR", moduleLine->bucket)->type;
+                if( strcmp(type, typeOfExpr(stat->child->child->brother->child, moduleLine->bucket) ) != 0){
+                    printf("Errore nell'assegnamento nel corpo del modulo %s\n", moduleLine->id);
+                    exit(-9);
+                }
                 break;
             case NMODULE_CALL:
                 controlFormalPar(stat, findLineByIdAndClass(stat->child->child->value.sval, moduleLine->class, moduleLine->bucket), moduleLine->bucket);
@@ -193,7 +199,7 @@ bool controlOfStatment(Pnode moduleBody, PLine moduleLine){
  * Type inference: computazione del tipo risultante di ogni operazione
  */
 
-//1.
+
 void moduleNameControl(char* h, char* q, char* id){
     if(strcmp(h,q)){
         printf("Errore gli ID non corrispondono: \"begin %s ... end %s\"", h, q);
@@ -211,7 +217,6 @@ void moduleNameControl(char* h, char* q, char* id){
     }
 }
 
-//2.
 void constantDeclaration(int type, char*id, Pnode expr){
 
     while(expr->child!=NULL){
@@ -254,9 +259,8 @@ void constantDeclaration(int type, char*id, Pnode expr){
 }
 
 
-//3. Visibilità degli identificatori referenziati (nella gerarchia degli ambienti)
+// Visibilità degli identificatori referenziati (nella gerarchia degli ambienti)
 
-//4. Compatibilità in numero e tipo dei parametri attuali con i parametri formali
 void controlFormalPar(Pnode stat, PLine rootLine, PLine *bucket){
     int numPar = 0;
 
@@ -308,10 +312,118 @@ void controlFormalPar(Pnode stat, PLine rootLine, PLine *bucket){
 
 //5. Compatibilità delle espressioni di ritorno con il tipo del valore di ritorno del modulo
 
-//6. Istruzione di return espressa sempre nel modulo che restituisce un valore diverso da void
 
 //7. Compatibilità degli operatori con gli operandi
 
 //8. Compatibilità dell'identificatore con l'espressione di assegnamento
 
 //9. Compatibilità delle espressioni con le istruzioni in cui sono coinvolte
+
+char* typeOfExpr(Pnode x_term, PLine *bucket){ //expr punta x_term
+
+    char *typeExpr1, *typeExpr2;
+    int typeOp;
+    // --------- piede della ricorsione ---------
+
+    if(x_term!=NULL){
+        if(x_term->child!=NULL){
+            typeExpr1 = typeOfExpr(x_term->child, bucket);
+        }
+
+            // --------- piede della ricorsione ---------
+        else{
+            if(x_term->type==11  ){
+//                printf("Id:%s type:%s\n", x_term->value.sval, findLineByIdFromPCV(x_term->value.sval, bucket)->type);
+                return findLineByIdFromPCV(x_term->value.sval, bucket)->type;
+            }
+            else if(x_term->type==10 || x_term->type==9 || x_term->type==8 || x_term->type==7 || x_term->type==6){
+                switch (x_term->type){
+                    case 6:
+                        return   "CHAR";
+                        break;
+                    case 7:
+                        return  "INT";
+                        break;
+                    case 8:
+                        return  "REAL";
+                        break;
+                    case 9:
+                        return  "STRING";
+                        break;
+                    case 10:
+                        return  "BOOL";
+                        break;
+                }
+            }
+
+        }
+
+        //---------------------------
+
+        //--------- passo ricorsivo ---------
+
+        if(x_term->brother!=NULL){
+
+            if(x_term->value.ival==32){//rel term è diverso per costruzione
+                typeExpr2 = typeOfExpr(x_term->brother->brother, bucket);
+                typeOp = x_term->brother->child->type;
+            }
+            else{
+                typeExpr2 = typeOfExpr(x_term->brother->child->brother, bucket);
+                typeOp = x_term->brother->child->child->type;
+            }
+
+//            printf("Op: %d\n", typeOp);
+
+            return operationChecking(typeOp, typeExpr1, typeExpr2);
+
+        }
+        else{
+            return typeExpr1;
+        }
+
+
+    }
+
+
+}
+
+char* operationChecking(int op, char *typeExpr1, char *typeExpr2){
+    switch (op){
+        //logic expr:
+        case 24 : case 25:
+            if( (strcmp(typeExpr1, "BOOL")!=0) || (strcmp(typeExpr2, "BOOL")!=0)){
+                printf("Errore nell'espressione logica: richiesto un BOOL, invece sono inseriti un %s e un %s\n", typeExpr1, typeExpr2);
+                exit(-8);
+            }
+            return "BOOL";
+
+        //rel expr:
+        case 18 : case 19: case 20: case 21: case 22: case 23:
+            if( (strcmp(typeExpr1,typeExpr2)!=0)){
+                printf("Errore nell'espressione relazionale: richiesti tipi uguali, invece sono inseriti un %s e un %s\n", typeExpr1, typeExpr2);
+                exit(-8);
+            }
+            return "BOOL";
+
+        //math expr:
+        case 13 : case 14: case 15: case 16:
+            if( ( (strcmp(typeExpr1, "INT")==0) ||  (strcmp(typeExpr1, "REAL")==0) ) && (strcmp(typeExpr1,typeExpr2)==0) ){
+                return typeExpr1;
+            }
+            else{
+                printf("Errore nell'espressione relazionale: richiesti tipi uguali o INT o REAL, invece sono inseriti un %s e un %s\n", typeExpr1, typeExpr2);
+                exit(-8);
+            }
+
+
+        //neg expr: ----> da controllare nel parser!
+        case 17:
+//            if( (strcmp(typeExpr2, )) )
+            break;
+
+
+
+    }
+
+}

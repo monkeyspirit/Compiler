@@ -10,7 +10,7 @@ PROGRAM
                 PARAM_DECL
                     ID (p2)
                     TYPE
-                        INT
+                        STRING
         TYPE
             REAL
         OPT_VAR_SECT
@@ -144,7 +144,13 @@ PROGRAM
                                             LOW_TERM
                                                 FACTOR
                                                     CONSTANT
-                                                        INTCONST (4)
+                                                        REALCONST (5.700000)
+                                                LOW_TERM1
+                                                    HIGH_BINOP
+                                                        AST
+                                                    FACTOR
+                                                        CONSTANT
+                                                            REALCONST (5.500000)
                     ID (f2)
         MODULE_BODY
             ID (H)
@@ -161,7 +167,21 @@ PROGRAM
                                                 FACTOR
                                                     ID (p)
                 STAT
+                    ASSIGN_STAT
+                        ID (veroofalso)
+                        EXPR
+                            BOOL_TERM
+                                REL_TERM
+                                    LOW_TERM
+                                        FACTOR
+                                            ID (a)
+                STAT
                     RETURN_STAT
-                        NULL
-
+                        OPT_EXPR
+                            EXPR
+                                BOOL_TERM
+                                    REL_TERM
+                                        LOW_TERM
+                                            FACTOR
+                                                ID (a)
             ID (H)
