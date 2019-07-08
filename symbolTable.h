@@ -16,8 +16,8 @@ typedef struct structLine{
     struct structLine *next;
 
     //Formali
-    int numParam;
-    struct structLine *params[];
+    int nFormalParams;
+    struct structLine **formalParams;
 
 } Line;
 

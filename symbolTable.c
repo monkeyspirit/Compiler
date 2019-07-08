@@ -34,9 +34,9 @@ int hash(char *id) {
 
 // Alloca la memoria per una nuova riga e la inizializza
 PLine newLine() {
-    PLine p = (PLine) malloc(sizeof(Line));
-    for(int b=0; b<BUCKET_SIZE; b++)
-        p->bucket[b] = 0; // devo metterli tutti a zero se no non li vede NULL
+    PLine p = (PLine) calloc(1, sizeof(Line));
+    //    for(int b=0; b<BUCKET_SIZE; b++)
+    //        p->bucket[b] = 0; // devo metterli tutti a zero se no non li vede NULL
     return p;
 }
 
@@ -98,25 +98,19 @@ PLine createModuleLine(Pnode moduleNode) {
 
     int local_oid = 0; // oid per le righe locali
 
-    moduleLine->numParam = 0;
-
+    moduleLine->nFormalParams = 0;
     // controlliamo se ci sono dei parametri formali
     if(iterNode -> value.ival==NOPT_PARAM_LIST){
+        moduleLine->formalParams = malloc(sizeof(PLine)); // chissa come... funziona
 
         Pnode paramNode = iterNode->child->child;
         while (paramNode != NULL) { // cicliamo su tutti i parametri
             PLine paramLine = createParamLine(paramNode);
             paramLine->oid = ++local_oid;
             insertLine(moduleLine->bucket, paramLine); // li inseriamo nel bucket
+            moduleLine->formalParams[moduleLine->nFormalParams++] = paramLine; // li inserisco tra i riferimenti ai formali
+            // moduleLine->numParam++;
 
-//            NON FUNZIONA ANCORA :(
-//             inserimento dei riferimenti anche nell'array di params
-//            PLine nextParam = moduleLine->params[0];
-//            while(nextParam!=NULL)
-//                nextParam++ // scorro avanti finchè è vuoto
-//            nextParam = paramLine;
-
-            moduleLine->numParam++;
             paramNode = paramNode->brother;
         }
 
@@ -182,7 +176,7 @@ PLine createModuleLine(Pnode moduleNode) {
     return moduleLine;
 }
 
-PLine rootLine;
+ PLine rootLine;
 PLine symbolTable(Pnode root){
     rootLine = createModuleLine(root->child);
     return  rootLine;
@@ -195,9 +189,12 @@ void printLine(PLine line, int indent) {
     // tabbiamo con la giusta iNdeNtazione
     for(int tab=0; tab<indent; tab++) printf("\t");
 
-    printf("[%d] class:%s, id:%s, type:%s, oid:%d", hash(line->id), line->class, line->id, line->type, line->oid);
-    if(line->class==tableClasses[1])
-        printf(", # params:%d", line->numParam);
+    printf("[%d] %s , cls:%s , tp:%s , oid=%d", hash(line->id), line->id, line->class, line->type, line->oid);
+    if(line->class==tableClasses[1]) { // se è un metodo stampo anche i parametri formali
+        printf(" , parms(#=%d):", line->nFormalParams);
+        for (int i = 0; i < line->nFormalParams; ++i)
+            printf("%s ", line->formalParams[i]->id);
+    }
     printf("\n");
 }
 
