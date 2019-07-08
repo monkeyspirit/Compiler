@@ -17,7 +17,7 @@ PROGRAM
             DECL_LIST
                 DECL
                     ID_LIST
-                        ID (x)
+                        ID (p)
                         ID (y)
                         ID (z)
                     TYPE
@@ -96,41 +96,6 @@ PROGRAM
                     ID (f1)
                     STAT_LIST
                         STAT
-                            MODULE_CALL
-                                ID (H)
-                                OPT_EXPR_LIST
-                                    EXPR_LIST
-                                        EXPR
-                                            BOOL_TERM
-                                                REL_TERM
-                                                    LOW_TERM
-                                                        FACTOR
-                                                            ID (k)
-                                        EXPR
-                                            BOOL_TERM
-                                                REL_TERM
-                                                    LOW_TERM
-                                                        FACTOR
-                                                            ID (l)
-                                        EXPR
-                                            BOOL_TERM
-                                                REL_TERM
-                                                    LOW_TERM
-                                                        FACTOR
-                                                            ID (m)
-                                        EXPR
-                                            BOOL_TERM
-                                                REL_TERM
-                                                    LOW_TERM
-                                                        FACTOR
-                                                            ID (l)
-                                        EXPR
-                                            BOOL_TERM
-                                                REL_TERM
-                                                    LOW_TERM
-                                                        FACTOR
-                                                            ID (l)
-                        STAT
                             RETURN_STAT
                                 NULL
 
@@ -178,6 +143,23 @@ PROGRAM
         MODULE_BODY
             ID (H)
             STAT_LIST
+                STAT
+                    MODULE_CALL
+                        ID (f1)
+                        OPT_EXPR_LIST
+                            EXPR_LIST
+                                EXPR
+                                    BOOL_TERM
+                                        REL_TERM
+                                            LOW_TERM
+                                                FACTOR
+                                                    ID (a)
+                                EXPR
+                                    BOOL_TERM
+                                        REL_TERM
+                                            LOW_TERM
+                                                FACTOR
+                                                    ID (b)
                 STAT
                     RETURN_STAT
                         NULL

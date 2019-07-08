@@ -82,7 +82,7 @@ void semanticControl(PLine rootLine, Pnode root){
 
         while (modNode != NULL) {
 
-            PLine nextModule = findLineByIdAndClass(modNode->child->value.sval, "MOD", rootLine->bucket);
+            PLine nextModule = findLineByIdAndClass(modNode->child->value.sval, rootLine->class, rootLine->bucket);
             semanticControl(nextModule,modNode);
             modNode = modNode->brother;
         }
@@ -98,18 +98,29 @@ void semanticControl(PLine rootLine, Pnode root){
 
 }
 
-PLine findLineByIdAndClass(char* id, char* class, PLine table[]){
+PLine findLineByIdAndClass(char* id, char* class, PLine *table){
 
+    PLine next;
     int i = 0;
     while(table[i]!=NULL){
 
-        if(strcmp(table[i]->class, "MOD")){
-            if(strcmp(table[i]->id, id)){
-                return table[i];
+        if(table[i]->class==class && table[i]->id==id){
+            return table[i];
+        }
+        next = table[i]->next;
+        printf("id:%s\n", table[i]->id);
+        while (next!=NULL){
+            printf("id:%s\n", next->id);
+            if(next->class==class && next->id==id){
+                return next;
             }
+
+            next = next->next;
+
         }
 
-        i++;
+
+       i++;
     }
     printf("Errore la riga non è presente, ma dovrebbe");
     exit(-5);
@@ -119,14 +130,17 @@ void controlOfStatment(Pnode moduleBody, Pnode paramNode, PLine moduleLine){
 
     Pnode stat = moduleBody->child->brother->child;
 
-    while(stat->brother!=NULL){
-        int statType = stat->child->type;
+
+    while(stat!=NULL){
+
+        int statType = stat->child->value.ival;
 
         switch (statType){
             case NASSIGN_STAT:
                 break;
             case NMODULE_CALL:
-                controlFormalPar(paramNode, moduleLine);
+
+                //controlFormalPar(paramNode, findLineByIdAndClass(stat->child->child->value.sval, moduleLine->class, moduleLine->bucket));
                 break;
             case NIF_STAT:
                 break;
@@ -229,6 +243,7 @@ void controlFormalPar(Pnode paramNode, PLine rootLine){
     int numPar = 0;
     Pnode paramNumberNode, typeParamNode;
     paramNumberNode = typeParamNode = paramNode;
+
 
     while(paramNumberNode!=NULL){
         ++numPar;

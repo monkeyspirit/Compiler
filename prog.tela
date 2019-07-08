@@ -1,5 +1,5 @@
 module H (p1: int, p2: int): real
-    var x, y, z: int;
+    var p, y, z: int;
     veroofalso: bool;
     const MAX:int = 4; a,b: bool = true; RR: char = a;
 
@@ -7,7 +7,6 @@ module H (p1: int, p2: int): real
         var c:real;
         k,l:int;
     begin f1
-        H(k,l,m);
         return ;
     end f1
 
@@ -20,7 +19,7 @@ module H (p1: int, p2: int): real
 
 
 begin H
-
+    f1(a, b);
     return ;
 
 end H
