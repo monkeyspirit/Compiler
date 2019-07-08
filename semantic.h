@@ -12,7 +12,8 @@
 void semanticControl(PLine, Pnode),
      moduleNameControl(char*, char*, char*),
      constantDeclaration(int, char*, Pnode),
-     controlOfStatment(Pnode, Pnode, PLine),
+     controlOfStatment(Pnode, PLine),
      controlFormalPar(Pnode, PLine);
-PLine findLineByIdAndClass(char*, char*, PLine*);
+PLine findLineByIdAndClass(char*, char*, PLine*),
+      findLineByIdFromPCV(char* , PLine*);
 #endif

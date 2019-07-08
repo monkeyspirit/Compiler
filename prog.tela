@@ -12,14 +12,14 @@ module H (p1: int, p2: int): real
 
         module f2(t: real):int
             var c:real;
-            const P:int=5;
+            const P:int=3;
         begin f2
             return ;
         end f2
 
 
 begin H
-    f1(a, b);
+    f1(a);
     return ;
 
 end H

@@ -131,7 +131,7 @@ PROGRAM
                                         LOW_TERM
                                             FACTOR
                                                 CONSTANT
-                                                    INTCONST (5)
+                                                    INTCONST (3)
                 MODULE_BODY
                     ID (f2)
                     STAT_LIST
@@ -154,12 +154,6 @@ PROGRAM
                                             LOW_TERM
                                                 FACTOR
                                                     ID (a)
-                                EXPR
-                                    BOOL_TERM
-                                        REL_TERM
-                                            LOW_TERM
-                                                FACTOR
-                                                    ID (b)
                 STAT
                     RETURN_STAT
                         NULL

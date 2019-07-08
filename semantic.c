@@ -94,39 +94,30 @@ void semanticControl(PLine rootLine, Pnode root){
 
     // controllo negli stament
 
-    controlOfStatment(iterNode, paramNode, rootLine);
+    controlOfStatment(iterNode, rootLine);
 
 }
 
 PLine findLineByIdAndClass(char* id, char* class, PLine *table){
 
-    PLine next;
-    int i = 0;
-    while(table[i]!=NULL){
 
-        if(table[i]->class==class && table[i]->id==id){
-            return table[i];
-        }
-        next = table[i]->next;
-        printf("id:%s\n", table[i]->id);
-        while (next!=NULL){
-            printf("id:%s\n", next->id);
-            if(next->class==class && next->id==id){
-                return next;
+        for(int i=0; i<BUCKET_SIZE; i++){
+            PLine toControl = table[i];
+            while(toControl!=NULL){
+                if(strcmp(id, toControl->id)==0 && strcmp(class, toControl->class)==0) {
+//                    printf("ToFind: %s, Found: %s\n", id, toControl->id);
+                    return toControl;
+                }
+                toControl = toControl->next;
             }
-
-            next = next->next;
-
         }
 
 
-       i++;
-    }
     printf("Errore la riga non è presente, ma dovrebbe");
     exit(-5);
 }
 
-void controlOfStatment(Pnode moduleBody, Pnode paramNode, PLine moduleLine){
+void controlOfStatment(Pnode moduleBody, PLine moduleLine){
 
     Pnode stat = moduleBody->child->brother->child;
 
@@ -139,8 +130,7 @@ void controlOfStatment(Pnode moduleBody, Pnode paramNode, PLine moduleLine){
             case NASSIGN_STAT:
                 break;
             case NMODULE_CALL:
-
-                //controlFormalPar(paramNode, findLineByIdAndClass(stat->child->child->value.sval, moduleLine->class, moduleLine->bucket));
+                controlFormalPar(stat, findLineByIdAndClass(stat->child->child->value.sval, moduleLine->class, moduleLine->bucket));
                 break;
             case NIF_STAT:
                 break;
@@ -239,28 +229,18 @@ void constantDeclaration(int type, char*id, Pnode expr){
 //3. Visibilità degli identificatori referenziati (nella gerarchia degli ambienti)
 
 //4. Compatibilità in numero e tipo dei parametri attuali con i parametri formali
-void controlFormalPar(Pnode paramNode, PLine rootLine){
+void controlFormalPar(Pnode stat, PLine rootLine){
     int numPar = 0;
-    Pnode paramNumberNode, typeParamNode;
-    paramNumberNode = typeParamNode = paramNode;
 
-
-    while(paramNumberNode!=NULL){
-        ++numPar;
-        paramNumberNode= paramNumberNode->brother;
+    if(stat->child->child->brother!=NULL){
+        Pnode expr =stat->child->child->brother->child->child;
+        while(expr!=NULL){
+            numPar++;
+            expr = expr->brother;
+        }
     }
 
-    int types[numPar];
-    int i = 0;
-    while(typeParamNode!=NULL){
-        types[i]= typeParamNode->child->brother->child->type;
-        typeParamNode=typeParamNode->brother;
-        i++;
-    }
-
-    printf("%d %d",rootLine->numParam,numPar );
-
-    if(rootLine->numParam!=numPar){
+    if(rootLine->nFormalParams!=numPar){
         printf("Errore: nel modulo %s il numero di parametri formali non corrisponde a quello dichiarato",rootLine->id);
         exit(-6);
     }
