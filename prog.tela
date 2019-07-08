@@ -3,23 +3,23 @@ module H (p1: int, p2: int): real
     veroofalso: bool;
     const MAX:int = 4; a,b: bool = true; RR: char = a;
 
-    module f1(t: int, p:bool):int
+    module f1(t: int):int
         var c:real;
         k,l:int;
     begin f1
         return ;
     end f1
 
-        module f2(t: real):int
+        module f2(t: real):void
             var c:real;
             const P:int=3;
         begin f2
-            return ;
+            c = 4 ;
         end f2
 
 
 begin H
-    f1(p, p);
+    f1(p);
     return ;
 
 end H

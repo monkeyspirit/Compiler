@@ -77,10 +77,6 @@ PROGRAM
                             ID (t)
                             TYPE
                                 INT
-                        PARAM_DECL
-                            ID (p)
-                            TYPE
-                                BOOL
                 TYPE
                     INT
                 OPT_VAR_SECT
@@ -113,7 +109,7 @@ PROGRAM
                             TYPE
                                 REAL
                 TYPE
-                    INT
+                    VOID
                 OPT_VAR_SECT
                     DECL_LIST
                         DECL
@@ -140,9 +136,15 @@ PROGRAM
                     ID (f2)
                     STAT_LIST
                         STAT
-                            RETURN_STAT
-                                NULL
-
+                            ASSIGN_STAT
+                                ID (c)
+                                EXPR
+                                    BOOL_TERM
+                                        REL_TERM
+                                            LOW_TERM
+                                                FACTOR
+                                                    CONSTANT
+                                                        INTCONST (4)
                     ID (f2)
         MODULE_BODY
             ID (H)
@@ -152,12 +154,6 @@ PROGRAM
                         ID (f1)
                         OPT_EXPR_LIST
                             EXPR_LIST
-                                EXPR
-                                    BOOL_TERM
-                                        REL_TERM
-                                            LOW_TERM
-                                                FACTOR
-                                                    ID (p)
                                 EXPR
                                     BOOL_TERM
                                         REL_TERM

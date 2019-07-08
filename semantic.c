@@ -90,11 +90,17 @@ void semanticControl(PLine rootLine, Pnode root){
         iterNode = iterNode->brother;
     }
 
+    // -------- Controlli ----------
     moduleNameControl(iterNode->child->value.sval, iterNode->child->brother->brother->value.sval, idMod);
 
-    // controllo negli stament
-
     controlOfStatment(iterNode, rootLine);
+
+    if(strcmp(rootLine->type, "VOID") != 0 ){
+        if(!controlOfStatment(iterNode, rootLine)){
+            printf("Errore: il modulo %s è di tipi %s ma manca l'operazione di return", rootLine->id, rootLine->type);
+            exit(-7);
+        }
+    }
 
 }
 
@@ -136,10 +142,10 @@ PLine findLineByIdFromPCV(char* id, PLine *table){
     exit(-5);
 }
 
-void controlOfStatment(Pnode moduleBody, PLine moduleLine){
+bool controlOfStatment(Pnode moduleBody, PLine moduleLine){
 
     Pnode stat = moduleBody->child->brother->child;
-
+    bool thereIsReturn =  false;
 
     while(stat!=NULL){
 
@@ -156,6 +162,8 @@ void controlOfStatment(Pnode moduleBody, PLine moduleLine){
             case NWHILE_STAT:
                 break;
             case NRETURN_STAT:
+//                printf("Yes in %s\n", moduleLine->id);
+                thereIsReturn = true;
                 break;
             case NREAD_STAT:
                 break;
@@ -168,6 +176,7 @@ void controlOfStatment(Pnode moduleBody, PLine moduleLine){
         stat= stat->brother;
     }
 
+    return thereIsReturn;
 }
 
 /*
