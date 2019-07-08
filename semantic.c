@@ -117,6 +117,25 @@ PLine findLineByIdAndClass(char* id, char* class, PLine *table){
     exit(-5);
 }
 
+PLine findLineByIdFromPCV(char* id, PLine *table){
+
+
+    for(int i=0; i<BUCKET_SIZE; i++){
+        PLine toControl = table[i];
+        while(toControl!=NULL){
+            if( (strcmp(id, toControl->id)==0) && ( (strcmp("VAR", toControl->class)==0) || (strcmp("CON", toControl->class)==0) || (strcmp("PAR", toControl->class)==0) ) ){
+//                    printf("ToFind: %s, Found: %s\n", id, toControl->id);
+                return toControl;
+            }
+            toControl = toControl->next;
+        }
+    }
+
+
+    printf("Errore la riga non è presente, ma dovrebbe");
+    exit(-5);
+}
+
 void controlOfStatment(Pnode moduleBody, PLine moduleLine){
 
     Pnode stat = moduleBody->child->brother->child;
@@ -130,7 +149,7 @@ void controlOfStatment(Pnode moduleBody, PLine moduleLine){
             case NASSIGN_STAT:
                 break;
             case NMODULE_CALL:
-                controlFormalPar(stat, findLineByIdAndClass(stat->child->child->value.sval, moduleLine->class, moduleLine->bucket));
+                controlFormalPar(stat, findLineByIdAndClass(stat->child->child->value.sval, moduleLine->class, moduleLine->bucket), moduleLine->bucket);
                 break;
             case NIF_STAT:
                 break;
@@ -229,7 +248,7 @@ void constantDeclaration(int type, char*id, Pnode expr){
 //3. Visibilità degli identificatori referenziati (nella gerarchia degli ambienti)
 
 //4. Compatibilità in numero e tipo dei parametri attuali con i parametri formali
-void controlFormalPar(Pnode stat, PLine rootLine){
+void controlFormalPar(Pnode stat, PLine rootLine, PLine *bucket){
     int numPar = 0;
 
     if(stat->child->child->brother!=NULL){
@@ -241,11 +260,40 @@ void controlFormalPar(Pnode stat, PLine rootLine){
     }
 
     if(rootLine->nFormalParams!=numPar){
-        printf("Errore: nel modulo %s il numero di parametri formali non corrisponde a quello dichiarato",rootLine->id);
+        printf("Errore: nella chiamata al modulo %s il numero di parametri formali non corrisponde a quello dichiarato",rootLine->id);
         exit(-6);
     }
 
-    // controllo sui tipi
+    char* types[numPar];
+
+    Pnode expr =stat->child->child->brother->child->child;
+    int i = 0;
+    while(expr!=NULL){
+        Pnode type = expr;
+
+        while(type->child!=NULL){
+            type=type->child;
+        }
+
+        types[i] = findLineByIdFromPCV(type->value.sval,bucket)->type;
+        expr = expr->brother;
+        i++;
+    }
+
+     // controllo sui tipi
+     PLine *formal = rootLine->formalParams;
+     PLine params[numPar];
+
+     for (int j = 0; j <numPar ; ++j) {
+         params[j] = formal[j];
+     }
+
+     for(int i=0; i <numPar; i++){
+        if(strcmp(types[i], params[i]->type)!=0){
+            printf("Errore: nella chiamata al modulo %s i tipi dei parametri non corrispondono, ci si aspetta un %s invece è un %s\n", rootLine->id, params[i]->type, types[i]);
+            exit(-6);
+        }
+     }
 
 }
 

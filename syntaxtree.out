@@ -76,7 +76,11 @@ PROGRAM
                         PARAM_DECL
                             ID (t)
                             TYPE
-                                STRING
+                                INT
+                        PARAM_DECL
+                            ID (p)
+                            TYPE
+                                BOOL
                 TYPE
                     INT
                 OPT_VAR_SECT
@@ -153,7 +157,13 @@ PROGRAM
                                         REL_TERM
                                             LOW_TERM
                                                 FACTOR
-                                                    ID (a)
+                                                    ID (p)
+                                EXPR
+                                    BOOL_TERM
+                                        REL_TERM
+                                            LOW_TERM
+                                                FACTOR
+                                                    ID (p)
                 STAT
                     RETURN_STAT
                         NULL

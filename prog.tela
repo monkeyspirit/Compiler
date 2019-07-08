@@ -3,7 +3,7 @@ module H (p1: int, p2: int): real
     veroofalso: bool;
     const MAX:int = 4; a,b: bool = true; RR: char = a;
 
-    module f1(t: string):int
+    module f1(t: int, p:bool):int
         var c:real;
         k,l:int;
     begin f1
@@ -19,7 +19,7 @@ module H (p1: int, p2: int): real
 
 
 begin H
-    f1(a);
+    f1(p, p);
     return ;
 
 end H
