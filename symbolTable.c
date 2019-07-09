@@ -42,7 +42,7 @@ PLine newLine() {
 
 void isDefined(PLine tableLine, char *id) {
     while (tableLine != NULL) {
-        printf("%s, %s\n", id, tableLine->id);
+        // printf("%s, %s\n", id, tableLine->id);
         if (strcmp(tableLine->id, id)==0) {
             printf("Errore: inserite due variabili omonime (%s)", tableLine->id);
             exit(-30);
