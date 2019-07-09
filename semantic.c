@@ -1,11 +1,5 @@
-//
-// Created by maria on 05/07/19.
-
-
 #include "semantic.h"
 #include "symbolTable.h"
-
-
 
 void semanticControl(PLine rootLine, Pnode root){
 
@@ -499,6 +493,23 @@ char* typeOfExpr(Pnode x_term, PLine moduleLine){ //expr punta x_term
                     case NTYPE:{
 //                        typeExpr1 = typeOfModuleCall(x_term->child->child, moduleLine->bucket);
 //                        printf("Cast?\n");
+                        if(x_term->child->child->child->type == 2) {
+                            if(strcmp(typeOfExpr(x_term->child->child->brother, moduleLine), "INT")){
+                                printf("Errore nel casting a REAL, ci si aspetta un INT invece è un %s\n", typeOfExpr(x_term->child->child->brother, moduleLine));
+                                exit(-3103);
+                            }
+                            return "REAL";
+                        } else if (x_term->child->child->child->type == 1) {
+                            if(strcmp(typeOfExpr(x_term->child->child->brother, moduleLine), "REAL")){
+                                printf("Errore nel casting a INT, ci si aspetta un REAL invece è un %s\n", typeOfExpr(x_term->child->child->brother, moduleLine));
+                                exit(-3103);
+                            }
+                            return "INT";
+                        } else {
+                            printf("errore nel casting, operazione non definita\n");
+                            exit(-3103);
+                        }
+
                         break;
                     }
                 }
