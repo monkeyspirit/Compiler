@@ -40,6 +40,17 @@ PLine newLine() {
     return p;
 }
 
+void isDefined(PLine tableLine, char *id) {
+    while (tableLine != NULL) {
+        printf("%s, %s\n", id, tableLine->id);
+        if (strcmp(tableLine->id, id)==0) {
+            printf("Errore: inserite due variabili omonime (%s)", tableLine->id);
+            exit(-30);
+        }
+        tableLine = tableLine->next;
+    }
+}
+
 // inserisce una riga in una tabella (se la riga è vuota tutto ok,
 // altrimenti la inserisce in coda a quella già presente)
 int insertLine(PLine table[], PLine line) {
@@ -48,6 +59,7 @@ int insertLine(PLine table[], PLine line) {
     if (table[index] == NULL)
         table[index] = line;
     else {
+        isDefined(table[index], line->id);
         PLine nextB = table[index];
         while(nextB->next != NULL)
             nextB = nextB->next;
