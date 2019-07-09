@@ -6,9 +6,6 @@
 #include <ctype.h>
 #include <string.h>
 
-
-#define INPUT_FILE_NAME "../prog.tela"
-
 #define MODULE 258
 #define ID 259
 #define LBRACE 260
@@ -56,6 +53,8 @@
 #define BOOLCONST 302
 #define ERROR 303
 #define RETURNNULL 304
+
+char* telaFileName;
 
 /*Elenco dei non terminali*/
 typedef enum {

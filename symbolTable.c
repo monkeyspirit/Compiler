@@ -176,7 +176,7 @@ PLine createModuleLine(Pnode moduleNode) {
     return moduleLine;
 }
 
- PLine rootLine;
+PLine rootLine;
 PLine symbolTable(Pnode root){
     rootLine = createModuleLine(root->child);
     return  rootLine;
@@ -184,18 +184,20 @@ PLine symbolTable(Pnode root){
 
 // METODI PER STAMPARE LA TABELLA
 
+FILE *out;
+
 // stampa una sola riga (usato nella ricorsione)
 void printLine(PLine line, int indent) {
     // tabbiamo con la giusta iNdeNtazione
-    for(int tab=0; tab<indent; tab++) printf("\t");
+    for(int tab=0; tab<indent; tab++) fprintf(out, "\t");
 
-    printf("[%d] %s , cls:%s , tp:%s , oid=%d", hash(line->id), line->id, line->class, line->type, line->oid);
+    fprintf(out, "[%d] %s , cls:%s , tp:%s , oid=%d", hash(line->id), line->id, line->class, line->type, line->oid);
     if(line->class==tableClasses[1]) { // se è un metodo stampo anche i parametri formali
-        printf(" , parms(#=%d):", line->nFormalParams);
+        fprintf(out, " , parms(#=%d):", line->nFormalParams);
         for (int i = 0; i < line->nFormalParams; ++i)
-            printf("%s ", line->formalParams[i]->id);
+            fprintf(out, "%s ", line->formalParams[i]->id);
     }
-    printf("\n");
+    fprintf(out, "\n");
 }
 
 // stampa un intero bucket
@@ -218,6 +220,7 @@ void printTable(PLine table[], int indent){
 
 // stampa tutto a partire dalla rootline
 void displayTable(){
+    out = fopen("../symbolTable.out", "w");
     printLine(rootLine, 0);
     printTable(rootLine->bucket, 1);
 }

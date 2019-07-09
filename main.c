@@ -5,19 +5,18 @@
 #include "symbolTable.h"
 #include "semantic.h"
 
-struct S {
-    int i, j, k;
-    int next[3];
-};
+int main(int nArgs, char  **args) {
+//    telaFileName = args[nArgs-1]; // l'ultimo argomento da linea di comando sarà il nome del file
+    telaFileName = "../prog.tela";
 
-int main() {
     Pnode root = parse();
 
     syntaxTree(root); // stampa su file l'albero sintattico
 
     PLine rootLine = symbolTable(root);
-    semanticControl(rootLine, root->child);
     displayTable();
+
+    semanticControl(rootLine, root->child);
 
     return(0);
 }
