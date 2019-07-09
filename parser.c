@@ -6,21 +6,19 @@ extern char *yytext;
 extern Lexval value;
 extern int line;
 extern FILE *yyin;
-extern FILE *yyout;
+//extern FILE *yyout;
 
 int lookahead;
 
 Pnode root = NULL;
 
 /*Metodo per il prossimo carattere*/
-void next()
-{
+void next() {
 	lookahead = yylex();
 }
 
 /*Metodo per mangiare il carattere e proseguire*/
-void match(int symbol)
-{
+void match(int symbol) {
 	if(lookahead == symbol){
 		next();
 	}
@@ -30,15 +28,13 @@ void match(int symbol)
 }
 
 /*Metodo per la generazione della stringa di errore con passaggio di numero di linea*/
-void parserror()
-{
+void parserror() {
 	fprintf(stderr, "Line %d: syntax error on symbol \"%s\"\n", line, yytext );
 	exit(-1);
 }
 
 /*Metodo che crea un nuovo nodo*/
-Pnode newnode(Typenode tnode)
-{
+Pnode newnode(Typenode tnode) {
 	Pnode p;
 	p = (Pnode) malloc(sizeof(Node));
 	p->type = tnode; /*Creo il nodo e come tipo gli associo il tipo passato*/
@@ -47,23 +43,21 @@ Pnode newnode(Typenode tnode)
 }
 
 /*Metodo che crea un nodo non terminale*/
-Pnode nonterminalnode(Nonterminal nonterm)
-{
+Pnode nonterminalnode(Nonterminal nonterm) {
 	Pnode p;
 	p = newnode(T_NONTERMINAL);
 	p->value.ival = nonterm; /*Regole di stato del parsing*/
+
 	return(p);
 }
 
 /*Meotod che crea un nodo associato ad una keyword*/
-Pnode keynode(Typenode keyword)
-{
+Pnode keynode(Typenode keyword) {
 	return(newnode(keyword));
 }
 
 /*Meotod che crea un nodo associato ad un id*/
-Pnode idnode()
-{
+Pnode idnode() {
 	Pnode p;
 	p = newnode(T_ID);
 	p->value.sval = value.sval; /*Regole di stato del parsing*/
@@ -71,8 +65,7 @@ Pnode idnode()
 }
 
 /*Meotod che crea un nodo associato ad una costanre di tipo char*/
-Pnode charconstnode()
-{
+Pnode charconstnode() {
 	Pnode p;
 	p = newnode(T_CHARCONST);
 	p->value.sval = value.sval; /*Regole di stato del parsing*/
@@ -80,17 +73,15 @@ Pnode charconstnode()
 	return(p);
 }
 
-Pnode opnode(Typenode node)
-{
+Pnode opnode(Typenode node) {
 	Pnode p;
 	p = newnode(node);
 	p->value.ival = value.ival; /*Regole di stato del parsing*/
-	return(p);
+	return(p);	
 }
 
 /*Meotod che crea un nodo associato ad una costanre di tipo int*/
-Pnode intconstnode()
-{
+Pnode intconstnode() {
 	Pnode p;
 	p = newnode(T_INTCONST);
 	p->value.ival = value.ival; /*Regole di stato del parsing*/
@@ -98,8 +89,7 @@ Pnode intconstnode()
 }
 
 /*Meotod che crea un nodo associato ad una costanre di tipo real*/
-Pnode realconstnode()
-{
+Pnode realconstnode() {
 	Pnode p;
 	p = newnode(T_REALCONST);
 	p->value.rval = value.rval; /*Regole di stato del parsing*/
@@ -107,8 +97,7 @@ Pnode realconstnode()
 }
 
 /*Meotod che crea un nodo associato ad una costanre di tipo string*/
-Pnode strconstnode()
-{
+Pnode strconstnode() {
 	Pnode p;
 	p = newnode(T_STRCONST);
 	p->value.sval = value.sval; /*Regole di stato del parsing*/
@@ -116,8 +105,7 @@ Pnode strconstnode()
 }
 
 /*Meotod che crea un nodo associato ad una costanre di tipo bool*/
-Pnode boolconstnode()
-{
+Pnode boolconstnode() {
 	Pnode p;
 	p = newnode(T_BOOLCONST);
 	p->value.ival = value.ival; /*Regole di stato del parsing*/
@@ -127,16 +115,14 @@ Pnode boolconstnode()
 /*I metodi da qui in giù servono per il matching al fine di creare un albero sintattico*/
 /*Ogni metodo fa il match dell'espressione regolare a cui fa riferimento (vedi il nome e la BNF)*/
 
-Pnode program()
-{
+Pnode program() {
 	Pnode p;
 	p = nonterminalnode(NMODULE_DECL);
 	p->child = module_decl();
 	return(p);
 }
 
-Pnode module_decl()
-{
+Pnode module_decl() {
 	Pnode p, d, c, h , j, m;
 	int i = 0;
 	match(MODULE);
@@ -176,13 +162,12 @@ Pnode module_decl()
 	}
 
 	j->brother = nonterminalnode(NMODULE_BODY);
-	j->brother->child = module_body();
+	j->brother->child = module_body();	
 
 	return(p);
 }
 
-Pnode opt_param_list()
-{
+Pnode opt_param_list() {
 	Pnode p;
 	p = nonterminalnode(NPARAM_LIST);
 	p->child = param_list();
@@ -190,8 +175,7 @@ Pnode opt_param_list()
 	return(p);
 }
 
-Pnode param_list()
-{
+Pnode param_list() {
 	Pnode head, p;
 	head = p = nonterminalnode(NPARAM_DECL);
 	p->child = param_decl();
@@ -205,8 +189,7 @@ Pnode param_list()
 	return(head);
 }
 
-Pnode param_decl()
-{
+Pnode param_decl() {
 	Pnode p;
 	p = idnode();
 	next();
@@ -216,19 +199,18 @@ Pnode param_decl()
 	return(p);
 }
 
-Pnode type()
-{
+Pnode type() {
 	Pnode p;
 	if(lookahead==CHAR){
 		p = keynode(T_CHAR);
 		next();
 		return(p);
-	}
+	} 
 	else if (lookahead==INT){
 		p = keynode(T_INT);
 		next();
 		return(p);
-	}
+	} 
 	else if (lookahead==REAL){
 		p = keynode(T_REAL);
 		next();
@@ -238,7 +220,7 @@ Pnode type()
 		p = keynode(T_STRING);
 		next();
 		return(p);
-	}
+	} 
 	else if (lookahead==BOOL){
 		p = keynode(T_BOOL);
 		next();
@@ -255,8 +237,7 @@ Pnode type()
 
 }
 
-Pnode opt_var_sect()
-{
+Pnode opt_var_sect() {
 	Pnode p;
 	match(VAR);
 	p = nonterminalnode(NDECL_LIST);
@@ -264,8 +245,7 @@ Pnode opt_var_sect()
 	return(p);
 }
 
-Pnode decl_list()
-{
+Pnode decl_list() {
 	Pnode head, p;
 	head = p = nonterminalnode(NDECL);
 	p->child = decl();
@@ -279,8 +259,7 @@ Pnode decl_list()
 	return(head);
 }
 
-Pnode decl()
-{
+Pnode decl() {
 	Pnode p;
 	p = nonterminalnode(NID_LIST);
 	p->child = id_list();
@@ -290,8 +269,7 @@ Pnode decl()
 	return(p);
 }
 
-Pnode id_list()
-{
+Pnode id_list() {
 	Pnode head, p;
 	head =  p = idnode();
 	next();
@@ -304,8 +282,7 @@ Pnode id_list()
 	return(head);
 }
 
-Pnode opt_const_sect()
-{
+Pnode opt_const_sect() {
 	Pnode p;
 	match(CONST);
 	p = nonterminalnode(NCONST_LIST);
@@ -313,8 +290,7 @@ Pnode opt_const_sect()
 	return(p);
 }
 
-Pnode const_list()
-{
+Pnode const_list() {
 	Pnode head, p;
 	head = p = nonterminalnode(NCONST_DECL);
 	p->child = const_decl();
@@ -327,8 +303,7 @@ Pnode const_list()
 }
 
 
-Pnode const_decl()
-{
+Pnode const_decl() {
 	Pnode p;
 	p = nonterminalnode(NDECL);
 	p->child = decl();
@@ -339,8 +314,7 @@ Pnode const_decl()
 	return(p);
 }
 
-Pnode opt_module_list()
-{
+Pnode opt_module_list() {
 	Pnode p, h;
 	p = h = nonterminalnode(NMODULE_DECL);
 	p->child = module_decl();
@@ -354,8 +328,7 @@ Pnode opt_module_list()
 	return(p);
 }
 
-Pnode module_body()
-{
+Pnode module_body() {
 	Pnode p;
 	match(BEGIn);
 	p = idnode();
@@ -368,8 +341,7 @@ Pnode module_body()
 	return(p);
 }
 
-Pnode stat_list()
-{
+Pnode stat_list() {
 	Pnode head, p;
 	head = p = nonterminalnode(NSTAT);
 	p->child = stat();
@@ -383,8 +355,7 @@ Pnode stat_list()
 	return(head);
 }
 
-Pnode stat()
-{
+Pnode stat() {
 	Pnode p, d;
 	if (lookahead==ID){
 		d=idnode();
@@ -402,12 +373,12 @@ Pnode stat()
 		else{
 			parserror();
 		}
-	}
+	} 
 	else if (lookahead==IF){
 		p = nonterminalnode(NIF_STAT);
 		p->child = if_stat();
 		return(p);
-	}
+	} 
 	else if (lookahead==WHILE){
 		p = nonterminalnode(NWHILE_STAT);
 		p->child = while_stat();
@@ -417,12 +388,12 @@ Pnode stat()
 		p = nonterminalnode(NRETURN_STAT);
 		p->child = return_stat();
 		return(p);
-	}
+	} 
 	else if (lookahead==READ){
 		p = nonterminalnode(NREAD_STAT);
 		p->child = read_stat();
 		return(p);
-	}
+	} 
 	else if (lookahead==WRITE){
 		p = nonterminalnode(NWRITE_STAT);
 		p->child = write_stat();
@@ -431,11 +402,10 @@ Pnode stat()
 	else {
 		parserror();
 	}
-
+	
 }
 
-Pnode assign_stat(Pnode p)
-{
+Pnode assign_stat(Pnode p) {
 
 	match(ASSIGN);
 	p->brother = nonterminalnode(NEXPR);
@@ -443,8 +413,7 @@ Pnode assign_stat(Pnode p)
 	return(p);
 }
 
-Pnode if_stat()
-{
+Pnode if_stat() {
 	Pnode p, h, l;
 	match(IF);
 	p = h = l = nonterminalnode(NEXPR);
@@ -471,8 +440,7 @@ Pnode if_stat()
 }
 
 
-Pnode opt_elseif_stat_list()
-{
+Pnode opt_elseif_stat_list() {
 	Pnode p, m;
 	match(ELSEIF);
 	p = m = nonterminalnode(NEXPR);
@@ -490,8 +458,7 @@ Pnode opt_elseif_stat_list()
 	return(p);
 }
 
-Pnode opt_else_stat()
-{
+Pnode opt_else_stat() {
 	Pnode p;
 	match(ELSE);
 	p = nonterminalnode(NSTAT_LIST);
@@ -500,8 +467,7 @@ Pnode opt_else_stat()
 	return(p);
 }
 
-Pnode while_stat()
-{
+Pnode while_stat() {
 	Pnode p;
 	match(WHILE);
 	p = nonterminalnode(NEXPR);
@@ -513,8 +479,7 @@ Pnode while_stat()
 	return(p);
 }
 
-Pnode return_stat()
-{
+Pnode return_stat() {
 	Pnode p;
 	match(RETURN);
 	if(lookahead!=SEMICOLON){
@@ -527,8 +492,7 @@ Pnode return_stat()
 	return(p);
 }
 
-Pnode opt_expr()
-{
+Pnode opt_expr() {
 	Pnode p;
 	if(lookahead==MINUS || lookahead==NOT || lookahead==LBRACE || lookahead==ID || lookahead==CHARCONST || lookahead == INTCONST || lookahead== REALCONST || lookahead==STRCONST || lookahead==BOOLCONST || lookahead==IF || lookahead==CHAR || lookahead==INT || lookahead==REAL || lookahead==STRING || lookahead==BOOL || lookahead==VOID){
 		p = nonterminalnode(NEXPR);
@@ -537,8 +501,7 @@ Pnode opt_expr()
 	return(p);
 }
 
-Pnode read_stat()
-{
+Pnode read_stat() {
 	Pnode p;
 	match(READ);
 	match(LBRACE);
@@ -548,8 +511,7 @@ Pnode read_stat()
 	return(p);
 }
 
-Pnode write_stat()
-{
+Pnode write_stat() {
 	Pnode p;
 	match(WRITE);
 	match(LBRACE);
@@ -560,8 +522,7 @@ Pnode write_stat()
 }
 
 
-Pnode expr_list()
-{
+Pnode expr_list() {
 	Pnode head, p;
 	head = p = nonterminalnode(NEXPR);
 	p->child = expr();
@@ -574,8 +535,7 @@ Pnode expr_list()
 	return(head);
 }
 
-Pnode expr()
-{
+Pnode expr() {
 	Pnode p;
 	p = nonterminalnode(NBOOL_TERM);
 	p->child = bool_term();
@@ -585,9 +545,8 @@ Pnode expr()
 	}
 	return(p);
 }
-
-Pnode expr1()
-{
+	 
+Pnode expr1() {
 	Pnode p;
 	if(lookahead==AND || lookahead==OR){
 		p = nonterminalnode(NBOOLOP);
@@ -596,32 +555,30 @@ Pnode expr1()
 		p->brother->child = bool_term();
 		if(lookahead==AND || lookahead==OR){
 			p->brother->brother = nonterminalnode(NEXPR1);
-			p->brother->brother->child = expr1();
+			p->brother->brother->child = expr1();	
 		}
 	}
 	return(p);
 }
 
-Pnode bool_op()
-{
+Pnode bool_op() {
 	Pnode p;
 	if(lookahead==AND){
 		p = opnode(T_AND);
 		next();
 		return(p);
-	}
+	} 
 	else if (lookahead==OR){
 		p = opnode(T_OR);
 		next();
 		return(p);
-	}
+	} 
 	else{
 		parserror();
 	}
 }
 
-Pnode bool_term()
-{
+Pnode bool_term() {
 	Pnode p;
 	p = nonterminalnode(NREL_TERM);
 	p->child = rel_term();
@@ -634,19 +591,18 @@ Pnode bool_term()
 	return(p);
 }
 
-Pnode rel_op()
-{
+Pnode rel_op() {
 	Pnode p;
 	if(lookahead==LE){
 		p = opnode(T_LE);
 		next();
 		return(p);
-	}
+	} 
 	else if (lookahead==GE){
 		p = opnode(T_GE);
 		next();
 		return(p);
-	}
+	} 
 	else if (lookahead==EQ){
 		p = opnode(T_EQ);
 		next();
@@ -672,8 +628,7 @@ Pnode rel_op()
 	}
 }
 
-Pnode rel_term()
-{
+Pnode rel_term() {
 	Pnode p;
 	p = nonterminalnode(NLOW_TERM);
 	p->child = low_term();
@@ -683,9 +638,8 @@ Pnode rel_term()
 	}
 	return(p);
 }
-
-Pnode rel_term1()
-{
+	 
+Pnode rel_term1() {
 	Pnode p;
 	if(lookahead==PLUS || lookahead==MINUS){
 		p = nonterminalnode(NLOW_BINOP);
@@ -700,26 +654,24 @@ Pnode rel_term1()
 	return(p);
 }
 
-Pnode low_binop()
-{
+Pnode low_binop() {
 	Pnode p;
 	if(lookahead==PLUS){
 		p = opnode(T_PLUS);
 		next();
 		return(p);
-	}
+	} 
 	else if (lookahead==MINUS){
 		p = opnode(T_MINUS);
 		next();
 		return(p);
-	}
+	} 
 	else{
 		parserror();
 	}
 }
 
-Pnode low_term()
-{
+Pnode low_term() {
 	Pnode p;
 	p = nonterminalnode(NFACTOR);
 	p->child = factor();
@@ -730,8 +682,7 @@ Pnode low_term()
 	return(p);
 }
 
-Pnode low_term1()
-{
+Pnode low_term1() {
 	Pnode p;
 	if(lookahead==AST || lookahead==FRAC){
 		p = nonterminalnode(NHIGH_BINOP);
@@ -746,26 +697,24 @@ Pnode low_term1()
 	return(p);
 }
 
-Pnode high_binop()
-{
+Pnode high_binop() {
 	Pnode p;
 	if(lookahead==AST){
 		p = opnode(T_AST);
 		next();
 		return(p);
-	}
+	} 
 	else if (lookahead==FRAC){
 		p = opnode(T_FRAC);
 		next();
 		return(p);
-	}
+	} 
 	else{
 		parserror;
 	}
 }
 
-Pnode factor()
-{
+Pnode factor() {
 	Pnode p, d;
 	if(lookahead==MINUS || lookahead==NOT){
 		p = nonterminalnode(NUNARYOP);
@@ -818,37 +767,35 @@ Pnode factor()
 	}
 }
 
-Pnode unary_op()
-{
+Pnode unary_op() {
 	Pnode p;
 	if(lookahead==MINUS){
 		p = opnode(T_MINUS);
 		next();
 		return(p);
-	}
+	} 
 	else if (lookahead==NOT){
 		p = opnode(T_NOT);
 		next();
 		return(p);
-	}
+	} 
 	else{
 		parserror();
 	}
 }
 
-Pnode constant()
-{
+Pnode constant() {
 	Pnode p;
 	if(lookahead==CHARCONST){
 		p = charconstnode();
 		next();
 		return(p);
-	}
+	} 
 	else if (lookahead==INTCONST){
 		p = intconstnode();
 		next();
 		return(p);
-	}
+	} 
 	else if (lookahead==REALCONST){
 		p = realconstnode();
 		next();
@@ -858,7 +805,7 @@ Pnode constant()
 		p = strconstnode();
 		next();
 		return(p);
-	}
+	} 
 	else if (lookahead==BOOLCONST){
 		p = boolconstnode();
 		next();
@@ -869,8 +816,7 @@ Pnode constant()
 	}
 }
 
-Pnode module_call(Pnode p)
-{
+Pnode module_call(Pnode p) {
 	match(LBRACE);
 	if(lookahead==MINUS || lookahead==NOT || lookahead==LBRACE || lookahead==ID || lookahead==CHARCONST || lookahead == INTCONST || lookahead== REALCONST || lookahead==STRCONST || lookahead==BOOLCONST || lookahead==IF || lookahead==CHAR || lookahead==INT || lookahead==REAL || lookahead==STRING || lookahead==BOOL || lookahead==VOID) {
 		p->brother = nonterminalnode(NOPT_EXPR_LIST);
@@ -880,16 +826,14 @@ Pnode module_call(Pnode p)
 	return(p);
 }
 
-Pnode opt_expr_list()
-{
+Pnode opt_expr_list() {
 	Pnode p;
 	p = nonterminalnode(NEXPR_LIST);
 	p->child = expr_list();
 	return(p);
 }
 
-Pnode cond_expr()
-{
+Pnode cond_expr() {
 	Pnode p, m,d;
 	match(IF);
 	p = m = d = nonterminalnode(NEXPR);
@@ -913,8 +857,7 @@ Pnode cond_expr()
 	return(p);
 }
 
-Pnode opt_elseif_expr_list()
-{
+Pnode opt_elseif_expr_list() {
 	Pnode p;
 	match(ELSEIF);
 	p = nonterminalnode(NEXPR);
@@ -933,12 +876,16 @@ Pnode opt_elseif_expr_list()
 
 
 
-Pnode parse(){
-    yyin = fopen("../prog.tela", "r");
-    yyout = fopen("../yyout", "w");
+Pnode parse() {
+    yyin = fopen(telaFileName, "r");
+//    yyout = fopen("../yyout", "w");
+
 	next();
 	root = nonterminalnode(NPROGRAM);
 	root->child = program();
+
+	fclose(yyin);
+
     return root;
 }
 
