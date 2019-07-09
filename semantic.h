@@ -15,12 +15,18 @@ void semanticControl(PLine, Pnode),
      constantDeclaration(int, char*, Pnode),
      controlFormalPar(Pnode, PLine, PLine*);
 
-char *typeOfExpr(Pnode , PLine* );
+char *typeOfExpr(Pnode , PLine );
 
-char *operationChecking(int, char *, char *);
+char *operationChecking(int, char *, char *),
+     *typeOfModuleCall(Pnode, PLine*),
+     *typeOFConstant(int),
+     *typeOFConditionalExpr(Pnode, PLine),
+     *typeOfElseIfExprList(Pnode , PLine),
+     *unaryOperationChecking(int , char *);
 
-bool  controlOfStatment(Pnode, PLine);
+void  controlOfStatment(Pnode, PLine);
 
 PLine findLineByIdAndClass(char*, char*, PLine*),
-      findLineByIdFromPCV(char* , PLine*);
+      findLineByIdFromPCV(char* , PLine*),
+      findLineByIdFromPV(char* , PLine*);
 #endif

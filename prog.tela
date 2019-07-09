@@ -1,26 +1,24 @@
-module H (p1: int, p2: string): real
+module H (p1: int, p2: string): bool
     var p, y, z: int;
     veroofalso: bool;
-    const MAX:int = 4; a,b: bool = true; RR: char = a;
+    const MAX:int = - 4; a,b: bool = not true; RR: char = a;
 
-    module f1(t: int):int
-        var c:real;
-        k,l:int;
+    module f1(t: int, r: int):bool
+        var c:int;
+        k,l:bool;
     begin f1
-        return ;
+        return k;
     end f1
 
-        module f2(t: real):void
-            var c:real;
-            const P:int=3;
-        begin f2
-            c = 5.7 * 5.5;
-        end f2
-
-
 begin H
-    f1(p);
+
+    p = (z * (z + p) - (y * y) );
+    p1 = z -  z;
+    p = 8;
+    p = if f1(z,z) then y+z elseif (z>p and p>z) then (p) elseif a then p else p end;
+    #p = char ( a);
     veroofalso = a;
-    return a;
+    veroofalso =  a and f1(z,z);
+    return f1(z,z);
 
 end H
