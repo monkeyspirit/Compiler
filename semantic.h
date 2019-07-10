@@ -13,7 +13,7 @@
 void semanticControl(PLine, Pnode),
      moduleNameControl(char*, char*, char*),
      constantDeclaration(int, char*, Pnode),
-     controlFormalPar(Pnode, PLine, PLine*);
+     controlFormalPar(Pnode, PLine);
 
 char *typeOfExpr(Pnode , PLine );
 

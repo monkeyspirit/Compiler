@@ -172,10 +172,19 @@ void controlOfStatment(Pnode stat, PLine moduleLine){
                 break;
             }
             case NIF_STAT:{
+//                printf("%s\n", typeOFConditionalExpr(stat->child->child->child, moduleLine));
                 break;
             }
-            case NWHILE_STAT:{
+            case NWHILE_STAT: {
+                // printf("%d\n", stat->child->child->value.ival);
+                if(strcmp(typeOfExpr(stat->child->child->child, moduleLine), "BOOL")) {
+                    printf("Errore nella condizione del ciclo while, richiesto un BOOL ma trovato un %s\n", typeOfExpr(stat->child->child->child, moduleLine));
+                    exit(-72);
+                }
+                controlOfStatment(stat->child->child->brother->child, moduleLine);
                 break;
+
+
             }
             case NRETURN_STAT: {
 
@@ -195,6 +204,8 @@ void controlOfStatment(Pnode stat, PLine moduleLine){
                         exit(-9);
                     }
                 }
+
+//                typeOfExpr(stat->child->child, moduleLine);
 
                 break;
             }
@@ -289,24 +300,28 @@ void constantDeclaration(int type, char*id, Pnode expr){
 }
 
 
-void controlFormalPar(Pnode stat, PLine rootLine, PLine *bucket){
+void controlFormalPar(Pnode stat, PLine modLine){
     int numPar = 0;
+    char **types;
 
     if(stat->child->child->brother!=NULL){
         Pnode expr =stat->child->child->brother->child->child;
         while(expr!=NULL){
-            numPar++;
+//            numPar++;
+            types[numPar++] = typeOfExpr(expr->child, modLine);
             expr = expr->brother;
         }
     }
+    printf("%d %d\n", modLine->nFormalParams, numPar);
 
-    if(rootLine->nFormalParams!=numPar){
-        printf("Errore: nella chiamata al modulo %s il numero di parametri formali non corrisponde a quello dichiarato",rootLine->id);
+    if(modLine->nFormalParams!=numPar){
+        printf("Errore: nella chiamata al modulo %s il numero di parametri formali non corrisponde a quello dichiarato",modLine->id);
         exit(-6);
     }
 
-    char* types[numPar];
 
+
+/*
     Pnode expr =stat->child->child->brother->child->child;
     int i = 0;
     while(expr!=NULL){
@@ -316,25 +331,27 @@ void controlFormalPar(Pnode stat, PLine rootLine, PLine *bucket){
             type=type->child;
         }
 
-        types[i] = findLineByIdFromPCV(type->value.sval,bucket)->type;
+        types[i] = findLineByIdFromPCV(type->value.sval,modLine->bucket)->type;
         expr = expr->brother;
         i++;
     }
 
     // controllo sui tipi
-    PLine *formal = rootLine->formalParams;
+    PLine *formal = modLine->formalParams;
     PLine params[numPar];
 
+
     for (int j = 0; j <numPar ; ++j) {
-        params[j] = formal[j];
+        originalTypes[j] = modLine->formalParams[j]->type;
+        printf("%s\n", originalTypes[j]);
     }
 
     for(int i=0; i <numPar; i++){
         if(strcmp(types[i], params[i]->type)!=0){
-            printf("Errore: nella chiamata al modulo %s i tipi dei parametri non corrispondono, ci si aspetta un %s invece è un %s\n", rootLine->id, params[i]->type, types[i]);
+            printf("Errore: nella chiamata al modulo %s i tipi dei parametri non corrispondono, ci si aspetta un %s invece è un %s\n", modLine->id, params[i]->type, types[i]);
             exit(-6);
         }
-    }
+    }/**/
 
 }
 
@@ -474,6 +491,8 @@ char* typeOfExpr(Pnode x_term, PLine moduleLine){ //expr punta x_term
                     }
                     case NMODULE_CALL:{
                         typeExpr1 = typeOfModuleCall(x_term->child->child, moduleLine->bucket);
+//                        printf("%s\n", moduleLine->id);
+//                        controlFormalPar(x_term->child, moduleLine);
                         break;
                     }
                     case NEXPR:{
