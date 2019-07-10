@@ -8,7 +8,8 @@
 #define BUCKET_SIZE 20
 
 typedef struct structLine{
-    char *id, *class, *type;
+    char *id, *class;
+    char *type;
     int oid;
 
     struct structLine *bucket[BUCKET_SIZE]; // AMBIENTE

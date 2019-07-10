@@ -176,12 +176,12 @@ void controlOfStatment(Pnode stat, PLine moduleLine){
                 break;
             }
             case NWHILE_STAT: {
-                // printf("%d\n", stat->child->child->value.ival);
-                if(strcmp(typeOfExpr(stat->child->child->child, moduleLine), "BOOL")) {
-                    printf("Errore nella condizione del ciclo while, richiesto un BOOL ma trovato un %s\n", typeOfExpr(stat->child->child->child, moduleLine));
-                    exit(-72);
-                }
-                controlOfStatment(stat->child->child->brother->child, moduleLine);
+//                // printf("%d\n", stat->child->child->value.ival);
+//                if(strcmp(typeOfExpr(stat->child->child->child, moduleLine), "BOOL")) {
+//                    printf("Errore nella condizione del ciclo while, richiesto un BOOL ma trovato un %s\n", typeOfExpr(stat->child->child->child, moduleLine));
+//                    exit(-72);
+//                }
+//                controlOfStatment(stat->child->child->brother->child, moduleLine);
                 break;
 
 
@@ -300,58 +300,58 @@ void constantDeclaration(int type, char*id, Pnode expr){
 }
 
 
-void controlFormalPar(Pnode stat, PLine modLine){
+void controlFormalPar(Pnode expr, PLine modLine, PLine *bucket){
     int numPar = 0;
-    char **types;
 
-    if(stat->child->child->brother!=NULL){
-        Pnode expr =stat->child->child->brother->child->child;
-        while(expr!=NULL){
-//            numPar++;
-            types[numPar++] = typeOfExpr(expr->child, modLine);
-            expr = expr->brother;
-        }
+    Pnode exprType = expr;
+
+    while(expr!=NULL){
+        numPar++;
+        expr = expr->brother;
     }
-    printf("%d %d\n", modLine->nFormalParams, numPar);
+
+//    printf("Id: %s numPar: %d\n", modLine->id, modLine->nFormalParams);
+//
+//    printf("%d %d\n", modLine->nFormalParams, numPar);
 
     if(modLine->nFormalParams!=numPar){
         printf("Errore: nella chiamata al modulo %s il numero di parametri formali non corrisponde a quello dichiarato",modLine->id);
         exit(-6);
     }
 
+    char *types[numPar]; //qui ci sono i tipi dei parametri con cui si chiama
 
-
-/*
-    Pnode expr =stat->child->child->brother->child->child;
     int i = 0;
-    while(expr!=NULL){
-        Pnode type = expr;
+    while(exprType!=NULL){
+        Pnode type = exprType;
 
         while(type->child!=NULL){
             type=type->child;
         }
 
-        types[i] = findLineByIdFromPCV(type->value.sval,modLine->bucket)->type;
-        expr = expr->brother;
+        types[i] = findLineByIdFromPCV(type->value.sval,bucket)->type;
+        exprType = exprType->brother;
         i++;
     }
 
     // controllo sui tipi
     PLine *formal = modLine->formalParams;
-    PLine params[numPar];
+    char *params[numPar];
 
 
     for (int j = 0; j <numPar ; ++j) {
-        originalTypes[j] = modLine->formalParams[j]->type;
-        printf("%s\n", originalTypes[j]);
+        params[j] = formal[j]->type;
     }
 
-    for(int i=0; i <numPar; i++){
-        if(strcmp(types[i], params[i]->type)!=0){
-            printf("Errore: nella chiamata al modulo %s i tipi dei parametri non corrispondono, ci si aspetta un %s invece è un %s\n", modLine->id, params[i]->type, types[i]);
+    for(int m=0; m <numPar; m++){
+
+//        printf("[%d] at:%s fo:%s\n", m, types[m], params[m]);
+        if(strcmp(types[m], params[m])!=0){
+//            printf("Errore [%d]\n", m);
+            printf("Errore: nella chiamata al modulo %s i tipi dei parametri non corrispondono, ci si aspetta un %s invece è un %s\n", modLine->id, params[m], types[m]);
             exit(-6);
         }
-    }/**/
+    }
 
 }
 
@@ -491,8 +491,7 @@ char* typeOfExpr(Pnode x_term, PLine moduleLine){ //expr punta x_term
                     }
                     case NMODULE_CALL:{
                         typeExpr1 = typeOfModuleCall(x_term->child->child, moduleLine->bucket);
-//                        printf("%s\n", moduleLine->id);
-//                        controlFormalPar(x_term->child, moduleLine);
+                        controlFormalPar(x_term->child->child->child->brother->child->child, findLineByIdAndClass(x_term->child->child->child->value.sval, "MOD", moduleLine->bucket),moduleLine->bucket);
                         break;
                     }
                     case NEXPR:{
