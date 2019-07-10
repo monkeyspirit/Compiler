@@ -199,11 +199,11 @@ void controlOfStatment(Pnode stat, PLine moduleLine){
             }
             case NWHILE_STAT: {
 //                // printf("%d\n", stat->child->child->value.ival);
-//                if(strcmp(typeOfExpr(stat->child->child->child, moduleLine), "BOOL")) {
-//                    printf("Errore nella condizione del ciclo while, richiesto un BOOL ma trovato un %s\n", typeOfExpr(stat->child->child->child, moduleLine));
-//                    exit(-72);
-//                }
-//                controlOfStatment(stat->child->child->brother->child, moduleLine);
+                if(strcmp(typeOfExpr(stat->child->child->child, moduleLine), "BOOL")) {
+                    printf("Errore nella condizione del ciclo while, richiesto un BOOL ma trovato un %s\n", typeOfExpr(stat->child->child->child, moduleLine));
+                    exit(-72);
+                }
+                controlOfStatment(stat->child->child->brother->child, moduleLine);
                 break;
 
 

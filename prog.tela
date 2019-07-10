@@ -26,6 +26,11 @@ begin H
         p=8;
         veroofalso =  a and f1(z,a);
     end;
+
+    while (a) do
+        p=8;
+        veroofalso =  a and f1(z,a);
+    end;
     #p = int (xx);
     #veroofalso = a;
     #veroofalso =  a and f1(z,a);
