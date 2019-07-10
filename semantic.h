@@ -24,7 +24,9 @@ char *operationChecking(int, char *, char *),
      *typeOfElseIfExprList(Pnode , PLine),
      *unaryOperationChecking(int , char *);
 
-void  controlOfStatment(Pnode, PLine);
+void  controlOfStatment(Pnode, PLine),
+      controlOptElseIfStatList(Pnode, PLine),
+      controlOptElseStat(Pnode, PLine);
 
 PLine findLineByIdAndClass(char*, char*, PLine*),
       findLineByIdFromPCV(char* , PLine*),

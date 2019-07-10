@@ -87,7 +87,7 @@ void semanticControl(PLine rootLine, Pnode root){
     // -------- Controlli ----------
     moduleNameControl(iterNode->child->value.sval, iterNode->child->brother->brother->value.sval, idMod);
 
-    controlOfStatment(iterNode->child->brother->child, rootLine);
+    controlOfStatment(iterNode->child->brother->child, rootLine); //Gli passo il primo stat
 
 
 }
@@ -172,7 +172,29 @@ void controlOfStatment(Pnode stat, PLine moduleLine){
                 break;
             }
             case NIF_STAT:{
-//                printf("%s\n", typeOFConditionalExpr(stat->child->child->child, moduleLine));
+                Pnode ifStat = stat->child;
+                char *type = typeOfExpr(ifStat->child->child, moduleLine);
+                if(strcmp(type, "BOOL")!=0){
+                    printf("Errore nell'If Stat nel corpo del modulo %s: richiesto un BOOL invece è presente %s\n", moduleLine->id, type);
+                    exit(-9);
+                }
+
+
+                Pnode statList = ifStat->child->brother;
+                controlOfStatment(statList->child, moduleLine);
+
+                if(statList->brother!=NULL &&  statList->brother->value.ival==NOPT_ELSEIF_STAT_LIST){
+                    controlOptElseIfStatList(statList->brother, moduleLine);
+                    statList=statList->brother;
+                }
+
+
+                if(statList->brother!=NULL && statList->brother->value.ival==NOPT_ELSE_STAT){
+
+                    controlOptElseStat(statList->brother, moduleLine);
+                }
+
+
                 break;
             }
             case NWHILE_STAT: {
@@ -298,7 +320,6 @@ void constantDeclaration(int type, char*id, Pnode expr){
     }
 
 }
-
 
 void controlFormalPar(Pnode expr, PLine modLine, PLine *bucket){
     int numPar = 0;
@@ -468,123 +489,121 @@ char* typeOfElseIfExprList(Pnode optExpr, PLine moduleLine){
     }
 }
 
-
 char* typeOfExpr(Pnode x_term, PLine moduleLine){ //expr punta x_term
 
     char *typeExpr1, *typeExpr2;
     int typeOp;
 
+    while(x_term!=NULL) {
 
+        if (x_term->child != NULL) {
+            if (x_term->child->value.ival == NFACTOR) {
+                if (x_term->child->child->type == 11) {
+                    typeExpr1 = typeOfExpr(x_term->child, moduleLine);
+                } else {
+                    switch (x_term->child->child->value.ival) {
+                        case NUNARYOP: {
+                            int unaryOp = x_term->child->child->child->type;
+                            typeExpr1 = typeOfExpr(x_term->child->child->brother, moduleLine);
+                            return unaryOperationChecking(unaryOp, typeExpr1);
 
-    if(x_term->child!=NULL ){
-        if(x_term->child->value.ival==NFACTOR){
-            if(x_term->child->child->type==11){
-                typeExpr1 = typeOfExpr(x_term->child, moduleLine);
-            }
-            else{
-                switch (x_term->child->child->value.ival){
-                    case NUNARYOP:{
-                        int unaryOp =  x_term->child->child->child->type;
-                        typeExpr1 = typeOfExpr(x_term->child->child->brother, moduleLine);
-                        return unaryOperationChecking(unaryOp, typeExpr1);
-
-                    }
-                    case NMODULE_CALL:{
-                        typeExpr1 = typeOfModuleCall(x_term->child->child, moduleLine->bucket);
-                        controlFormalPar(x_term->child->child->child->brother->child->child, findLineByIdAndClass(x_term->child->child->child->value.sval, "MOD", moduleLine->bucket),moduleLine->bucket);
-                        break;
-                    }
-                    case NEXPR:{
-                        typeExpr1 = typeOfExpr(x_term->child->child, moduleLine);
-                        break;
-                    }
-                    case NCONSTANT:{
-                        typeExpr1 = typeOFConstant(x_term->child->child->child->type);
-                        break;
-                    }
-                    case NCOND_EXPR:{
+                        }
+                        case NMODULE_CALL: {
+                            typeExpr1 = typeOfModuleCall(x_term->child->child, moduleLine->bucket);
+                            controlFormalPar(x_term->child->child->child->brother->child->child,
+                                             findLineByIdAndClass(x_term->child->child->child->value.sval, "MOD",
+                                                                  moduleLine->bucket), moduleLine->bucket);
+                            break;
+                        }
+                        case NEXPR: {
+                            typeExpr1 = typeOfExpr(x_term->child->child, moduleLine);
+                            break;
+                        }
+                        case NCONSTANT: {
+                            typeExpr1 = typeOFConstant(x_term->child->child->child->type);
+                            break;
+                        }
+                        case NCOND_EXPR: {
 //                        printf("Typenode: %d\n", x_term->child->child->child->value.ival);
 
-                        typeExpr1 = typeOFConditionalExpr(x_term->child->child->child, moduleLine);
-                        break;
-                    }
-                    case NTYPE:{
+                            typeExpr1 = typeOFConditionalExpr(x_term->child->child->child, moduleLine);
+                            break;
+                        }
+                        case NTYPE: {
 //                        typeExpr1 = typeOfModuleCall(x_term->child->child, moduleLine->bucket);
 //                        printf("Cast?\n");
-                        if(x_term->child->child->child->type == 2) {
-                            if(strcmp(typeOfExpr(x_term->child->child->brother, moduleLine), "INT")){
-                                printf("Errore nel casting a REAL, ci si aspetta un INT invece è un %s\n", typeOfExpr(x_term->child->child->brother, moduleLine));
+                            if (x_term->child->child->child->type == 2) {
+                                if (strcmp(typeOfExpr(x_term->child->child->brother, moduleLine), "INT")) {
+                                    printf("Errore nel casting a REAL, ci si aspetta un INT invece è un %s\n",
+                                           typeOfExpr(x_term->child->child->brother, moduleLine));
+                                    exit(-3103);
+                                }
+                                return "REAL";
+                            } else if (x_term->child->child->child->type == 1) {
+                                if (strcmp(typeOfExpr(x_term->child->child->brother, moduleLine), "REAL")) {
+                                    printf("Errore nel casting a INT, ci si aspetta un REAL invece è un %s\n",
+                                           typeOfExpr(x_term->child->child->brother, moduleLine));
+                                    exit(-3103);
+                                }
+                                return "INT";
+                            } else {
+                                printf("errore nel casting, operazione non definita\n");
                                 exit(-3103);
                             }
-                            return "REAL";
-                        } else if (x_term->child->child->child->type == 1) {
-                            if(strcmp(typeOfExpr(x_term->child->child->brother, moduleLine), "REAL")){
-                                printf("Errore nel casting a INT, ci si aspetta un REAL invece è un %s\n", typeOfExpr(x_term->child->child->brother, moduleLine));
-                                exit(-3103);
-                            }
-                            return "INT";
-                        } else {
-                            printf("errore nel casting, operazione non definita\n");
-                            exit(-3103);
-                        }
 
-                        break;
+                            break;
+                        }
                     }
                 }
-            }
-        }
-        else{
-            typeExpr1 = typeOfExpr(x_term->child, moduleLine);
+            } else {
+                typeExpr1 = typeOfExpr(x_term->child, moduleLine);
 //            printf("Type: %s\n",typeExpr1);
 
-        }
-    }
-    else{
-        if(x_term->type==11  ){
-//            printf("Id: %s Type: %s\n",x_term->value.sval, findLineByIdFromPCV(x_term->value.sval, moduleLine->bucket)->type);
-            return findLineByIdFromPCV(x_term->value.sval, moduleLine->bucket)->type;
-        }
-        else if(x_term->type==10 || x_term->type==9 || x_term->type==8 || x_term->type==7 || x_term->type==6){
-            switch (x_term->type){
-                case 6:
-                    return   "CHAR";
-                    break;
-                case 7:
-                    return  "INT";
-                    break;
-                case 8:
-                    return  "REAL";
-                    break;
-                case 9:
-                    return  "STRING";
-                    break;
-                case 10:
-                    return  "BOOL";
-                    break;
             }
+        } else {
+            if (x_term->type == 11) {
+//            printf("Id: %s Type: %s\n",x_term->value.sval, findLineByIdFromPCV(x_term->value.sval, moduleLine->bucket)->type);
+                return findLineByIdFromPCV(x_term->value.sval, moduleLine->bucket)->type;
+            } else if (x_term->type == 10 || x_term->type == 9 || x_term->type == 8 || x_term->type == 7 ||
+                       x_term->type == 6) {
+                switch (x_term->type) {
+                    case 6:
+                        return "CHAR";
+                        break;
+                    case 7:
+                        return "INT";
+                        break;
+                    case 8:
+                        return "REAL";
+                        break;
+                    case 9:
+                        return "STRING";
+                        break;
+                    case 10:
+                        return "BOOL";
+                        break;
+                }
+            }
+
         }
 
-    }
+        if (x_term->brother != NULL) {
 
-    if(x_term->brother!=NULL){
+            if (x_term->value.ival == 32) {//rel term è diverso per costruzione
+                typeExpr2 = typeOfExpr(x_term->brother->brother, moduleLine);
+                typeOp = x_term->brother->child->type;
+            } else {
+                typeExpr2 = typeOfExpr(x_term->brother->child->brother, moduleLine);
+                typeOp = x_term->brother->child->child->type;
+            }
 
-        if(x_term->value.ival==32){//rel term è diverso per costruzione
-            typeExpr2 = typeOfExpr(x_term->brother->brother, moduleLine);
-            typeOp = x_term->brother->child->type;
+
+            return operationChecking(typeOp, typeExpr1, typeExpr2);
+
+        } else {
+            return typeExpr1;
         }
-        else{
-            typeExpr2 = typeOfExpr(x_term->brother->child->brother, moduleLine);
-            typeOp = x_term->brother->child->child->type;
-        }
-
-
-        return operationChecking(typeOp, typeExpr1, typeExpr2);
-
     }
-    else{
-        return typeExpr1;
-    }
-
 
 }
 
@@ -641,5 +660,30 @@ char* operationChecking(int op, char *typeExpr1, char *typeExpr2){
             }
 
     }
+
+}
+
+void controlOptElseIfStatList(Pnode opt_elseif_statList, PLine moduleLine){
+    Pnode expr = opt_elseif_statList->child;
+    char *type = typeOfExpr(expr->child, moduleLine);
+
+    if(strcmp(type, "BOOL")!=0){
+        printf("Errore nell'If Stat nel corpo del modulo %s: richiesto un BOOL invece è presente %s\n", moduleLine->id, type);
+        exit(-9);
+    }
+
+    Pnode statList = expr->brother;
+    controlOfStatment(statList->child, moduleLine);
+
+    if(statList->brother!=NULL && statList->brother->value.ival==NOPT_ELSEIF_STAT_LIST){
+        controlOptElseIfStatList(statList->brother, moduleLine);
+    }
+
+}
+
+void controlOptElseStat(Pnode opt_else_stat, PLine moduleLine){
+
+    Pnode statList = opt_else_stat->child;
+    controlOfStatment(statList->child, moduleLine);
 
 }
