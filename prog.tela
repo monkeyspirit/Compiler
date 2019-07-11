@@ -1,7 +1,7 @@
 module H (p1: int, p2: string): bool
     var p, y, z: int; xx: real;
     veroofalso: bool;
-    const MAX:int = - 4; a,b: bool = not true; RR: char = a;
+    const MAX:int = -4; a,b: bool = not true; RR: char = 'a';
 
     module f1(t: int, p:bool):bool
         var c:int;

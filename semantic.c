@@ -101,6 +101,8 @@ char* checkOperationAndGetType(int op, char *typeExpr1, char *typeExpr2){
                 printf("Errore nell'espressione relazionale: richiesti tipi uguali o INT o REAL, invece sono inseriti un %s e un %s\n", typeExpr1, typeExpr2);
                 exit(-8);
             }
+        default:
+            return NULL;
 
     }
 
@@ -267,12 +269,13 @@ void statListControl(Pnode firstStatNode, PLine fatherModuleLine){
                 Pnode statList = ifStat->child->brother;
                 statListControl(statList->child, fatherModuleLine);
 
-                if(statList->brother!=NULL)
-                    if(statList->brother->value.ival==NOPT_ELSEIF_STAT_LIST){
+                if(statList->brother!=NULL) {
+                    if (statList->brother->value.ival == NOPT_ELSEIF_STAT_LIST) {
                         optElseIfStatListControl(statList->brother, fatherModuleLine);
-                        statList=statList->brother;
-                    } else if(statList->brother->value.ival==NOPT_ELSE_STAT)
+//                        statList = statList->brother;
+                    } else if (statList->brother->value.ival == NOPT_ELSE_STAT)
                         statListControl(statList->brother->child->child, fatherModuleLine);
+                }
             }
                 break;
 
@@ -466,7 +469,7 @@ char* getOptElseIfExprType(Pnode optExpr, PLine fatherModuleLine){
 
         char *typeExprThen = getExprType(optExpr->brother->child, fatherModuleLine);
 
-        char* typeExprOpt;
+        char* typeExprOpt=NULL;
 
         if(optExpr->brother->brother!=NULL && optExpr->brother->brother->value.ival==NOPT_ELSEIF_EXPR_LIST){
             typeExprOpt = getOptElseIfExprType(optExpr->brother->brother->child, fatherModuleLine);
@@ -504,7 +507,7 @@ char* getCondExprType(Pnode condition, PLine fatherModuleLine){
 
         char *typeExprThen = getExprType(condition->brother->child, fatherModuleLine);
 
-        char* typeExprOpt;
+        char* typeExprOpt=NULL;
 
 
         if(condition->brother->brother->value.ival==NOPT_ELSEIF_EXPR_LIST){
