@@ -18,7 +18,7 @@ void tCodeGenerator(PLine pLine, Pnode pNode);
 PLine wholeSymbolTable;
 
 // metodi per gestire il buffer
-/*
+
 void bufferWrite(char *lineToWrite){
     buffer = realloc(buffer, sizeof(char*) * (currentBufferSize+1)); // rialloco la memoria
     buffer[currentBufferSize++] = lineToWrite; // aggiungo la rica
@@ -36,20 +36,21 @@ void bprintf(char *s, ...){
 void flush(){
     out = fopen("../tCode.out", "w");
     for (int i = 0; i < currentBufferSize; ++i)
-        fprintf( out, "%s\n", buffer[i]);
+        fprintf( out, "%s", buffer[i]);
     fclose(out);
 }
-*/
+
 void tCode(PLine rootLine, Pnode root){
-    out = fopen("../tCode.out", "w");
+//    out = fopen("../tCode.out", "w");
     wholeSymbolTable = rootLine;
-//    fprintf(out, "TCODE %d", );
+//    bprintf( "TCODE %d", );
     tCodeGenerator(rootLine, root);
+    flush();
 }
 
 void tCodeGenerator(PLine rootLine, Pnode root){
 
-    fprintf(out, "MOD %d\n", rootLine->oid);
+    bprintf( "MOD %d\n", rootLine->oid);
 
 //    if(rootLine!=wholeSymbolTable){
 //        printf("Id: %s Father: %s\n", rootLine->id, getFather(rootLine, wholeSymbolTable)->id);
@@ -177,7 +178,7 @@ void codeStatment(Pnode stat, PLine moduleLine){
                 PLine id = findLineById(assignStat->child->value.sval, moduleLine);
                 // ↑↑↑↑↑↑ forse bisogna controllare che siano esclusivamente PAR o VAR ↑↑↑↑↑↑
                 instTypeOfExpr(assignStat->child->brother->child, moduleLine);
-                fprintf(out, "STO %d %d\n",getLevelModule(id, moduleLine)==-1?0:getLevelModule(id, moduleLine), id->oid);
+                bprintf( "STO %d %d\n",getLevelModule(id, moduleLine)==-1?0:getLevelModule(id, moduleLine), id->oid);
                 break;
             }
             case NIF_STAT:{
@@ -235,27 +236,27 @@ void codeStatment(Pnode stat, PLine moduleLine){
 
 void newTcode(int type){
 
-    fprintf( out, "NEW ");
+    bprintf( "NEW ");
 
     switch (type){
         case T_INT:{
-            fprintf( out, "|int|\n");
+            bprintf( "|int|\n");
             break;
         }
         case T_REAL:{
-            fprintf( out, "|float|\n");
+            bprintf( "|float|\n");
             break;
         }
         case T_BOOL:{
-            fprintf(out , "|int|\n");
+            bprintf( "|int|\n");
             break;
         }
         case T_CHAR:{
-            fprintf( out, "|char|\n");
+            bprintf( "|char|\n");
             break;
         }
         case T_STRING:{
-            fprintf(out, "|string|\n");
+            bprintf( "|string|\n");
             break;
         }
     }
@@ -278,32 +279,32 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
             switch (x_term->type) {
                 case 6: {
                     //char const
-                    fprintf(out, "LDC %s\n", x_term->value.sval);
+                    bprintf( "LDC %s\n", x_term->value.sval);
                     break;
                 }
                 case 7: {
                     //int const
-                    fprintf(out, "LDI %d\n", x_term->value.ival);
+                    bprintf( "LDI %d\n", x_term->value.ival);
                     break;
                 }
                 case 8: {
                     //real const
-                    fprintf(out, "LDR %f\n", x_term->value.rval);
+                    bprintf( "LDR %f\n", x_term->value.rval);
                     break;
                 }
                 case 9: {
                     //string const
-                    fprintf(out, "LDS %s\n", x_term->value.sval);
+                    bprintf( "LDS %s\n", x_term->value.sval);
                     break;
                 }
                 case 10: {
                     //bool const
-                    fprintf(out, "LDI %d\n", x_term->value.ival);
+                    bprintf( "LDI %d\n", x_term->value.ival);
                     break;
                 }
                 case 11: {
                     PLine id = findLineById(x_term->value.sval, moduleLine);
-                    fprintf(out, "LOD %d %d\n", getLevelModule(id, moduleLine)==-1?0:getLevelModule(id, moduleLine),id->oid);
+                    bprintf( "LOD %d %d\n", getLevelModule(id, moduleLine)==-1?0:getLevelModule(id, moduleLine),id->oid);
                     break;
                 }
             }
@@ -320,16 +321,16 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
                             instTypeOfExpr(x_term->child->child->brother, moduleLine);
                             switch (unaryOP) {
                                 case 1: { //int
-                                    fprintf(out, "IUMI\n");
+                                    bprintf( "IUMI\n");
                                     break;
                                 }
                                 case 2: { //real
-                                    fprintf(out, "RUMI\n");
+                                    bprintf( "RUMI\n");
 
                                     break;
                                 }
                                 case 3: { //bool
-                                    fprintf(out, "LNEG\n");
+                                    bprintf( "LNEG\n");
 
                                     break;
                                 }
@@ -350,7 +351,7 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
 //                                printf("Genitore\n");
 //                            }
                             printf("Gap: %d tra chiamato: %s e chiamante: %s\n", getGapModuleAmbient(moduleLine, moduleCalled), moduleCalled->id, moduleLine->id);
-                            fprintf(out, "PUSH %d -oggetti- %d\n\t GOTO %d\nPOP\n", moduleCalled->nFormalParams, getGapModuleAmbient(moduleLine, moduleCalled),
+                            bprintf( "PUSH %d -oggetti- %d\n\t GOTO %d\nPOP\n", moduleCalled->nFormalParams, getGapModuleAmbient(moduleLine, moduleCalled),
                                     moduleCalled->oid);
                             break;
                         }
@@ -404,16 +405,16 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
                             instTypeOfExpr(x_term->child->child->brother, moduleLine);
                             switch (unaryOP) {
                                 case 1: { //int
-                                    fprintf(out, "IUMI\n");
+                                    bprintf( "IUMI\n");
                                     break;
                                 }
                                 case 2: { //real
-                                    fprintf(out, "RUMI\n");
+                                    bprintf( "RUMI\n");
 
                                     break;
                                 }
                                 case 3: { //bool
-                                    fprintf(out, "LNEG\n");
+                                    bprintf( "LNEG\n");
 
                                     break;
                                 }
@@ -435,7 +436,7 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
 //                                printf("Genitore\n");
 //                            }
                             printf("Gap: %d tra chiamato: %s e chiamante: %s\n", getGapModuleAmbient(moduleLine, moduleCalled), moduleCalled->id, moduleLine->id);
-                            fprintf(out, "PUSH %d -oggetti- %d\n\t GOTO %d\nPOP\n", moduleCalled->nFormalParams, getGapModuleAmbient(moduleLine, moduleCalled),
+                            bprintf( "PUSH %d -oggetti- %d\n\t GOTO %d\nPOP\n", moduleCalled->nFormalParams, getGapModuleAmbient(moduleLine, moduleCalled),
                                     moduleCalled->oid);
                             break;
                         }
@@ -464,32 +465,32 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
             switch (x_term->type) {
                 case 6: {
 //char const
-                    fprintf(out, "LDC %s\n", x_term->value.sval);
+                    bprintf( "LDC %s\n", x_term->value.sval);
 
                     break;
                 }
                 case 7: {
 //int const
-                    fprintf(out, "LDI %d\n", x_term->value.ival);
+                    bprintf( "LDI %d\n", x_term->value.ival);
 
                     unaryOP = 1;
                     break;
                 }
                 case 8: {
 //real const
-                    fprintf(out, "LDR %f\n", x_term->value.rval);
+                    bprintf( "LDR %f\n", x_term->value.rval);
 
                     unaryOP = 2;
                     break;
                 }
                 case 9: {
 //string const
-                    fprintf(out, "LDS %s\n", x_term->value.sval);
+                    bprintf( "LDS %s\n", x_term->value.sval);
                     break;
                 }
                 case 10: {
 //bool const
-                    fprintf(out, "LDI %d\n", x_term->value.ival);
+                    bprintf( "LDI %d\n", x_term->value.ival);
 
                     unaryOP = 3;
                     break;
@@ -498,7 +499,7 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
                     PLine id = findLineById(x_term->value.sval, moduleLine);
 
 //faccio riferimento a quello che ho già caricato
-                    fprintf(out, "LOD %d %d\n", getLevelModule(id, moduleLine)==-1?0:getLevelModule(id, moduleLine),id->oid);
+                    bprintf( "LOD %d %d\n", getLevelModule(id, moduleLine)==-1?0:getLevelModule(id, moduleLine),id->oid);
                     break;
                 }
             }
@@ -563,19 +564,19 @@ void mathOperation(Pnode term, int type,  PLine moduleLine, char* typeExpr){
 
         switch (type){
             case 13 :{ // *
-                fprintf(out, "IMUL\n");
+                bprintf( "IMUL\n");
                 break;
             }
             case 14:{  // /
-                fprintf(out, "IDIV\n");
+                bprintf( "IDIV\n");
                 break;
             }
             case 15: { // -
-                fprintf(out, "ISUB\n");
+                bprintf( "ISUB\n");
                 break;
             }
             case 16: { // +
-                fprintf(out, "IADD\n");
+                bprintf( "IADD\n");
                 break;
 
             }
@@ -585,19 +586,19 @@ void mathOperation(Pnode term, int type,  PLine moduleLine, char* typeExpr){
         instTypeOfExpr(term, moduleLine);
         switch (type){
             case 13 :{ // *
-                fprintf(out, "RMUL\n");
+                bprintf( "RMUL\n");
                 break;
             }
             case 14:{  // /
-                fprintf(out, "RDIV\n");
+                bprintf( "RDIV\n");
                 break;
             }
             case 15: { // -
-                fprintf(out, "RSUB\n");
+                bprintf( "RSUB\n");
                 break;
             }
             case 16: { // +
-                fprintf(out, "RADD\n");
+                bprintf( "RADD\n");
                 break;
 
             }
@@ -625,12 +626,12 @@ void equalNotEqual(Pnode term,int type,PLine moduleLine){
     switch (type){
         case 22:{ //==
             instTypeOfExpr(term, moduleLine);
-            fprintf(out, "EQU\n");
+            bprintf( "EQU\n");
             break;
         }
         case 23:{ //!=
             instTypeOfExpr(term, moduleLine);
-            fprintf(out, "NEQ\n");
+            bprintf( "NEQ\n");
             break;
         }
     }
@@ -643,19 +644,19 @@ void relationOp(Pnode term, int type, PLine moduleLine, char* typeExpr){
 
         switch (type){
             case 18 :{ //<=
-                fprintf(out, "ILE\n");
+                bprintf( "ILE\n");
                 break;
             }
             case 19:{  //>=
-                fprintf(out, "IGE\n");
+                bprintf( "IGE\n");
                 break;
             }
             case 20: { //<
-                fprintf(out, "ILT\n");
+                bprintf( "ILT\n");
                 break;
             }
             case 21: { //>
-                fprintf(out, "IGT\n");
+                bprintf( "IGT\n");
                 break;
 
             }
@@ -665,19 +666,19 @@ void relationOp(Pnode term, int type, PLine moduleLine, char* typeExpr){
         instTypeOfExpr(term, moduleLine);
         switch (type){
             case 18 :{ //<=
-                fprintf(out, "CLE\n");
+                bprintf( "CLE\n");
                 break;
             }
             case 19:{  //>=
-                fprintf(out, "CGE\n");
+                bprintf( "CGE\n");
                 break;
             }
             case 20: { //<
-                fprintf(out, "CLT\n");
+                bprintf( "CLT\n");
                 break;
             }
             case 21: { //>
-                fprintf(out, "CGT\n");
+                bprintf( "CGT\n");
                 break;
 
             }
@@ -687,20 +688,20 @@ void relationOp(Pnode term, int type, PLine moduleLine, char* typeExpr){
         instTypeOfExpr(term, moduleLine);
         switch (type){
             case 18 :{ //<=
-                fprintf(out, "RLE\n");
+                bprintf( "RLE\n");
 
                 break;
             }
             case 19:{  //>=
-                fprintf(out, "RGE\n");
+                bprintf( "RGE\n");
                 break;
             }
             case 20: { //<
-                fprintf(out, "RLT\n");
+                bprintf( "RLT\n");
                 break;
             }
             case 21: { //>
-                fprintf(out, "RGT\n");
+                bprintf( "RGT\n");
                 break;
 
             }
@@ -710,19 +711,19 @@ void relationOp(Pnode term, int type, PLine moduleLine, char* typeExpr){
         instTypeOfExpr(term, moduleLine);
         switch (type){
             case 18 :{ //<=
-                fprintf(out, "SLE\n");
+                bprintf( "SLE\n");
                 break;
             }
             case 19:{  //>=
-                fprintf(out, "SGE\n");
+                bprintf( "SGE\n");
                 break;
             }
             case 20: { //<
-                fprintf(out, "SLT\n");
+                bprintf( "SLT\n");
                 break;
             }
             case 21: { //>
-                fprintf(out, "SGT\n");
+                bprintf( "SGT\n");
                 break;
 
             }
@@ -739,10 +740,10 @@ void logicOperation(Pnode term, int type, PLine moduleLine){
             int offset = 2 + numberOfLinesExpr(term->child);
             //il +2 include le due righe stampate del JMP e LDI
 
-            fprintf(out, "JMF %d\n", offset);
+            bprintf( "JMF %d\n", offset);
             instTypeOfExpr(term->child, moduleLine);
-            fprintf(out,"JMP 2\n");
-            fprintf(out, "LDI 0\n");
+            bprintf("JMP 2\n");
+            bprintf( "LDI 0\n");
 
 
 
@@ -751,9 +752,9 @@ void logicOperation(Pnode term, int type, PLine moduleLine){
         case 25:{ //OR
             int exit = 1 + numberOfLinesExpr(term);
             //il +1 fa andare dopo l'ultima riga dell'ultima espressione
-            fprintf(out, "JMF 3\n");
-            fprintf(out, "LDI 1\n");
-            fprintf(out,"JMP %d\n", exit);
+            bprintf( "JMF 3\n");
+            bprintf( "LDI 1\n");
+            bprintf("JMP %d\n", exit);
             instTypeOfExpr(term, moduleLine);
 
 
@@ -774,7 +775,7 @@ void generateCodeOFConditionalExpr(Pnode condition, PLine moduleLine){
 
     int next = 2 + numberOfLinesExpr(thenNode);
 
-    fprintf(out, "JMF %d\n", next);
+    bprintf( "JMF %d\n", next);
     instTypeOfExpr(thenNode, moduleLine);
 
     if(condition->brother->brother->value.ival==NOPT_ELSEIF_EXPR_LIST){
@@ -787,7 +788,7 @@ void generateCodeOFConditionalExpr(Pnode condition, PLine moduleLine){
     Pnode elseNode = condition->brother->brother;
 
     int exit = 1 + numberOfLinesExpr(elseNode->child);
-    fprintf(out,"JMP %d\n", exit);
+    bprintf("JMP %d\n", exit);
     instTypeOfExpr(elseNode, moduleLine);
 
 }
