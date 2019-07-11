@@ -1,0 +1,15 @@
+module main (p1: int, p2: string): int
+    var hello: string;
+
+    module sayHello(): string
+    begin sayHello
+        return "Hello";
+    end sayHello
+
+begin main
+
+    hello = sayHello();
+    write(hello);
+    return 1;
+
+end main

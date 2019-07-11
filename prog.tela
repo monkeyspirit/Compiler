@@ -1,13 +1,14 @@
 module H (p1: int, p2: string): bool
     var p, y, z: int; xx: real;
     veroofalso: bool;
-    const MAX:int = -4; a,b: bool = not true; RR: char = 'a';
+    msg: string;
+    const MAX:int =4; a: bool = false and (false>true or false < true) ; RR: char = 'a';
 
-    module f1(t: int, p:bool):bool
+    module f1(t: int, p:bool):int
         var c:int;
         k,l:bool;
     begin f1
-        return k;
+        return MAX;
     end f1
 
 begin H
@@ -16,24 +17,24 @@ begin H
     #p1 = z -  z;
     #p = 8;
     if a then
-        p=z;
-        veroofalso =  a and f1(z,a);
+        p= f1(p, H(p,msg));
+        veroofalso =  a and false;
         if a then
             p=8;
         end;
     else
         p=8;
         p=8;
-        veroofalso =  a and f1(z,a);
+        veroofalso =  a and false;
     end;
 
     while (a) do
         p=8;
-        veroofalso =  a and f1(z,a);
+        veroofalso =  a and false;
     end;
     #p = int (xx);
     #veroofalso = a;
     #veroofalso =  a and f1(z,a);
-    return f1(z,a);
+    return false;
 
 end H

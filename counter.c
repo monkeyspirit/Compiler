@@ -52,7 +52,7 @@ int numberOfLinesExpr(Pnode x_term) { //nodo di cui voglio determinare il numero
             }
         }
         else {
-            numberOfLinesExpr(x_term->child);
+            num = num + numberOfLinesExpr(x_term->child);
         }
     }
     else {
@@ -74,7 +74,36 @@ int numberOfLinesExpr(Pnode x_term) { //nodo di cui voglio determinare il numero
         }
 
 
-//        num = num + opertationNumLines(prox_term, typeOp);
+        num = num + opertationNumLines(prox_term, typeOp);
+    }
+
+    return num;
+}
+
+int opertationNumLines(Pnode x_term, int typeOp){
+    int num = 0;
+
+    switch (typeOp){
+        //logic op:
+        case 24 : case 25:{
+            num = num + numberOfLinesExpr(x_term);
+            num = num +3;
+            break;
+        }
+
+            //rel op:
+        case 18 : case 19: case 20: case 21: case 22: case 23:{
+            num = num + numberOfLinesExpr(x_term);
+            num++;
+            break;
+        }
+
+            //math op:
+        case 13 : case 14: case 15: case 16:{
+            num = num + numberOfLinesExpr(x_term);
+            num++;
+            break;
+        }
     }
 
     return num;

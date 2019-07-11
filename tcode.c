@@ -263,7 +263,7 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
                             break;
                         }
                         case NMODULE_CALL: {
-                            generateCodeFormalParams(x_term->child->child->child->brother->child->child, moduleLine);
+//                            generateCodeFormalParams(x_term->child->child->child->brother->child->child, moduleLine);
 //                            PLine moduleCalled = findLineByIdAndClass(x_term->child->child->child->value.sval, "MOD",
 //                                                                      moduleLine->bucket);
                             PLine moduleCalled = findLineById(x_term->child->child->child->value.sval, moduleLine);
@@ -367,24 +367,24 @@ void generateCodeFormalParams(Pnode param, PLine moduleLine){
     }
 }
 
-void operationCode(Pnode prox_term, int type, PLine moduleLine, char* typeExpr){
+void operationCode(Pnode x_term, int type, PLine moduleLine, char* typeExpr){
 
     switch (type){
         //logic op:
         case 24 : case 25:{
-            logicOperation(prox_term, type, moduleLine);
+            logicOperation(x_term, type, moduleLine);
             break;
         }
 
         //rel op:
         case 18 : case 19: case 20: case 21: case 22: case 23:{
-            relOperation(prox_term,type, moduleLine, typeExpr);
+            relOperation(x_term,type, moduleLine, typeExpr);
             break;
         }
 
         //math op:
         case 13 : case 14: case 15: case 16:{
-            mathOperation(prox_term,type, moduleLine, typeExpr);
+            mathOperation(x_term,type, moduleLine, typeExpr);
             break;
         }
     }
@@ -569,16 +569,18 @@ void logicOperation(Pnode term, int type, PLine moduleLine){
 
     switch (type){
         case 24:{ //AND
-
-            int offset = numberOfLinesExpr(term);
-            fprintf(out, "JMF %d\n", offset);
+            fprintf(out, "----AND----\n");
+            int offset = numberOfLinesExpr(term) + 2;
+            fprintf(out, "1-JMF %d\n", offset);
             instTypeOfExpr(term, moduleLine);
-            fprintf(out,"JMP 2\n");
-            fprintf(out, "LDI 0\n");
+            fprintf(out,"2-JMP 2\n");
+            fprintf(out, "3-LDI 0\n");
+            fprintf(out, "------\n");
             break;
         }
         case 25:{ //OR
-            int exit = numberOfLinesExpr(term);
+            fprintf(out, "----OR----\n");
+            int exit = numberOfLinesExpr(term)+1;
             fprintf(out, "JMF 3\n");
             fprintf(out, "LDI 1\n");
             fprintf(out,"JMP %d\n", exit);

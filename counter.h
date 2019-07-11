@@ -9,10 +9,7 @@
 
 int  opertationNumLines(Pnode , int),
      logicOperationCounter(Pnode),
-     relOperationCounter(Pnode),
-     generateCodeParamCounter(Pnode),
-     elseIfExprListCounter(Pnode),
-     conditionalExprCounter(Pnode);
+     relOperationCounter(Pnode);
 
 
 int numberOfLinesExpr(Pnode node);
