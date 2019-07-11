@@ -10,15 +10,23 @@ FILE *out;
 
 void tCodeGenerator(PLine pLine, Pnode pNode);
 
+PLine wholeSymbolTable;
+
 
 void tCode(PLine rootLine, Pnode root){
     out = fopen("../tCode.out", "w");
+    wholeSymbolTable = rootLine;
     tCodeGenerator(rootLine, root);
 }
 
 void tCodeGenerator(PLine rootLine, Pnode root){
 
     fprintf(out, "MOD %d\n", rootLine->oid);
+
+    if(rootLine!=wholeSymbolTable){
+        printf("Father: %d\n", getFather(rootLine, wholeSymbolTable)->oid);
+    }
+
 
     Pnode iterNode, paramNode, declNode, constDeclNode, modNode;
     iterNode = root->child; // punta a ID
@@ -268,6 +276,14 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
 //                                                                      moduleLine->bucket);
                             PLine moduleCalled = findLineById(x_term->child->child->child->value.sval, moduleLine);
                             // ↑↑↑↑↑↑ forse bisogna controllare che sia esclusivamente MOD ↑↑↑↑↑↑
+
+//                            if(isChildOfCaller(moduleCalled, moduleLine)==1){
+//                                printf("Figlio\n");
+//                            }
+//                            if(isFatherOfCaller(moduleCalled, moduleLine)==1){
+//                                printf("Genitore\n");
+//                            }
+
                             fprintf(out, "PUSH %d -oggetti- -chain\n\t GOTO %d\nPOP\n", moduleCalled->nFormalParams,
                                     moduleCalled->oid);
                             break;

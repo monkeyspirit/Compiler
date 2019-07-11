@@ -2,12 +2,60 @@ module H (p1: int, p2: string): bool
     var p, y, z: int; xx: real;
     veroofalso: bool;
     msg: string;
-    const MAX:int =4; a: bool = false and (false>true or false < true) ; RR: char = 'a';
+    const MAX:int =4; a: bool = false and (false>true or false<true); RR: char = 'a';
 
     module f1(t: int, p:bool):int
         var c:int;
         k,l:bool;
+
+         module f2(t: int, p:bool):int
+            var c:int;
+            k,l:bool;
+
+            begin f2
+                veroofalso = H(c,msg);
+                return MAX;
+            end f2
+
+         module f3(t: int, p:bool):int
+            var c:int;
+            k,l:bool;
+            begin f3
+                veroofalso = H(c,msg);
+                return MAX;
+            end f3
+
+        module f4(t: int, p:bool):int
+            var c:int;
+            k,l:bool;
+
+            module f5():void
+                var k:int;
+
+                module f7():void
+                    var k:int;
+
+                    module f8():void
+                        var k:int;
+
+                        begin f8
+                            k =9;
+                        end f8
+                begin f7
+                    k =9;
+                end f7
+
+            begin f5
+                k =9;
+            end f5
+
+            begin f4
+                veroofalso = H(c,msg);
+                return MAX;
+            end f4
+
     begin f1
+        veroofalso = H(c,msg);
         return MAX;
     end f1
 
@@ -15,7 +63,7 @@ begin H
 
     #p = (z * (z + p) - (y * y) );
     #p1 = z -  z;
-    #p = 8;
+    veroofalso = H(p,msg);
     if a then
         p= f1(p, H(p,msg));
         veroofalso =  a and false;

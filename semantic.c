@@ -19,6 +19,102 @@ PLine wholeSymbolTable; // riferimento alla testa dell'INTERA symbol table
 
 // Funzioni di utilità per la ricerca nella symbol table
 
+
+int isChildOfCaller(PLine called, PLine caller){
+
+    for(int i=0; i<BUCKET_SIZE; i++){
+        PLine toControl = caller->bucket[i];
+
+
+        while (toControl!=NULL){
+            if(toControl==called){
+                return 1;
+            }
+
+            toControl = toControl->next;
+        }
+
+    }
+
+    return 0;
+}
+
+PLine getFather(PLine child, PLine table){
+
+    if(child == table){
+        return table;
+    }
+
+    for(int i=0; i<BUCKET_SIZE; i++){
+        PLine toControl = table->bucket[i];
+
+        while (toControl!=NULL){
+            if(toControl==child){
+                return table;
+            }
+
+            toControl = toControl->next;
+        }
+
+    }
+
+    for(int i=0; i<BUCKET_SIZE; i++){
+        PLine toControl = table->bucket[i];
+
+        while (toControl!=NULL){
+            if(strcmp(toControl->class, "MOD")==0){
+                if(getFather(child, toControl)!=NULL){
+                    return getFather(child, toControl);
+                }
+            }
+            toControl = toControl->next;
+        }
+
+    }
+
+    return NULL;
+}
+
+int isBrotherOfCaller(PLine brotherCalled, PLine brotherCaller){
+
+//    PLine fatherOfBrothers = is
+
+    for(int i=0; i<BUCKET_SIZE; i++){
+        PLine toControl = brotherCalled->bucket[i];
+
+
+        while (toControl!=NULL){
+            if(toControl==brotherCalled){
+                return 1;
+            }
+
+            toControl = toControl->next;
+        }
+
+    }
+
+    return 0;
+}
+
+int isFatherOfCaller(PLine called, PLine caller){
+    for(int i=0; i<BUCKET_SIZE; i++){
+        PLine toControl = called->bucket[i];
+
+
+        while (toControl!=NULL){
+            if(toControl==caller){
+                return 1;
+            }
+
+            toControl = toControl->next;
+        }
+
+    }
+
+    return 0;
+}
+
+
 // dato l'oid di un modulo, cerca ricorsivamente quale modulo è suo padre
 PLine findModuleFather(PLine moduleLine, int childModuleOid) {
     for(int i=0; i<BUCKET_SIZE; i++){

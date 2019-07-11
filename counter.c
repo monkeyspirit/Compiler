@@ -7,6 +7,7 @@
 
 
 
+
 int numberOfLinesExpr(Pnode x_term) { //nodo di cui voglio determinare il numero di linee
     int num = 0;
 
