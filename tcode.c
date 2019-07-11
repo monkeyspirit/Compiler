@@ -6,16 +6,44 @@
 #include "semantic.h"
 #include "counter.h"
 
+#include <stdarg.h>
+
+char **buffer=NULL;
+int currentBufferSize=0;
 FILE *out;
+
 
 void tCodeGenerator(PLine pLine, Pnode pNode);
 
 PLine wholeSymbolTable;
 
+// metodi per gestire il buffer
+/*
+void bufferWrite(char *lineToWrite){
+    buffer = realloc(buffer, sizeof(char*) * (currentBufferSize+1)); // rialloco la memoria
+    buffer[currentBufferSize++] = lineToWrite; // aggiungo la rica
+}
 
+void bprintf(char *s, ...){
+    char *ss = malloc(strlen(s)); // devo allocare la memoria per la nuova stringa
+    va_list args;
+    va_start(args, s);
+    vsprintf(ss, s, args); // elaboriamo la stringa
+    bufferWrite(ss); // la aggiungiamo al buffer
+    va_end(args);
+}
+
+void flush(){
+    out = fopen("../tCode.out", "w");
+    for (int i = 0; i < currentBufferSize; ++i)
+        fprintf( out, "%s\n", buffer[i]);
+    fclose(out);
+}
+*/
 void tCode(PLine rootLine, Pnode root){
     out = fopen("../tCode.out", "w");
     wholeSymbolTable = rootLine;
+//    fprintf(out, "TCODE %d", );
     tCodeGenerator(rootLine, root);
 }
 
@@ -244,7 +272,128 @@ int unaryOP;
 
 void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
 
+    if(x_term!=NULL) {
 
+        if (x_term->child == NULL) { // se siamo ai minimi termini
+            switch (x_term->type) {
+                case 6: {
+                    //char const
+                    fprintf(out, "LDC %s\n", x_term->value.sval);
+                    break;
+                }
+                case 7: {
+                    //int const
+                    fprintf(out, "LDI %d\n", x_term->value.ival);
+                    break;
+                }
+                case 8: {
+                    //real const
+                    fprintf(out, "LDR %f\n", x_term->value.rval);
+                    break;
+                }
+                case 9: {
+                    //string const
+                    fprintf(out, "LDS %s\n", x_term->value.sval);
+                    break;
+                }
+                case 10: {
+                    //bool const
+                    fprintf(out, "LDI %d\n", x_term->value.ival);
+                    break;
+                }
+                case 11: {
+                    PLine id = findLineById(x_term->value.sval, moduleLine);
+                    fprintf(out, "LOD %d %d\n", getLevelModule(id, moduleLine)==-1?0:getLevelModule(id, moduleLine),id->oid);
+                    break;
+                }
+            }
+        } else { // passo ricorsivo
+
+            if (x_term->child->value.ival != NFACTOR)
+                instTypeOfExpr(x_term->child, moduleLine);
+            else {
+                if (x_term->child->child->type == 11)  // per gli id scendiamo di livello
+                    instTypeOfExpr(x_term->child, moduleLine);
+                else {
+                    switch (x_term->child->child->value.ival) {
+                        case NUNARYOP: {
+                            instTypeOfExpr(x_term->child->child->brother, moduleLine);
+                            switch (unaryOP) {
+                                case 1: { //int
+                                    fprintf(out, "IUMI\n");
+                                    break;
+                                }
+                                case 2: { //real
+                                    fprintf(out, "RUMI\n");
+
+                                    break;
+                                }
+                                case 3: { //bool
+                                    fprintf(out, "LNEG\n");
+
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                        case NMODULE_CALL: {
+                            //                            generateCodeFormalParams(x_term->child->child->child->brother->child->child, moduleLine);
+//                            PLine moduleCalled = findLineByIdAndClass(x_term->child->child->child->value.sval, "MOD",
+//                                                                      moduleLine->bucket);
+                            PLine moduleCalled = findLineById(x_term->child->child->child->value.sval, moduleLine);
+                            // ↑↑↑↑↑↑ forse bisogna controllare che sia esclusivamente MOD ↑↑↑↑↑↑
+
+//                            if(isChildOfCaller(moduleCalled, moduleLine)==1){
+//                                printf("Figlio\n");
+//                            }
+//                            if(isFatherOfCaller(moduleCalled, moduleLine)==1){
+//                                printf("Genitore\n");
+//                            }
+                            printf("Gap: %d tra chiamato: %s e chiamante: %s\n", getGapModuleAmbient(moduleLine, moduleCalled), moduleCalled->id, moduleLine->id);
+                            fprintf(out, "PUSH %d -oggetti- %d\n\t GOTO %d\nPOP\n", moduleCalled->nFormalParams, getGapModuleAmbient(moduleLine, moduleCalled),
+                                    moduleCalled->oid);
+                            break;
+                        }
+                        case NEXPR:
+                            instTypeOfExpr(x_term->child->child, moduleLine);
+                            break;
+
+                        case NCONSTANT: {
+                            instTypeOfExpr(x_term->child, moduleLine);
+                            break;
+                        }
+                        case NCOND_EXPR: {
+                            generateCodeOFConditionalExpr(x_term->child->child->child, moduleLine);
+                            break;
+                        }
+                        case NTYPE: {
+                            break;
+                        }
+                    }
+                }
+            }
+
+        }
+
+
+        int typeOp;
+        Pnode prox_term;
+
+        if (x_term->brother != NULL){ // se c'è una parte destra bisogna controllare
+
+            if (x_term->value.ival == 32) { // rel term è diverso per costruzione
+                prox_term = x_term->brother->brother;
+                typeOp = x_term->brother->child->type;
+            } else {
+                prox_term = x_term->brother->child->brother;
+                typeOp = x_term->brother->child->child->type;
+            }
+
+            operationCode(prox_term, typeOp, moduleLine, getExprType(prox_term, moduleLine));
+        }
+
+    }
+/*
         if (x_term->child != NULL) {
             if (x_term->child->value.ival == NFACTOR) {
                 if (x_term->child->child->type == 11) {
@@ -299,7 +448,7 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
                             break;
                         }
                         case NCOND_EXPR: {
-                            generateCodeOFConditionalExpr(x_term->child->child->child, moduleLine);
+                            generateCodeOFConditionalExpr(x_term->child->child, moduleLine);
                             break;
                         }
                         case NTYPE: {
@@ -349,7 +498,7 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
                     PLine id = findLineById(x_term->value.sval, moduleLine);
 
 //faccio riferimento a quello che ho già caricato
-                    fprintf(out, "LOD .. %d\n", id->oid);
+                    fprintf(out, "LOD %d %d\n", getLevelModule(id, moduleLine)==-1?0:getLevelModule(id, moduleLine),id->oid);
                     break;
                 }
             }
@@ -373,7 +522,7 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
 
         }
 
-
+*/
 }
 
 void generateCodeFormalParams(Pnode param, PLine moduleLine){
@@ -586,18 +735,22 @@ void logicOperation(Pnode term, int type, PLine moduleLine){
 
     switch (type){
         case 24:{ //AND
-            fprintf(out, "----AND----\n");
-            int offset = numberOfLinesExpr(term) + 2;
-            fprintf(out, "1-JMF %d\n", offset);
-            instTypeOfExpr(term, moduleLine);
-            fprintf(out,"2-JMP 2\n");
-            fprintf(out, "3-LDI 0\n");
-            fprintf(out, "------\n");
+
+            int offset = 2 + numberOfLinesExpr(term->child);
+            //il +2 include le due righe stampate del JMP e LDI
+
+            fprintf(out, "JMF %d\n", offset);
+            instTypeOfExpr(term->child, moduleLine);
+            fprintf(out,"JMP 2\n");
+            fprintf(out, "LDI 0\n");
+
+
+
             break;
         }
         case 25:{ //OR
-            fprintf(out, "----OR----\n");
-            int exit = numberOfLinesExpr(term)+1;
+            int exit = 1 + numberOfLinesExpr(term);
+            //il +1 fa andare dopo l'ultima riga dell'ultima espressione
             fprintf(out, "JMF 3\n");
             fprintf(out, "LDI 1\n");
             fprintf(out,"JMP %d\n", exit);
@@ -614,32 +767,64 @@ void logicOperation(Pnode term, int type, PLine moduleLine){
 void generateCodeOFConditionalExpr(Pnode condition, PLine moduleLine){
 
     Pnode ifNode = condition->child;
-    instTypeOfExpr(ifNode, moduleLine);
-    int next = numberOfLinesExpr(ifNode->brother->brother);
-    fprintf(out, "JMF %d\n", next);
+    Pnode thenNode = condition->brother ;
 
-    Pnode thenNode = ifNode->brother;
+
+    instTypeOfExpr(ifNode, moduleLine);
+
+    int next = 2 + numberOfLinesExpr(thenNode);
+
+    fprintf(out, "JMF %d\n", next);
     instTypeOfExpr(thenNode, moduleLine);
 
+    if(condition->brother->brother->value.ival==NOPT_ELSEIF_EXPR_LIST){
 
-//    printf("Tot istruction: %d\n", numberOfLinesExpr(condition));
-//
-//    printf("Count else: %d\n", numberOfLinesExpr(condition->child->brother->brother));
+        generateCodeElseIfExpr(condition->brother->brother->child, moduleLine);
 
-//    fprintf(out, "JMP %d\n", exit);
+        condition = condition->brother;
+    }
 
-//    if(cond_expr->child->brother->brother == NOPT_ELSEIF_EXPR_LIST){
-//
-//        Pnode elseifNode = cond_expr->child->brother->brother->child;
-//        Pnode thenElseifNode = cond_expr->child->brother->brother->child->brother;
-//
-//        if(cond_expr->child->brother->brother->child->brother->brother==NOPT_ELSEIF_EXPR_LIST)
-//
-//        expr = cond_expr->child->brother;
-//    }
+    Pnode elseNode = condition->brother->brother;
 
-    Pnode elseNode = ifNode->brother->brother;
+    int exit = 1 + numberOfLinesExpr(elseNode->child);
+    fprintf(out,"JMP %d\n", exit);
     instTypeOfExpr(elseNode, moduleLine);
 
+}
 
+
+void generateCodeElseIfExpr(Pnode optExpr, PLine moduleLine){
+    bool opt = false;
+
+   Pnode elseIf = optExpr->child;
+
+  /*  if(strcmp(typeExprELSEIF, "BOOL") != 0 ){
+        printf("Errore la condizione dell'Else If deve essere di tipo BOOL invece è %s\n", typeExprELSEIF);
+        exit(-9);
+    }
+    else{
+
+        char *typeExprThen = getExprType(optExpr->brother->child, fatherModuleLine);
+
+        char* typeExprOpt=NULL;
+
+        if(optExpr->brother->brother!=NULL && optExpr->brother->brother->value.ival==NOPT_ELSEIF_EXPR_LIST){
+            typeExprOpt = getOptElseIfExprType(optExpr->brother->brother->child, fatherModuleLine);
+            opt =true;
+
+        }
+
+        if(opt){
+            if( strcmp(typeExprThen,  typeExprOpt)==0 ){
+                return typeExprThen;
+            }
+            else{
+                printf("Errore nella condizione Else If: ... then ...[%s] elseif ...[%s]  end\n", typeExprThen,typeExprOpt );
+                exit(-9);
+            }
+        }
+        else{
+            return typeExprThen;
+        }
+    }*/
 }

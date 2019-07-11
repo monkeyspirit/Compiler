@@ -16,7 +16,7 @@ void newTcode(int),
      equalNotEqual(Pnode, int, PLine),
      relationOp(Pnode, int, PLine, char*),
      generateCodeFormalParams(Pnode, PLine),
-     generateCodeOfElseIfExprList(Pnode , PLine ),
+     generateCodeElseIfExpr(Pnode , PLine ),
      generateCodeOFConditionalExpr(Pnode , PLine )  ;
 
 void instTypeOfExpr(Pnode , PLine );

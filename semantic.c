@@ -53,6 +53,7 @@ int objectInBuckets(PLine *bucket){
 
 int getLevelModule(PLine module, PLine table){
 
+
     for (int i = 0; i <BUCKET_SIZE ; ++i) {
         PLine line = table->bucket[i];
         while(line!=NULL){
@@ -139,25 +140,7 @@ int isBrother(PLine module1, PLine module2){
 
     return 0;
 }
-/*
-int isFatherOfCaller(PLine called, PLine caller){
-    for(int i=0; i<BUCKET_SIZE; i++){
-        PLine toControl = called->bucket[i];
 
-
-        while (toControl!=NULL){
-            if(toControl==caller){
-                return 1;
-            }
-
-            toControl = toControl->next;
-        }
-
-    }
-
-    return 0;
-}
-*/
 
 // dato l'oid di un modulo, cerca ricorsivamente quale modulo è suo padre
 PLine findModuleFather(PLine moduleLine, int childModuleOid) {
@@ -690,7 +673,7 @@ char* getExprType(Pnode node, PLine fatherModuleLine){ //expr punta x_term
     char *leftExprType = "";
     int typeOp;
 
-    //if(x_term!=NULL) {
+    if(node!=NULL) {
 
     if (node->child == NULL) { // se siamo ai minimi termini
         switch (node->type) {
@@ -840,6 +823,6 @@ char* getExprType(Pnode node, PLine fatherModuleLine){ //expr punta x_term
         return checkOperationAndGetType(typeOp, leftExprType, rightExprType);
     }
 
-    //}
+    }
 
 }
