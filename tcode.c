@@ -10,6 +10,7 @@ FILE *out;
 
 void tCodeGenerator(PLine pLine, Pnode pNode);
 
+
 void tCode(PLine rootLine, Pnode root){
     out = fopen("../tCode.out", "w");
     tCodeGenerator(rootLine, root);
@@ -109,7 +110,8 @@ void tCodeGenerator(PLine rootLine, Pnode root){
 
             /* .... */
 
-            PLine nextModule = findLineByIdAndClass(modNode->child->value.sval, rootLine->class, rootLine->bucket);
+//            PLine nextModule = findLineByIdAndClass(modNode->child->value.sval, rootLine->class, rootLine->bucket);
+            PLine nextModule = findLineById(modNode->child->value.sval, rootLine);
             tCodeGenerator(nextModule, modNode);
             modNode = modNode->brother;
         }
@@ -133,7 +135,9 @@ void codeStatment(Pnode stat, PLine moduleLine){
             case NASSIGN_STAT: {
 
                 Pnode assignStat = stat->child;
-                PLine id = findLineByIdFromPV(assignStat->child->value.sval, moduleLine->bucket);
+//                PLine id = findLineByIdFromPV(assignStat->child->value.sval, moduleLine->bucket);
+                PLine id = findLineById(assignStat->child->value.sval, moduleLine);
+                // ↑↑↑↑↑↑ forse bisogna controllare che siano esclusivamente PAR o VAR ↑↑↑↑↑↑
                 instTypeOfExpr(assignStat->child->brother->child, moduleLine);
                 fprintf(out, "STO ... %d\n",id->oid);
                 break;
@@ -260,8 +264,10 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
                         }
                         case NMODULE_CALL: {
                             generateCodeFormalParams(x_term->child->child->child->brother->child->child, moduleLine);
-                            PLine moduleCalled = findLineByIdAndClass(x_term->child->child->child->value.sval, "MOD",
-                                                                      moduleLine->bucket);
+//                            PLine moduleCalled = findLineByIdAndClass(x_term->child->child->child->value.sval, "MOD",
+//                                                                      moduleLine->bucket);
+                            PLine moduleCalled = findLineById(x_term->child->child->child->value.sval, moduleLine);
+                            // ↑↑↑↑↑↑ forse bisogna controllare che sia esclusivamente MOD ↑↑↑↑↑↑
                             fprintf(out, "PUSH %d -oggetti- -chain\n\t GOTO %d\nPOP\n", moduleCalled->nFormalParams,
                                     moduleCalled->oid);
                             break;
@@ -322,7 +328,7 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
                     break;
                 }
                 case 11: {
-                    PLine id = findLineByIdFromPCV(x_term->value.sval, moduleLine->bucket);
+                    PLine id = findLineById(x_term->value.sval, moduleLine);
 
 //faccio riferimento a quello che ho già caricato
                     fprintf(out, "LOD .. %d\n", id->oid);
@@ -345,7 +351,7 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
             }
 
 
-            operationCode(prox_term, typeOp, moduleLine, typeOfExpr(prox_term, moduleLine));
+            operationCode(prox_term, typeOp, moduleLine, getExprType(prox_term, moduleLine));
 
         }
 

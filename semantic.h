@@ -1,6 +1,3 @@
-//
-// Created by maria on 05/07/19.
-//
 #ifndef UNTITLED_SEMANTIC_H
 #define UNTITLED_SEMANTIC_H
 #include "def.h"
@@ -8,27 +5,9 @@
 #include <ctype.h>
 #include <stdbool.h>
 
+PLine findLineById(char*, PLine);
+void semanticControl(Pnode, PLine);
+void  statListControl(Pnode, PLine);
+char *getExprType(Pnode, PLine);
 
-
-void semanticControl(PLine, Pnode),
-     moduleNameControl(char*, char*, char*),
-     constantDeclaration(int, char*, Pnode),
-     controlFormalPar(Pnode, PLine, PLine*);
-
-char *typeOfExpr(Pnode , PLine );
-
-char *operationChecking(int, char *, char *),
-     *typeOfModuleCall(Pnode, PLine*),
-     *typeOFConstant(int),
-     *typeOFConditionalExpr(Pnode, PLine),
-     *typeOfElseIfExprList(Pnode , PLine),
-     *unaryOperationChecking(int , char *);
-
-void  controlOfStatment(Pnode, PLine),
-      controlOptElseIfStatList(Pnode, PLine),
-      controlOptElseStat(Pnode, PLine);
-
-PLine findLineByIdAndClass(char*, char*, PLine*),
-      findLineByIdFromPCV(char* , PLine*),
-      findLineByIdFromPV(char* , PLine*);
 #endif

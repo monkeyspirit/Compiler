@@ -1,252 +1,8 @@
 #include "semantic.h"
 #include "symbolTable.h"
 
-void semanticControl(PLine rootLine, Pnode root){
-
-
-    Pnode iterNode, paramNode, declNode, constDeclNode, modNode;
-    iterNode = root->child; // punta a ID
-    char* idMod = iterNode->value.sval;
-
-    iterNode = iterNode->brother;
-
-
-
-    if(iterNode -> value.ival==NOPT_PARAM_LIST){
-
-        paramNode = iterNode->child->child;
-
-        while (paramNode != NULL) {
-            paramNode = paramNode->brother;
-        }
-
-        iterNode = iterNode->brother;
-    }
-
-    iterNode = iterNode->brother;
-
-
-    if(iterNode->value.ival==NOPT_VAR_SECT){
-
-        declNode = iterNode->child->child;
-
-        while (declNode!=NULL) {
-
-            int decl_type = declNode->child->brother->child->type;
-            Pnode idNode = declNode->child->child;
-
-            while(idNode != NULL){
-
-                idNode = idNode->brother;
-            }
-
-            declNode = declNode->brother;
-        }
-
-        iterNode = iterNode->brother;
-    }
-
-
-    if(iterNode->value.ival==NOPT_CONST_SECT){
-
-        constDeclNode = iterNode->child->child;
-
-        while(constDeclNode != NULL) {
-
-            int decl_type = constDeclNode->child->child->brother->child->type;
-            Pnode idNode = constDeclNode->child->child->child;
-            Pnode expr = constDeclNode->child->brother;
-            constantDeclaration(decl_type, idNode->value.sval, expr);
-
-            while(idNode != NULL){
-
-                idNode = idNode->brother;
-            }
-
-            constDeclNode = constDeclNode->brother;
-        }
-
-        iterNode = iterNode->brother;                                        //PUNTO A OPT-MODULE/MODULE BODY
-    }
-
-
-    if(iterNode->value.ival==NOPT_MODULE_LIST){
-
-        modNode = iterNode->child;
-
-        while (modNode != NULL) {
-
-            PLine nextModule = findLineByIdAndClass(modNode->child->value.sval, rootLine->class, rootLine->bucket);
-            semanticControl(nextModule,modNode);
-            modNode = modNode->brother;
-        }
-
-        iterNode = iterNode->brother;
-    }
-
-    // -------- Controlli ----------
-    moduleNameControl(iterNode->child->value.sval, iterNode->child->brother->brother->value.sval, idMod);
-
-    controlOfStatment(iterNode->child->brother->child, rootLine); //Gli passo il primo stat
-
-
-}
-
-PLine findLineByIdAndClass(char* id, char* class, PLine *table){
-
-
-    for(int i=0; i<BUCKET_SIZE; i++){
-        PLine toControl = table[i];
-        while(toControl!=NULL){
-            if(strcmp(id, toControl->id)==0 && strcmp(class, toControl->class)==0) {
-                return toControl;
-            }
-            toControl = toControl->next;
-        }
-    }
-
-
-    printf("Errore la riga di \"%s\" non è presente, ma dovrebbe... controlla che non sia una costante\n", id);
-    exit(-5);
-}
-
-PLine findLineByIdFromPV(char* id, PLine *table){
-
-
-    for(int i=0; i<BUCKET_SIZE; i++){
-        PLine toControl = table[i];
-        while(toControl!=NULL){
-
-            if( (strcmp(id, toControl->id)==0) && ( (strcmp("VAR", toControl->class)==0) || (strcmp("PAR", toControl->class)==0) ) ){
-//                    printf("Found: %s\n",toControl->id);
-                return toControl;
-            }
-            toControl = toControl->next;
-        }
-    }
-
-
-    printf("Errore la riga \"%s\" non è presente, ma dovrebbe", id);
-    exit(-5);
-}
-
-PLine findLineByIdFromPCV(char* id, PLine *table){
-
-
-    for(int i=0; i<BUCKET_SIZE; i++){
-        PLine toControl = table[i];
-        while(toControl!=NULL){
-
-            if( (strcmp(id, toControl->id)==0) && ( (strcmp("VAR", toControl->class)==0) || (strcmp("CON", toControl->class)==0) || (strcmp("PAR", toControl->class)==0) ) ){
-//                    printf("Found: %s\n",toControl->id);
-                return toControl;
-            }
-            toControl = toControl->next;
-        }
-    }
-
-
-    printf("Errore la riga \"%s\" non è presente, ma dovrebbe", id);
-    exit(-5);
-}
-
-void controlOfStatment(Pnode stat, PLine moduleLine){
-
-    while(stat!=NULL){ //punta a stat
-
-        int statType = stat->child->value.ival;
-
-
-        switch (statType){
-            case NASSIGN_STAT: {
-
-                Pnode assignStat = stat->child;
-                char *type = findLineByIdFromPV(assignStat->child->value.sval, moduleLine->bucket)->type;
-
-                char* typeExpr = typeOfExpr(assignStat->child->brother->child, moduleLine);
-
-                if (strcmp(type, typeExpr) != 0) {
-                    printf("Errore nell'assegnamento di \"%s\" nel corpo del modulo %s: richiesto %s invece è presente %s\n", assignStat->child->value.sval, moduleLine->id, type, typeExpr);
-                    exit(-9);
-                }
-                break;
-            }
-            case NIF_STAT:{
-                Pnode ifStat = stat->child;
-                char *type = typeOfExpr(ifStat->child->child, moduleLine);
-                if(strcmp(type, "BOOL")!=0){
-                    printf("Errore nell'If Stat nel corpo del modulo %s: richiesto un BOOL invece è presente %s\n", moduleLine->id, type);
-                    exit(-9);
-                }
-
-
-                Pnode statList = ifStat->child->brother;
-                controlOfStatment(statList->child, moduleLine);
-
-                if(statList->brother!=NULL &&  statList->brother->value.ival==NOPT_ELSEIF_STAT_LIST){
-                    controlOptElseIfStatList(statList->brother, moduleLine);
-                    statList=statList->brother;
-                }
-
-
-                if(statList->brother!=NULL && statList->brother->value.ival==NOPT_ELSE_STAT){
-
-                    controlOptElseStat(statList->brother, moduleLine);
-                }
-
-
-                break;
-            }
-            case NWHILE_STAT: {
-//                // printf("%d\n", stat->child->child->value.ival);
-                if(strcmp(typeOfExpr(stat->child->child->child, moduleLine), "BOOL")) {
-                    printf("Errore nella condizione del ciclo while, richiesto un BOOL ma trovato un %s\n", typeOfExpr(stat->child->child->child, moduleLine));
-                    exit(-72);
-                }
-                controlOfStatment(stat->child->child->brother->child, moduleLine);
-                break;
-
-
-            }
-            case NRETURN_STAT: {
-
-                Pnode returnStat = stat->child;
-                char* moduleType = moduleLine->type;
-                char* typeExpr;
-                if(returnStat->child->child==NULL){
-                    typeExpr = "VOID";
-                }
-                else {
-                    typeExpr = typeOfExpr(returnStat->child->child, moduleLine);
-                }
-
-                if(strcmp(moduleLine->type, "VOID") != 0 ){
-                    if (strcmp(moduleType, typeExpr) != 0) {
-                        printf("Errore nell'operazione di return nel corpo del modulo %s: richiesto %s invece è presente %s\n", moduleLine->id, moduleType, typeExpr);
-                        exit(-9);
-                    }
-                }
-
-//                typeOfExpr(stat->child->child, moduleLine);
-
-                break;
-            }
-            case NREAD_STAT:{
-                break;
-            }
-            case NWRITE_STAT:{
-                break;
-            }
-
-        }
-
-        stat= stat->brother;
-    }
-
-}
-
 /*
- * Controlli:
+Controlli:
     1. Uguaglianza del nome del modulo con i nomi che delimitano il corpo del modulo
     2. Definizione delle costanti nella sezione const: compatibilità del valore con il tipo dichiarato
     3. Visibilità degli identificatori referenziati (nella gerarchia degli ambienti)
@@ -256,37 +12,122 @@ void controlOfStatment(Pnode stat, PLine moduleLine){
     7. Compatibilità degli operatori con gli operandi
     8. Compatibilità dell'identificatore con l'espressione di assegnamento
     9. Compatibilità delle espressioni con le istruzioni in cui sono coinvolte
- * Type inference: computazione del tipo risultante di ogni operazione
- */
+Type inference: computazione del tipo risultante di ogni operazione
+*/
 
+PLine wholeSymbolTable; // riferimento alla testa dell'INTERA symbol table
 
-void moduleNameControl(char* h, char* q, char* id){
-    if(strcmp(h,q)){
-        printf("Errore gli ID non corrispondono: \"begin %s ... end %s\"", h, q);
-        exit(-2);
-    }
-    else{
-        if(strcmp(h, id)){
-            printf("Errore gli ID non corrispondono: \"module %s ... begin %s\"",id, h);
-            exit(-2);
+// Funzioni di utilità per la ricerca nella symbol table
+
+// dato l'oid di un modulo, cerca ricorsivamente quale modulo è suo padre
+PLine findModuleFather(PLine moduleLine, int childModuleOid) {
+    for(int i=0; i<BUCKET_SIZE; i++){
+        PLine line = moduleLine->bucket[i];
+        while (line != NULL) {
+            if (strcmp(line->class, "MOD")==0){
+                if(line->oid == childModuleOid)
+                    return moduleLine;
+                else {
+                    PLine line1 = findModuleFather(line, childModuleOid);
+                    if(line1 != NULL)
+                        return line1;
+
+                }
+            }
+            line = line->next;
         }
-        else if(strcmp(q,id)){
-            printf("Errore gli ID non corrispondono: \"module %s ... end %s\"", id, q);
-            exit(-2);
-        }
     }
+    return NULL;
 }
 
-void constantDeclaration(int type, char*id, Pnode expr){
+// cerca gerarchicamente (in risalita) nella symboltable una riga con un dato id
+PLine findLineById(char* id, PLine fatherModuleLine){
 
-    while(expr->child!=NULL){
-        expr = expr->child;
-        if(expr->value.ival==NUNARYOP){
-            expr = expr->brother;
+    for(int i=0; i<BUCKET_SIZE; i++){
+        PLine toControl = fatherModuleLine->bucket[i];
+        while(toControl!=NULL){
+
+            if( strcmp(id, toControl->id)==0 )
+                return toControl;
+
+            toControl = toControl->next;
         }
     }
 
-    switch (type){
+    if(fatherModuleLine->oid != wholeSymbolTable->oid){
+        PLine fatherModule = findModuleFather(wholeSymbolTable, fatherModuleLine->oid);
+        if(fatherModule!=NULL) {
+            return findLineById(id, fatherModule);
+        } else
+            printf("PROBLEMONE GROSSO COME UNA * DI CASA");
+
+    }
+
+    if( strcmp(id, wholeSymbolTable->id)==0 )
+        return wholeSymbolTable;
+
+    printf("Errore la riga \"%s\" non è presente, ma dovrebbe", id);
+    exit(-5);
+}
+
+
+// Analisi semantica
+
+// dati due tipi e un operazione controlla che questa sia valida e ritorna il tipo totale
+char* checkOperationAndGetType(int op, char *typeExpr1, char *typeExpr2){
+    switch (op){
+        //logic expr:
+        case 24 : case 25:
+            if( (strcmp(typeExpr1, "BOOL")!=0) || (strcmp(typeExpr2, "BOOL")!=0)){
+                printf("Errore nell'espressione logica: richiesto un BOOL, invece sono inseriti un %s e un %s\n", typeExpr1, typeExpr2);
+                exit(-8);
+            }
+            return "BOOL";
+
+            //rel expr:
+        case 18 : case 19: case 20: case 21: case 22: case 23:
+            if( (strcmp(typeExpr1,typeExpr2)!=0)){
+                printf("Errore nell'espressione relazionale: richiesti tipi uguali, invece sono inseriti un %s e un %s\n", typeExpr1, typeExpr2);
+                exit(-8);
+            }
+            return "BOOL";
+
+            //math expr:
+        case 13 : case 14: case 15: case 16:
+            if( ( (strcmp(typeExpr1, "INT")==0) ||  (strcmp(typeExpr1, "REAL")==0) ) && (strcmp(typeExpr1,typeExpr2)==0) ){
+                return typeExpr1;
+            }
+            else{
+                printf("Errore nell'espressione relazionale: richiesti tipi uguali o INT o REAL, invece sono inseriti un %s e un %s\n", typeExpr1, typeExpr2);
+                exit(-8);
+            }
+
+    }
+
+}
+
+// controlla che la const-decl sia corretta (tipo dell'espressione e visibilità degli attributi)
+void checkConstDecl(Pnode constDeclNode, PLine moduleLine){
+
+    char *id = constDeclNode->child->child->child->value.sval;
+    PLine constLine = findLineById(id, moduleLine);
+
+    Pnode expr = constDeclNode->child->brother;
+    char *exprType = getExprType(expr, moduleLine);
+
+    if(strcmp(constLine->type, exprType)!=0){
+        printf("Errore nell'espressione della costante %s\n richiesto un %s ma trovato un %s",
+               id, constLine->type, exprType);
+        exit(-15);
+    }
+    /*
+    while(expr->child!=NULL){
+        expr = expr->child;
+        if(expr->value.ival==NUNARYOP)
+            expr = expr->brother;
+    }
+
+    switch (constDeclType){
         case T_CHAR:
             if(expr->type!=T_CHARCONST  && expr->type!=T_ID ){
                 printf("Errore: id \"%s\" ci si aspetta un CHAR\n", id);
@@ -317,94 +158,342 @@ void constantDeclaration(int type, char*id, Pnode expr){
                 exit(-3);
             }
             break;
-    }
+        default:
+            printf("operazione non supportata");
+            exit(-1);
+    }*/
 
 }
 
-void controlFormalPar(Pnode expr, PLine modLine, PLine *bucket){
-    int numPar = 0;
+// controlla i parametri (espressioni) passati alla chiamata di un modulo (sia il numero che il tipo)
+void checkModuleCallParams(Pnode optParamListNode, PLine calledModuleLine, PLine fatherModuleLine){
 
-    Pnode exprType = expr;
+    int numGivenParams = 0;
+    char **types = malloc(0);
 
-    while(expr!=NULL){
-        numPar++;
-        expr = expr->brother;
+    if (optParamListNode!=NULL ) { // && optParamListNode->value.ival == NOPT_EXPR_LIST) {
+        Pnode paramExpr = optParamListNode->child->child;
+
+        while (paramExpr != NULL) {
+            types = realloc(types, (numGivenParams + 1) * sizeof(char *));
+            types[numGivenParams++] = getExprType(paramExpr->child, fatherModuleLine);
+
+            paramExpr = paramExpr->brother;
+        }
     }
 
-//    printf("Id: %s numPar: %d\n", modLine->id, modLine->nFormalParams);
-//
-//    printf("%d %d\n", modLine->nFormalParams, numPar);
+//    char *types[numGivenParams];
+/*
+    paramExpr = firstParamExprNode;
+    for (int i = 0; i < numGivenParams; ++i) {
+        types[i] = getExprType(paramExpr->child, ambiente);
+        paramExpr = paramExpr->brother;
+    }*/
 
-    if(modLine->nFormalParams!=numPar){
-        printf("Errore: nella chiamata al modulo %s il numero di parametri formali non corrisponde a quello dichiarato",modLine->id);
+    if(calledModuleLine->nFormalParams!=numGivenParams){
+        printf("Errore: nella chiamata al modulo %s il numero di parametri formali non corrisponde a quello dichiarato",
+               calledModuleLine->id);
         exit(-6);
     }
 
-    char *types[numPar]; //qui ci sono i tipi dei parametri con cui si chiama
-
-    int i = 0;
-    while(exprType!=NULL){
-        Pnode type = exprType;
-
-        while(type->child!=NULL){
-            type=type->child;
-        }
-
-        types[i] = findLineByIdFromPCV(type->value.sval,bucket)->type;
-        exprType = exprType->brother;
-        i++;
-    }
-
     // controllo sui tipi
-    PLine *formal = modLine->formalParams;
-    char *params[numPar];
-
-
-    for (int j = 0; j <numPar ; ++j) {
-        params[j] = formal[j]->type;
-    }
-
-    for(int m=0; m <numPar; m++){
-
-//        printf("[%d] at:%s fo:%s\n", m, types[m], params[m]);
-        if(strcmp(types[m], params[m])!=0){
-//            printf("Errore [%d]\n", m);
-            printf("Errore: nella chiamata al modulo %s i tipi dei parametri non corrispondono, ci si aspetta un %s invece è un %s\n", modLine->id, params[m], types[m]);
+    PLine *formal = calledModuleLine->formalParams;
+    for (int i = 0; i < numGivenParams; ++i)
+        if(strcmp(types[i], formal[i]->type) != 0){
+            printf("Errore nei parametri della chiamata al modulo %s\n"
+                   "all'indice %d ci si aspetta un %s, trovato invece un %s\n",
+                   calledModuleLine->id, i+1, formal[i]->type, types[i]);
             exit(-6);
         }
+
+}
+
+// analisi semantica della opt-else-if-stat
+void optElseIfStatListControl(Pnode optElseIfStatListNode, PLine fatherModuleLine){
+    Pnode expr = optElseIfStatListNode->child;
+    char *type = getExprType(expr->child, fatherModuleLine);
+
+    if(strcmp(type, "BOOL")!=0){
+        printf("Errore nell'If Stat nel corpo del modulo %s: "
+               "richiesto un BOOL invece è presente %s\n", fatherModuleLine->id, type);
+        exit(-9);
+    }
+
+    Pnode statList = expr->brother;
+    statListControl(statList->child, fatherModuleLine);
+
+    if(statList->brother!=NULL && statList->brother->value.ival==NOPT_ELSEIF_STAT_LIST){
+        optElseIfStatListControl(statList->brother, fatherModuleLine);
     }
 
 }
 
-char* typeOfModuleCall(Pnode module, PLine *bucket){
-    char *typeOfModule;
+// metodo per l'analisi semantica di ogni stat
+void statListControl(Pnode firstStatNode, PLine fatherModuleLine){
 
-    typeOfModule=findLineByIdAndClass(module->child->value.sval, "MOD", bucket)->type;
+    Pnode statNode = firstStatNode;
+    while(statNode!=NULL) { // cicliamo le stat
 
-    return typeOfModule;
-}
+        int statType = statNode->child->value.ival;
 
-char* typeOFConstant(int type){
+        switch (statType){
+            case NASSIGN_STAT: {
+                Pnode assignStat = statNode->child;
+                PLine leftOperand = findLineById(assignStat->child->value.sval, fatherModuleLine);
+                if (strcmp(leftOperand->class, "CON")==0 || strcmp(leftOperand->class, "MOD")==0){
+                    printf("Errore: l'assegnamento puo' essere fatto solo a VAR e PAR trovato %s", leftOperand->class);
+                    exit(-12);
+                }
+                char *type = leftOperand->type;
+                char *typeExpr = getExprType(assignStat->child->brother->child, fatherModuleLine);
+                if (strcmp(type, typeExpr) != 0) {
+                    printf("Errore nell'assegnamento di \"%s\" nel corpo del modulo %s:"
+                           " richiesto %s invece è presente %s\n",
+                           assignStat->child->value.sval, fatherModuleLine->id, type, typeExpr);
+                    exit(-9);
+                }
+            }
+                break;
 
-    switch (type) {
-        case T_CHARCONST:
-            return "CHAR";
-        case T_INTCONST:
-            return "INT";
-        case T_REALCONST:
-            return "REAL";
-        case T_STRCONST:
-            return "STRING";
-        case T_BOOLCONST:
-            return "BOOL";
+            case NIF_STAT: {
+
+                Pnode ifStat = statNode->child;
+                char *type = getExprType(ifStat->child->child, fatherModuleLine);
+                if(strcmp(type, "BOOL")!=0){
+                    printf("Errore nell'If Stat nel corpo del modulo %s: richiesto un BOOL invece è presente %s\n", fatherModuleLine->id, type);
+                    exit(-9);
+                }
+
+                Pnode statList = ifStat->child->brother;
+                statListControl(statList->child, fatherModuleLine);
+
+                if(statList->brother!=NULL)
+                    if(statList->brother->value.ival==NOPT_ELSEIF_STAT_LIST){
+                        optElseIfStatListControl(statList->brother, fatherModuleLine);
+                        statList=statList->brother;
+                    } else if(statList->brother->value.ival==NOPT_ELSE_STAT)
+                        statListControl(statList->brother->child->child, fatherModuleLine);
+            }
+                break;
+
+            case NWHILE_STAT:
+
+                if(strcmp(getExprType(statNode->child->child->child, fatherModuleLine), "BOOL")!=0) {
+                    printf("Errore nella condizione del ciclo while, richiesto un BOOL ma trovato un %s\n",
+                           getExprType(statNode->child->child->child, fatherModuleLine));
+                    exit(-72);
+                }
+                statListControl(statNode->child->child->brother->child, fatherModuleLine);
+                break;
+
+            case NRETURN_STAT: {
+
+                Pnode returnStat = statNode->child;
+                char *moduleType = fatherModuleLine->type, *typeExpr;
+
+                if(returnStat->child->child==NULL)
+                    typeExpr = "VOID";
+                else
+                    typeExpr = getExprType(returnStat->child->child, fatherModuleLine);
+
+                if (strcmp(moduleType, typeExpr) != 0) {
+                    printf("Errore nell'operazione di return nel corpo del modulo %s: richiesto %s invece è presente %s\n", fatherModuleLine->id, moduleType, typeExpr);
+                    exit(-9);
+                }
+
+            }
+                break;
+
+            case NREAD_STAT: {
+                Pnode idNode = statNode->child->child->child;
+                while (idNode != NULL) {
+                    PLine idLine = findLineById(idNode->value.sval, fatherModuleLine);
+                    if (strcmp(idLine->class, "CON") == 0 || strcmp(idLine->class, "MOD") == 0) {
+                        printf("Errore: nelle read stat si aspetta un VAR o PAR "
+                               "trovato invece %s", idLine->class);
+                        exit(-13);
+                    }
+                    idNode = idNode->brother;
+                }
+            }
+                break;
+
+            case NWRITE_STAT:{
+                Pnode exprNode = statNode->child->child->child;
+                while (exprNode != NULL) {
+                    getExprType(exprNode->child, fatherModuleLine); // non serve veramente il tipo... la uso solo perchè fa i controlli
+
+                    exprNode = exprNode->brother;
+                }
+            }
+                break;
+
+            case NMODULE_CALL: {
+
+                PLine calledModuleLine = findLineById(statNode->child->child->value.sval, fatherModuleLine);
+                if (strcmp(calledModuleLine->class, "MOD") != 0){
+                    printf("Errore: l'id %s non risulta essere un modulo ma un %s", calledModuleLine->id, calledModuleLine->class);
+                    exit(-11);
+                }
+                checkModuleCallParams(statNode->child->child->brother,
+                                      calledModuleLine,
+                                      fatherModuleLine);
+            }
+                break;
+
+            default:
+                printf("stat non riconosciuta");
+                exit(-1);
+
+        }
+
+        statNode= statNode->brother;
     }
+
 }
 
-char* typeOFConditionalExpr(Pnode condition, PLine moduleLine){
+// metodo per l'analisi di un modulo (analizza costanti, sottomoduli ricorsivamente e statements)
+void moduleControl(Pnode moduleNode, PLine fatherModuleLine){
 
+    Pnode iterNode = moduleNode->child; // punta a ID
+    char* idMod = iterNode->value.sval;
+
+    iterNode = iterNode->brother;
+
+    if(iterNode -> value.ival==NOPT_PARAM_LIST){
+        /*
+        paramNode = iterNode->child->child;
+
+        while (paramNode != NULL) {
+            paramNode = paramNode->brother;
+        }
+        */
+
+        iterNode = iterNode->brother;
+    }
+
+    iterNode = iterNode->brother;
+
+
+    if(iterNode->value.ival==NOPT_VAR_SECT){
+        /*
+        declNode = iterNode->child->child;
+
+        while (declNode!=NULL) {
+
+            int decl_type = declNode->child->brother->child->type;
+            Pnode idNode = declNode->child->child;
+
+            while(idNode != NULL){
+
+                idNode = idNode->brother;
+            }
+
+            declNode = declNode->brother;
+        }
+        */
+
+        iterNode = iterNode->brother;
+    }
+
+
+    if(iterNode->value.ival==NOPT_CONST_SECT){
+
+        Pnode constDeclNode = iterNode->child->child;
+
+        while(constDeclNode != NULL) {
+
+            checkConstDecl(constDeclNode, fatherModuleLine);
+
+            /*
+            while(idNode != NULL){
+                idNode = idNode->brother;
+            }
+            */
+
+            constDeclNode = constDeclNode->brother;
+        }
+
+        iterNode = iterNode->brother;
+    }
+
+    if(iterNode->value.ival==NOPT_MODULE_LIST){
+
+        Pnode innerModuleNode = iterNode->child;
+
+        while (innerModuleNode != NULL){
+
+            PLine nextModule = findLineById(innerModuleNode->child->value.sval, fatherModuleLine);
+//            PLine nextModule = findLineByIdAndClass(innerModuleNode->child->value.sval, moduleLine->class, moduleLine);
+            moduleControl(innerModuleNode, nextModule);
+            innerModuleNode = innerModuleNode->brother;
+        }
+
+        iterNode = iterNode->brother;
+    }
+
+    // Controllo che gli id davanti a begin e a end corrispondano all'id del modulo
+    if(strcmp(idMod, iterNode->child->value.sval)!=0){
+        printf("Errore gli ID non corrispondono: \"module %s ... begin %s\"", idMod, iterNode->child->value.sval);
+        exit(-2);
+    } else if(strcmp(idMod, iterNode->child->brother->brother->value.sval)!=0){
+        printf("Errore gli ID non corrispondono: \"module %s ... end %s\"", idMod, iterNode->child->brother->brother->value.sval);
+        exit(-2);
+    }
+
+    statListControl(iterNode->child->brother->child, fatherModuleLine); //Gli passo il primo stat
+
+}
+
+// metodo richiamato dall'esterno per cominciare l'analisi
+void semanticControl(Pnode rootNode, PLine rootLine){
+    wholeSymbolTable = rootLine;
+    moduleControl(rootNode, rootLine);
+}
+
+// ritorna il tipo della opt-else-ifexpr e controlla che l'expr sia scritta correttamente
+char* getOptElseIfExprType(Pnode optExpr, PLine fatherModuleLine){
 
     bool opt = false;
-    char *typeExprIF = typeOfExpr(condition->child, moduleLine);
+
+    char *typeExprELSEIF = getExprType(optExpr->child, fatherModuleLine);
+
+    if(strcmp(typeExprELSEIF, "BOOL") != 0 ){
+        printf("Errore la condizione dell'Else If deve essere di tipo BOOL invece è %s\n", typeExprELSEIF);
+        exit(-9);
+    }
+    else{
+
+        char *typeExprThen = getExprType(optExpr->brother->child, fatherModuleLine);
+
+        char* typeExprOpt;
+
+        if(optExpr->brother->brother!=NULL && optExpr->brother->brother->value.ival==NOPT_ELSEIF_EXPR_LIST){
+            typeExprOpt = getOptElseIfExprType(optExpr->brother->brother->child, fatherModuleLine);
+            opt =true;
+
+        }
+
+        if(opt){
+            if( strcmp(typeExprThen,  typeExprOpt)==0 ){
+                return typeExprThen;
+            }
+            else{
+                printf("Errore nella condizione Else If: ... then ...[%s] elseif ...[%s]  end\n", typeExprThen,typeExprOpt );
+                exit(-9);
+            }
+        }
+        else{
+            return typeExprThen;
+        }
+    }
+}
+
+// ritorna il tipo della conditional-expr e controlla che l'expr sia scritta correttamente
+char* getCondExprType(Pnode condition, PLine fatherModuleLine){
+
+    bool opt = false;
+    char *typeExprIF = getExprType(condition->child, fatherModuleLine);
 
     if(strcmp(typeExprIF, "BOOL") != 0 ){
         printf("Errore la condizione dell'If deve essere di tipo BOOL invece è %s\n", typeExprIF);
@@ -413,14 +502,14 @@ char* typeOFConditionalExpr(Pnode condition, PLine moduleLine){
     else{
 
 
-        char *typeExprThen = typeOfExpr(condition->brother->child, moduleLine);
+        char *typeExprThen = getExprType(condition->brother->child, fatherModuleLine);
 
         char* typeExprOpt;
 
 
         if(condition->brother->brother->value.ival==NOPT_ELSEIF_EXPR_LIST){
 
-            typeExprOpt = typeOfElseIfExprList(condition->brother->brother->child, moduleLine);
+            typeExprOpt = getOptElseIfExprType(condition->brother->brother->child, fatherModuleLine);
             opt =true;
 
             condition = condition->brother;
@@ -428,7 +517,7 @@ char* typeOFConditionalExpr(Pnode condition, PLine moduleLine){
 
 
 
-        char *typeExprElse = typeOfExpr(condition->brother->brother->child, moduleLine);
+        char *typeExprElse = getExprType(condition->brother->brother->child, fatherModuleLine);
 
         if(opt){
             if( strcmp(typeExprThen,  typeExprOpt)==0 && strcmp(typeExprThen,  typeExprElse)==0){
@@ -452,238 +541,162 @@ char* typeOFConditionalExpr(Pnode condition, PLine moduleLine){
 
 }
 
-char* typeOfElseIfExprList(Pnode optExpr, PLine moduleLine){
+// data un'espressione ne ricava il tipo totale controllando la semantica
+char* getExprType(Pnode node, PLine fatherModuleLine){ //expr punta x_term
 
-    bool opt = false;
-
-    char *typeExprELSEIF = typeOfExpr(optExpr->child, moduleLine);
-
-    if(strcmp(typeExprELSEIF, "BOOL") != 0 ){
-        printf("Errore la condizione dell'Else If deve essere di tipo BOOL invece è %s\n", typeExprELSEIF);
-        exit(-9);
-    }
-    else{
-
-        char *typeExprThen = typeOfExpr(optExpr->brother->child, moduleLine);
-
-        char* typeExprOpt;
-
-        if(optExpr->brother->brother!=NULL && optExpr->brother->brother->value.ival==NOPT_ELSEIF_EXPR_LIST){
-            typeExprOpt = typeOfElseIfExprList(optExpr->brother->brother->child, moduleLine);
-            opt =true;
-
-        }
-
-        if(opt){
-            if( strcmp(typeExprThen,  typeExprOpt)==0 ){
-                return typeExprThen;
-            }
-            else{
-                printf("Errore nella condizione Else If: ... then ...[%s] elseif ...[%s]  end\n", typeExprThen,typeExprOpt );
-                exit(-9);
-            }
-        }
-        else{
-            return typeExprThen;
-        }
-    }
-}
-
-char* typeOfExpr(Pnode x_term, PLine moduleLine){ //expr punta x_term
-
-    char *typeExpr1, *typeExpr2;
+    char *leftExprType = "";
     int typeOp;
 
-    while(x_term!=NULL) {
+    //if(x_term!=NULL) {
 
-        if (x_term->child != NULL) {
-            if (x_term->child->value.ival == NFACTOR) {
-                if (x_term->child->child->type == 11) {
-                    typeExpr1 = typeOfExpr(x_term->child, moduleLine);
-                } else {
-                    switch (x_term->child->child->value.ival) {
-                        case NUNARYOP: {
-                            int unaryOp = x_term->child->child->child->type;
-                            typeExpr1 = typeOfExpr(x_term->child->child->brother, moduleLine);
-                            return unaryOperationChecking(unaryOp, typeExpr1);
+    if (node->child == NULL) { // se siamo ai minimi termini
+        switch (node->type) {
+            case 6:
+                return "CHAR";
+            case 7:
+                return "INT";
+            case 8:
+                return "REAL";
+            case 9:
+                return "STRING";
+            case 10:
+                return "BOOL";
+            case 11: {
+                // printf("Id: %s Type: %s\n",node->value.sval, findLineByIdFromPCV(node->value.sval, ambiente->bucket)->type);
+                PLine line = findLineById(node->value.sval, fatherModuleLine);
+                if (strcmp(line->class, "MOD") == 0) {
+                    printf("Errore: chiamata non valida al modulo %s", line->id);
+                    exit(-14);
+                }
+                return line->type;
+            }
+            default:
+                printf("Errore: tipo \"%d\"non supportato", node->type);
+                exit(-1);
+        }
+    } else { // passo ricorsivo
 
-                        }
-                        case NMODULE_CALL: {
-                            typeExpr1 = typeOfModuleCall(x_term->child->child, moduleLine->bucket);
-                            controlFormalPar(x_term->child->child->child->brother->child->child,
-                                             findLineByIdAndClass(x_term->child->child->child->value.sval, "MOD",
-                                                                  moduleLine->bucket), moduleLine->bucket);
-                            break;
-                        }
-                        case NEXPR: {
-                            typeExpr1 = typeOfExpr(x_term->child->child, moduleLine);
-                            break;
-                        }
-                        case NCONSTANT: {
-                            typeExpr1 = typeOFConstant(x_term->child->child->child->type);
-                            break;
-                        }
-                        case NCOND_EXPR: {
-//                        printf("Typenode: %d\n", x_term->child->child->child->value.ival);
+        if (node->child->value.ival != NFACTOR)
+            leftExprType = getExprType(node->child, fatherModuleLine);
+        else {
+            if (node->child->child->type == 11)  // per gli id scendiamo di livello
+//                printf("%s\n", node->child->child->value.sval);
+                leftExprType = getExprType(node->child, fatherModuleLine);
+            else {
+                switch (node->child->child->value.ival) {
+                    case NUNARYOP: {
+                        leftExprType = getExprType(node->child->child->brother, fatherModuleLine);
 
-                            typeExpr1 = typeOFConditionalExpr(x_term->child->child->child, moduleLine);
-                            break;
+                        // Checking del tipo sull'operatore unario
+                        switch (node->child->child->child->type) {
+                            case 15: // meno unario
+                                if (strcmp(leftExprType, "INT") != 0 || strcmp(leftExprType, "REAL") != 0) {
+                                    printf("Errore l'operatore unario \"-\" richiede o INT o REAL, trovato invece un %s\n", leftExprType);
+                                    exit(-8);
+                                }
+                                break;
+                            case 17: // not
+                                if (strcmp(leftExprType, "BOOL") != 0) {
+                                    printf("Errore l'operatore unario \"not\" richiede un BOOL, trovato invece un %s\n", leftExprType);
+                                    exit(-8);
+                                }
+                                break;
+                            default:
+                                printf("Errore operatore unario non riconosciuto %d", node->child->child->child->type);
+                                exit(-1);
                         }
-                        case NTYPE: {
+
+                        return leftExprType;
+
+                    }
+                    case NMODULE_CALL: {
+                        PLine calledModuleLine = findLineById(node->child->child->child->value.sval, fatherModuleLine);
+                        if (strcmp(calledModuleLine->class, "MOD") != 0){
+                            printf("Errore: l'id %s non risulta essere un modulo ma un %s", calledModuleLine->id, calledModuleLine->class);
+                            exit(-11);
+                        }
+                        leftExprType = calledModuleLine->type;
+                        checkModuleCallParams(node->child->child->child->brother,
+                                              calledModuleLine,
+                                              fatherModuleLine);
+                        break;
+                    }
+                    case NEXPR:
+                        leftExprType = getExprType(node->child->child, fatherModuleLine);
+                        break;
+
+                    case NCONSTANT: {
+                        switch (node->child->child->child->type) {
+                            case T_CHARCONST:
+                                leftExprType = "CHAR";
+                                break;
+                            case T_INTCONST:
+                                leftExprType = "INT";
+                                break;
+                            case T_REALCONST:
+                                leftExprType = "REAL";
+                                break;
+                            case T_STRCONST:
+                                leftExprType = "STRING";
+                                break;
+                            case T_BOOLCONST:
+                                leftExprType = "BOOL";
+                                break;
+                            default:
+                                printf("Errore type expr");
+                                exit(-1);
+                        }
+                        break;
+                    }
+                    case NCOND_EXPR: {
+                        leftExprType = getCondExprType(node->child->child->child, fatherModuleLine);
+                        break;
+                    }
+                    case NTYPE: {
 //                        typeExpr1 = typeOfModuleCall(x_term->child->child, moduleLine->bucket);
 //                        printf("Cast?\n");
-                            if (x_term->child->child->child->type == 2) {
-                                if (strcmp(typeOfExpr(x_term->child->child->brother, moduleLine), "INT")) {
-                                    printf("Errore nel casting a REAL, ci si aspetta un INT invece è un %s\n",
-                                           typeOfExpr(x_term->child->child->brother, moduleLine));
-                                    exit(-3103);
-                                }
-                                return "REAL";
-                            } else if (x_term->child->child->child->type == 1) {
-                                if (strcmp(typeOfExpr(x_term->child->child->brother, moduleLine), "REAL")) {
-                                    printf("Errore nel casting a INT, ci si aspetta un REAL invece è un %s\n",
-                                           typeOfExpr(x_term->child->child->brother, moduleLine));
-                                    exit(-3103);
-                                }
-                                return "INT";
-                            } else {
-                                printf("errore nel casting, operazione non definita\n");
+                        if (node->child->child->child->type == 2) {
+                            if (strcmp(getExprType(node->child->child->brother, fatherModuleLine), "INT") != 0) {
+                                printf("Errore nel casting a REAL, ci si aspetta un INT invece è un %s\n",
+                                       getExprType(node->child->child->brother, fatherModuleLine));
                                 exit(-3103);
                             }
-
-                            break;
+                            return "REAL";
+                        } else if (node->child->child->child->type == 1) {
+                            if (strcmp(getExprType(node->child->child->brother, fatherModuleLine), "REAL") != 0) {
+                                printf("Errore nel casting a INT, ci si aspetta un REAL invece è un %s\n",
+                                       getExprType(node->child->child->brother, fatherModuleLine));
+                                exit(-3103);
+                            }
+                            return "INT";
+                        } else {
+                            printf("errore nel casting, operazione non definita\n");
+                            exit(-3103);
                         }
                     }
                 }
-            } else {
-                typeExpr1 = typeOfExpr(x_term->child, moduleLine);
-//            printf("Type: %s\n",typeExpr1);
-
             }
+        }
+
+    }
+
+
+    if (node->brother == NULL)
+        return leftExprType;
+    else { // se c'è una parte destra bisogna controllare
+        char *rightExprType;
+
+        if (node->value.ival == 32) { // rel term è diverso per costruzione
+            rightExprType = getExprType(node->brother->brother, fatherModuleLine);
+            typeOp = node->brother->child->type;
         } else {
-            if (x_term->type == 11) {
-//            printf("Id: %s Type: %s\n",x_term->value.sval, findLineByIdFromPCV(x_term->value.sval, moduleLine->bucket)->type);
-                return findLineByIdFromPCV(x_term->value.sval, moduleLine->bucket)->type;
-            } else if (x_term->type == 10 || x_term->type == 9 || x_term->type == 8 || x_term->type == 7 ||
-                       x_term->type == 6) {
-                switch (x_term->type) {
-                    case 6:
-                        return "CHAR";
-                        break;
-                    case 7:
-                        return "INT";
-                        break;
-                    case 8:
-                        return "REAL";
-                        break;
-                    case 9:
-                        return "STRING";
-                        break;
-                    case 10:
-                        return "BOOL";
-                        break;
-                }
-            }
-
+            rightExprType = getExprType(node->brother->child->brother, fatherModuleLine);
+            typeOp = node->brother->child->child->type;
         }
 
-        if (x_term->brother != NULL) {
-
-            if (x_term->value.ival == 32) {//rel term è diverso per costruzione
-                typeExpr2 = typeOfExpr(x_term->brother->brother, moduleLine);
-                typeOp = x_term->brother->child->type;
-            } else {
-                typeExpr2 = typeOfExpr(x_term->brother->child->brother, moduleLine);
-                typeOp = x_term->brother->child->child->type;
-            }
-
-
-            return operationChecking(typeOp, typeExpr1, typeExpr2);
-
-        } else {
-            return typeExpr1;
-        }
+        return checkOperationAndGetType(typeOp, leftExprType, rightExprType);
     }
 
-}
-
-char* unaryOperationChecking(int op, char *typeExpr1){
-    switch (op){
-        case 15: {//meno unario
-            if( (strcmp(typeExpr1, "INT")==0) ||  (strcmp(typeExpr1, "REAL")==0)){
-                return typeExpr1;
-            }
-            else{
-                printf("Errore l'operatore \"-\" usato come unario richiede o INT o REAL, invece è iserito un %s\n", typeExpr1);
-                exit(-8);
-            }
-
-        }
-        case 17:{//not
-            if( (strcmp(typeExpr1, "BOOL")==0)){
-                return typeExpr1;
-            }
-            else{
-                printf("Errore l'operatore \"not\" richiede un BOOL, invece è iserito un %s\n", typeExpr1);
-                exit(-8);
-            }
-        }
-    }
-}
-
-char* operationChecking(int op, char *typeExpr1, char *typeExpr2){
-    switch (op){
-        //logic expr:
-        case 24 : case 25:
-            if( (strcmp(typeExpr1, "BOOL")!=0) || (strcmp(typeExpr2, "BOOL")!=0)){
-                printf("Errore nell'espressione logica: richiesto un BOOL, invece sono inseriti un %s e un %s\n", typeExpr1, typeExpr2);
-                exit(-8);
-            }
-            return "BOOL";
-
-        //rel expr:
-        case 18 : case 19: case 20: case 21: case 22: case 23:
-            if( (strcmp(typeExpr1,typeExpr2)!=0)){
-                printf("Errore nell'espressione relazionale: richiesti tipi uguali, invece sono inseriti un %s e un %s\n", typeExpr1, typeExpr2);
-                exit(-8);
-            }
-            return "BOOL";
-
-        //math expr:
-        case 13 : case 14: case 15: case 16:
-            if( ( (strcmp(typeExpr1, "INT")==0) ||  (strcmp(typeExpr1, "REAL")==0) ) && (strcmp(typeExpr1,typeExpr2)==0) ){
-                return typeExpr1;
-            }
-            else{
-                printf("Errore nell'espressione relazionale: richiesti tipi uguali o INT o REAL, invece sono inseriti un %s e un %s\n", typeExpr1, typeExpr2);
-                exit(-8);
-            }
-
-    }
-
-}
-
-void controlOptElseIfStatList(Pnode opt_elseif_statList, PLine moduleLine){
-    Pnode expr = opt_elseif_statList->child;
-    char *type = typeOfExpr(expr->child, moduleLine);
-
-    if(strcmp(type, "BOOL")!=0){
-        printf("Errore nell'If Stat nel corpo del modulo %s: richiesto un BOOL invece è presente %s\n", moduleLine->id, type);
-        exit(-9);
-    }
-
-    Pnode statList = expr->brother;
-    controlOfStatment(statList->child, moduleLine);
-
-    if(statList->brother!=NULL && statList->brother->value.ival==NOPT_ELSEIF_STAT_LIST){
-        controlOptElseIfStatList(statList->brother, moduleLine);
-    }
-
-}
-
-void controlOptElseStat(Pnode opt_else_stat, PLine moduleLine){
-
-    Pnode statList = opt_else_stat->child;
-    controlOfStatment(statList->child, moduleLine);
+    //}
 
 }

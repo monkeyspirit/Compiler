@@ -16,7 +16,7 @@ int main(int nArgs, char  **args) {
     PLine rootLine = symbolTable(root);
     displayTable();
 
-    semanticControl(rootLine, root->child);
+    semanticControl(root->child, rootLine);
 
     return(0);
 }
