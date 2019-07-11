@@ -23,10 +23,12 @@ void tCodeGenerator(PLine rootLine, Pnode root){
 
     fprintf(out, "MOD %d\n", rootLine->oid);
 
-    if(rootLine!=wholeSymbolTable){
-        printf("Father: %d\n", getFather(rootLine, wholeSymbolTable)->oid);
-    }
-
+//    if(rootLine!=wholeSymbolTable){
+//        printf("Id: %s Father: %s\n", rootLine->id, getFather(rootLine, wholeSymbolTable)->id);
+//    }
+//
+//    printf("Livello di %s: %d\n", rootLine->id, getLevelModule(rootLine, wholeSymbolTable));
+//
 
     Pnode iterNode, paramNode, declNode, constDeclNode, modNode;
     iterNode = root->child; // punta a ID
@@ -147,7 +149,7 @@ void codeStatment(Pnode stat, PLine moduleLine){
                 PLine id = findLineById(assignStat->child->value.sval, moduleLine);
                 // ↑↑↑↑↑↑ forse bisogna controllare che siano esclusivamente PAR o VAR ↑↑↑↑↑↑
                 instTypeOfExpr(assignStat->child->brother->child, moduleLine);
-                fprintf(out, "STO ... %d\n",id->oid);
+                fprintf(out, "STO %d %d\n",getLevelModule(id, moduleLine)==-1?0:getLevelModule(id, moduleLine), id->oid);
                 break;
             }
             case NIF_STAT:{
@@ -283,8 +285,8 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
 //                            if(isFatherOfCaller(moduleCalled, moduleLine)==1){
 //                                printf("Genitore\n");
 //                            }
-
-                            fprintf(out, "PUSH %d -oggetti- -chain\n\t GOTO %d\nPOP\n", moduleCalled->nFormalParams,
+                            printf("Gap: %d tra chiamato: %s e chiamante: %s\n", getGapModuleAmbient(moduleLine, moduleCalled), moduleCalled->id, moduleLine->id);
+                            fprintf(out, "PUSH %d -oggetti- %d\n\t GOTO %d\nPOP\n", moduleCalled->nFormalParams, getGapModuleAmbient(moduleLine, moduleCalled),
                                     moduleCalled->oid);
                             break;
                         }
@@ -375,7 +377,6 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
 }
 
 void generateCodeFormalParams(Pnode param, PLine moduleLine){
-
 
     while (param!=NULL){
         instTypeOfExpr(param, moduleLine);

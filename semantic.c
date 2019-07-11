@@ -19,16 +19,69 @@ PLine wholeSymbolTable; // riferimento alla testa dell'INTERA symbol table
 
 // Funzioni di utilità per la ricerca nella symbol table
 
+int getGapModuleAmbient(PLine caller, PLine called){
 
-int isChildOfCaller(PLine called, PLine caller){
+    //m1 chiama m2
+
+    if(caller == called && caller == wholeSymbolTable){
+        return 0;
+    }else{
+        //m1 genitore di m2
+        if(isChildDirectly(called, caller)!=0){
+            return 0;
+        }
+            //m1 fratello m2
+        else if(caller!=wholeSymbolTable && called!=wholeSymbolTable && isBrother(caller, called)==1){
+            return 1;
+        }
+            //altrimenti
+        else{
+            /*...*/
+            return getLevelModule(caller, wholeSymbolTable)-getLevelModule(called,wholeSymbolTable)+1;
+
+             /*...*/
+        }
+    }
+
+
+}
+
+int objectInBuckets(PLine *bucket){
+
+}
+
+
+int getLevelModule(PLine module, PLine table){
+
+    for (int i = 0; i <BUCKET_SIZE ; ++i) {
+        PLine line = table->bucket[i];
+        while(line!=NULL){
+
+            if(module==line){
+                return 0;
+            }
+            if(getLevelModule(module, line)!=-1){
+                return 1+getLevelModule(module, line);
+            }
+            line = line->next;
+        }
+    }
+
+    return -1;
+
+}
+
+int isChildDirectly(PLine probableChild, PLine probableFather){
+
+    int gap = 0;
 
     for(int i=0; i<BUCKET_SIZE; i++){
-        PLine toControl = caller->bucket[i];
+        PLine toControl = probableFather->bucket[i];
 
 
         while (toControl!=NULL){
-            if(toControl==called){
-                return 1;
+            if(toControl==probableChild){
+                return  1;
             }
 
             toControl = toControl->next;
@@ -36,7 +89,6 @@ int isChildOfCaller(PLine called, PLine caller){
 
     }
 
-    return 0;
 }
 
 PLine getFather(PLine child, PLine table){
@@ -75,27 +127,19 @@ PLine getFather(PLine child, PLine table){
     return NULL;
 }
 
-int isBrotherOfCaller(PLine brotherCalled, PLine brotherCaller){
+int isBrother(PLine module1, PLine module2){
 
-//    PLine fatherOfBrothers = is
+    PLine fatherM1 = getFather(module1, wholeSymbolTable);
+    PLine fatherM2 = getFather(module2, wholeSymbolTable);
 
-    for(int i=0; i<BUCKET_SIZE; i++){
-        PLine toControl = brotherCalled->bucket[i];
-
-
-        while (toControl!=NULL){
-            if(toControl==brotherCalled){
-                return 1;
-            }
-
-            toControl = toControl->next;
-        }
+    if(fatherM1==fatherM2){
+        return 1;
 
     }
 
     return 0;
 }
-
+/*
 int isFatherOfCaller(PLine called, PLine caller){
     for(int i=0; i<BUCKET_SIZE; i++){
         PLine toControl = called->bucket[i];
@@ -113,7 +157,7 @@ int isFatherOfCaller(PLine called, PLine caller){
 
     return 0;
 }
-
+*/
 
 // dato l'oid di un modulo, cerca ricorsivamente quale modulo è suo padre
 PLine findModuleFather(PLine moduleLine, int childModuleOid) {

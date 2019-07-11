@@ -9,8 +9,9 @@ PLine findLineById(char*, PLine);
 void semanticControl(Pnode, PLine);
 void  statListControl(Pnode, PLine);
 char *getExprType(Pnode, PLine);
-int isChildOfCaller(PLine, PLine);
-int isFatherOfCaller(PLine, PLine);
-int isBrotherOfCaller(PLine, PLine);
+int isChildDirectly(PLine, PLine);
+int getLevelModule(PLine, PLine);
+int isBrother(PLine, PLine);
+int getGapModuleAmbient(PLine, PLine);
 PLine getFather(PLine, PLine);
 #endif

@@ -13,15 +13,15 @@ module H (p1: int, p2: string): bool
             k,l:bool;
 
             begin f2
-                veroofalso = H(c,msg);
+                c = f3(c);
                 return MAX;
             end f2
 
-         module f3(t: int, p:bool):int
+         module f3(t: int):int
             var c:int;
             k,l:bool;
             begin f3
-                veroofalso = H(c,msg);
+                c = f2(c,l);
                 return MAX;
             end f3
 
