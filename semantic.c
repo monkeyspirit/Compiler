@@ -928,6 +928,7 @@ char* getExprType(Pnode node, PLine fatherModuleLine){ //expr punta x_term
         int typeOp;
         switch (node->brother->value.ival) {
             case NREL_TERM1:
+            case NLOW_TERM1:
             case NEXPR1:
                 typeOp = node->brother->child->child->type;
                 rightExprType = getExprType(node->brother->child->brother, fatherModuleLine);
