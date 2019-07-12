@@ -667,13 +667,171 @@ char* getCondExprType(Pnode condition, PLine fatherModuleLine){
 
 }
 
-// data un'espressione ne ricava il tipo totale controllando la semantica
-char* getExprType(Pnode node, PLine fatherModuleLine){ //expr punta x_term
+/*
+char* getExprType2(Pnode node, PLine fatherModuleLine){ //expr punta x_term
 
     char *leftExprType = "";
     int typeOp;
 
     if(node!=NULL) {
+
+        if (node->child == NULL) { // se siamo ai minimi termini
+            switch (node->type) {
+                case 6:
+                    return "CHAR";
+                case 7:
+                    return "INT";
+                case 8:
+                    return "REAL";
+                case 9:
+                    return "STRING";
+                case 10:
+                    return "BOOL";
+                case 11: {
+                    // printf("Id: %s Type: %s\n",node->value.sval, findLineByIdFromPCV(node->value.sval, ambiente->bucket)->type);
+                    PLine line = findLineById(node->value.sval, fatherModuleLine);
+                    if (strcmp(line->class, "MOD") == 0) {
+                        printf("Errore: chiamata non valida al modulo %s", line->id);
+                        exit(-14);
+                    }
+                    return line->type;
+                }
+                default:
+                    printf("Errore: tipo \"%d\"non supportato", node->type);
+                    exit(-1);
+            }
+        } else { // passo ricorsivo
+
+            if (node->child->value.ival != NFACTOR)
+                leftExprType = getExprType(node->child, fatherModuleLine);
+            else {
+                if (node->child->child->type == 11)  // per gli id scendiamo di livello
+//                printf("%s\n", node->child->child->value.sval);
+                    leftExprType = getExprType(node->child, fatherModuleLine);
+                else {
+                    switch (node->child->child->value.ival) {
+                        case NUNARYOP: {
+                            leftExprType = getExprType(node->child->child->brother, fatherModuleLine);
+
+                            // Checking del tipo sull'operatore unario
+                            switch (node->child->child->child->type) {
+                                case 15: // meno unario
+                                    if (strcmp(leftExprType, "INT") != 0 || strcmp(leftExprType, "REAL") != 0) {
+                                        printf("Errore l'operatore unario \"-\" richiede o INT o REAL, trovato invece un %s\n", leftExprType);
+                                        exit(-8);
+                                    }
+                                    break;
+                                case 17: // not
+                                    if (strcmp(leftExprType, "BOOL") != 0) {
+                                        printf("Errore l'operatore unario \"not\" richiede un BOOL, trovato invece un %s\n", leftExprType);
+                                        exit(-8);
+                                    }
+                                    break;
+                                default:
+                                    printf("Errore operatore unario non riconosciuto %d", node->child->child->child->type);
+                                    exit(-1);
+                            }
+
+                            return leftExprType;
+
+                        }
+                        case NMODULE_CALL: {
+                            PLine calledModuleLine = findLineById(node->child->child->child->value.sval, fatherModuleLine);
+                            if (strcmp(calledModuleLine->class, "MOD") != 0){
+                                printf("Errore: l'id %s non risulta essere un modulo ma un %s", calledModuleLine->id, calledModuleLine->class);
+                                exit(-11);
+                            }
+                            leftExprType = calledModuleLine->type;
+                            checkModuleCallParams(node->child->child->child->brother,
+                                                  calledModuleLine,
+                                                  fatherModuleLine);
+                            break;
+                        }
+                        case NEXPR:
+                            leftExprType = getExprType(node->child->child, fatherModuleLine);
+                            break;
+
+                        case NCONSTANT: {
+                            switch (node->child->child->child->type) {
+                                case T_CHARCONST:
+                                    leftExprType = "CHAR";
+                                    break;
+                                case T_INTCONST:
+                                    leftExprType = "INT";
+                                    break;
+                                case T_REALCONST:
+                                    leftExprType = "REAL";
+                                    break;
+                                case T_STRCONST:
+                                    leftExprType = "STRING";
+                                    break;
+                                case T_BOOLCONST:
+                                    leftExprType = "BOOL";
+                                    break;
+                                default:
+                                    printf("Errore type expr");
+                                    exit(-1);
+                            }
+                            break;
+                        }
+                        case NCOND_EXPR: {
+                            leftExprType = getCondExprType(node->child->child->child, fatherModuleLine);
+                            break;
+                        }
+                        case NTYPE: {
+//                        typeExpr1 = typeOfModuleCall(x_term->child->child, moduleLine->bucket);
+//                        printf("Cast?\n");
+                            if (node->child->child->child->type == 2) {
+                                if (strcmp(getExprType(node->child->child->brother, fatherModuleLine), "INT") != 0) {
+                                    printf("Errore nel casting a REAL, ci si aspetta un INT invece è un %s\n",
+                                           getExprType(node->child->child->brother, fatherModuleLine));
+                                    exit(-3103);
+                                }
+                                return "REAL";
+                            } else if (node->child->child->child->type == 1) {
+                                if (strcmp(getExprType(node->child->child->brother, fatherModuleLine), "REAL") != 0) {
+                                    printf("Errore nel casting a INT, ci si aspetta un REAL invece è un %s\n",
+                                           getExprType(node->child->child->brother, fatherModuleLine));
+                                    exit(-3103);
+                                }
+                                return "INT";
+                            } else {
+                                printf("errore nel casting, operazione non definita\n");
+                                exit(-3103);
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+
+        if (node->brother == NULL)
+            return leftExprType;
+        else { // se c'è una parte destra bisogna controllare
+            char *rightExprType;
+
+            if (node->value.ival == 32) { // rel term è diverso per costruzione
+                rightExprType = getExprType(node->brother->brother, fatherModuleLine);
+                typeOp = node->brother->child->type;
+            } else {
+                rightExprType = getExprType(node->brother->child->brother, fatherModuleLine);
+                typeOp = node->brother->child->child->type;
+            }
+
+            return checkOperationAndGetType(typeOp, leftExprType, rightExprType);
+        }
+
+    }
+
+}/**/
+
+// data un'espressione ne ricava il tipo totale controllando la semantica
+char* getExprType(Pnode node, PLine fatherModuleLine){ //expr punta x_term
+
+    char *leftExprType = "";
+//    int typeOp;
 
     if (node->child == NULL) { // se siamo ai minimi termini
         switch (node->type) {
@@ -697,132 +855,90 @@ char* getExprType(Pnode node, PLine fatherModuleLine){ //expr punta x_term
                 return line->type;
             }
             default:
-                printf("Errore: tipo \"%d\"non supportato", node->type);
+                printf("Errore: tipo \"%d\" non supportato", node->type);
                 exit(-1);
         }
-    } else { // passo ricorsivo
-
-        if (node->child->value.ival != NFACTOR)
-            leftExprType = getExprType(node->child, fatherModuleLine);
-        else {
-            if (node->child->child->type == 11)  // per gli id scendiamo di livello
-//                printf("%s\n", node->child->child->value.sval);
-                leftExprType = getExprType(node->child, fatherModuleLine);
-            else {
-                switch (node->child->child->value.ival) {
-                    case NUNARYOP: {
-                        leftExprType = getExprType(node->child->child->brother, fatherModuleLine);
-
-                        // Checking del tipo sull'operatore unario
-                        switch (node->child->child->child->type) {
-                            case 15: // meno unario
-                                if (strcmp(leftExprType, "INT") != 0 || strcmp(leftExprType, "REAL") != 0) {
-                                    printf("Errore l'operatore unario \"-\" richiede o INT o REAL, trovato invece un %s\n", leftExprType);
-                                    exit(-8);
-                                }
-                                break;
-                            case 17: // not
-                                if (strcmp(leftExprType, "BOOL") != 0) {
-                                    printf("Errore l'operatore unario \"not\" richiede un BOOL, trovato invece un %s\n", leftExprType);
-                                    exit(-8);
-                                }
-                                break;
-                            default:
-                                printf("Errore operatore unario non riconosciuto %d", node->child->child->child->type);
-                                exit(-1);
-                        }
-
-                        return leftExprType;
-
-                    }
-                    case NMODULE_CALL: {
-                        PLine calledModuleLine = findLineById(node->child->child->child->value.sval, fatherModuleLine);
-                        if (strcmp(calledModuleLine->class, "MOD") != 0){
-                            printf("Errore: l'id %s non risulta essere un modulo ma un %s", calledModuleLine->id, calledModuleLine->class);
-                            exit(-11);
-                        }
-                        leftExprType = calledModuleLine->type;
-                        checkModuleCallParams(node->child->child->child->brother,
-                                              calledModuleLine,
-                                              fatherModuleLine);
-                        break;
-                    }
-                    case NEXPR:
-                        leftExprType = getExprType(node->child->child, fatherModuleLine);
-                        break;
-
-                    case NCONSTANT: {
-                        switch (node->child->child->child->type) {
-                            case T_CHARCONST:
-                                leftExprType = "CHAR";
-                                break;
-                            case T_INTCONST:
-                                leftExprType = "INT";
-                                break;
-                            case T_REALCONST:
-                                leftExprType = "REAL";
-                                break;
-                            case T_STRCONST:
-                                leftExprType = "STRING";
-                                break;
-                            case T_BOOLCONST:
-                                leftExprType = "BOOL";
-                                break;
-                            default:
-                                printf("Errore type expr");
-                                exit(-1);
-                        }
-                        break;
-                    }
-                    case NCOND_EXPR: {
-                        leftExprType = getCondExprType(node->child->child->child, fatherModuleLine);
-                        break;
-                    }
-                    case NTYPE: {
-//                        typeExpr1 = typeOfModuleCall(x_term->child->child, moduleLine->bucket);
-//                        printf("Cast?\n");
-                        if (node->child->child->child->type == 2) {
-                            if (strcmp(getExprType(node->child->child->brother, fatherModuleLine), "INT") != 0) {
-                                printf("Errore nel casting a REAL, ci si aspetta un INT invece è un %s\n",
-                                       getExprType(node->child->child->brother, fatherModuleLine));
-                                exit(-3103);
-                            }
-                            return "REAL";
-                        } else if (node->child->child->child->type == 1) {
-                            if (strcmp(getExprType(node->child->child->brother, fatherModuleLine), "REAL") != 0) {
-                                printf("Errore nel casting a INT, ci si aspetta un REAL invece è un %s\n",
-                                       getExprType(node->child->child->brother, fatherModuleLine));
-                                exit(-3103);
-                            }
-                            return "INT";
-                        } else {
-                            printf("errore nel casting, operazione non definita\n");
-                            exit(-3103);
-                        }
-                    }
-                }
-            }
-        }
-
     }
-
+    // passo ricorsivo
+    switch (node->value.ival) {
+        case NUNARYOP:
+            leftExprType = getExprType(node->brother, fatherModuleLine);
+            switch (node->child->type) {
+                case 15: // meno unario
+                    if (strcmp(leftExprType, "INT") != 0 && strcmp(leftExprType, "REAL") != 0) {
+                        printf("Errore l'operatore unario \"-\" richiede o INT o REAL, trovato invece un %s\n", leftExprType);
+                        exit(-8);
+                    }
+                    break;
+                case 17: // not
+                    if (strcmp(leftExprType, "BOOL") != 0) {
+                        printf("Errore l'operatore unario \"not\" richiede un BOOL, trovato invece un %s\n", leftExprType);
+                        exit(-8);
+                    }
+                    break;
+                default:
+                    printf("Errore operatore unario: non riconosciuto %d", node->child->child->child->type);
+                    exit(-1);
+            }
+            return leftExprType;
+            break;
+        case NCOND_EXPR:
+            leftExprType = getCondExprType(node->child, fatherModuleLine);
+            break;
+        case NTYPE:
+            if (node->child->type == 2) {
+                if (strcmp(getExprType(node->brother, fatherModuleLine), "INT") != 0) {
+                    printf("Errore nel casting a REAL, ci si aspetta un INT invece è un %s\n",
+                           getExprType(node->brother, fatherModuleLine));
+                    exit(-3103);
+                }
+                return "REAL";
+            } else if (node->child->type == 1) {
+                if (strcmp(getExprType(node->brother, fatherModuleLine), "REAL") != 0) {
+                    printf("Errore nel casting a INT, ci si aspetta un REAL invece è un %s\n",
+                           getExprType(node->brother, fatherModuleLine));
+                    exit(-3103);
+                }
+                return "INT";
+            } else {
+                printf("errore nel casting, operazione non definita\n");
+                exit(-3103);
+            }
+            break;
+        case NMODULE_CALL: {
+            PLine calledModuleLine = findLineById(node->child->value.sval, fatherModuleLine);
+            if (strcmp(calledModuleLine->class, "MOD") != 0){
+                printf("Errore: l'id %s non risulta essere un modulo ma un %s", calledModuleLine->id, calledModuleLine->class);
+                exit(-11);
+            }
+            leftExprType = calledModuleLine->type;
+            checkModuleCallParams(node->child->brother,
+                                  calledModuleLine,
+                                  fatherModuleLine);
+            break;
+        }
+        default:
+            leftExprType = getExprType(node->child, fatherModuleLine);
+    }
 
     if (node->brother == NULL)
         return leftExprType;
     else { // se c'è una parte destra bisogna controllare
         char *rightExprType;
-
-        if (node->value.ival == 32) { // rel term è diverso per costruzione
-            rightExprType = getExprType(node->brother->brother, fatherModuleLine);
-            typeOp = node->brother->child->type;
-        } else {
-            rightExprType = getExprType(node->brother->child->brother, fatherModuleLine);
-            typeOp = node->brother->child->child->type;
+        int typeOp;
+        switch (node->brother->value.ival) {
+            case NREL_TERM1:
+            case NEXPR1:
+                typeOp = node->brother->child->child->type;
+                rightExprType = getExprType(node->brother->child->brother, fatherModuleLine);
+                break;
+            default:
+                exit(-189);
         }
 
         return checkOperationAndGetType(typeOp, leftExprType, rightExprType);
     }
 
-    }
+//    }
 
 }
