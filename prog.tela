@@ -17,7 +17,7 @@ module H (p1: int, p2: string): bool
 
 begin H
 
-    p =  if a then (8+3*1) else (9+1+1+1) end;
+    p =  if a then (8+3*1) elseif a then (9+1+1+1) else 9 end;
     #p = (z * (z + p) - (y * y) );
     #p1 = z -  z;
     #veroofalso =(b and (6+1)>(7+1)) or a;
