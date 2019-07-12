@@ -1,45 +1,8 @@
-module H (p1: int, p2: string): bool
-    var p, y, z: int; xx: real;
-    veroofalso,a,b,c: bool;
-    msg: string;
-    const MAX:int =4; d: bool = (b and (6+1)>(7+1)) or a; RR: char = 'a';
+module main (): void
+    var b:bool; s:string; i:int; r:real;
 
-    module f1(t: int, p:bool):int
-        var c:int;
-        k,l:bool;
-
-
-
-    begin f1
-        veroofalso = H(c,msg);
-        return MAX;
-    end f1
-
-begin H
-
-    p =  if a then (8+3*1) else (9+1+1+1) end;
-    #p = (z * (z + p) - (y * y) );
-    #p1 = z -  z;
-    #veroofalso =(b and (6+1)>(7+1)) or a;
-    if a then
-        p= f1(p, H(p,msg));
-        veroofalso =  a and false;
-        if a then
-            p=8;
-        end;
-    else
-        p=8;
-        p=8;
-        veroofalso =  a and false;
-    end;
-
-    while (a) do
-        p=8;
-        veroofalso =  a and false;
-    end;
-    #p = int (xx);
-    #veroofalso = a;
-    #veroofalso =  a and f1(z,a);
-    return false;
-
-end H
+begin main
+    i = int(r+3.0);
+    b = true or (s<s and true);
+    return;
+end main

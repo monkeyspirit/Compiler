@@ -9,7 +9,7 @@
 #include <stdarg.h>
 
 char **buffer=NULL;
-int currentBufferSize=0;
+int bufferSize=0;
 FILE *out;
 
 
@@ -19,31 +19,45 @@ PLine wholeSymbolTable;
 
 // metodi per gestire il buffer
 
+// aggiunge una strina al buffer e aumenta il bufferSize
 void bufferWrite(char *lineToWrite){
-    buffer = realloc(buffer, sizeof(char*) * (currentBufferSize+1)); // rialloco la memoria
-    buffer[currentBufferSize++] = lineToWrite; // aggiungo la rica
+    buffer = realloc(buffer, sizeof(char*) * (bufferSize+1)); // rialloco la memoria
+    buffer[bufferSize++] = lineToWrite; // aggiungo la rica
 }
 
-void bprintf(char *s, ...){
-    char *ss = malloc(strlen(s)); // devo allocare la memoria per la nuova stringa
+// fa come la printf ma sul buffer
+void bprintf(char *stringToCompile, ...){
+    char *compiledString = malloc(strlen(stringToCompile)); // devo allocare la memoria per la nuova stringa
     va_list args;
-    va_start(args, s);
-    vsprintf(ss, s, args); // elaboriamo la stringa
-    bufferWrite(ss); // la aggiungiamo al buffer
+    va_start(args, stringToCompile);
+    vsprintf(compiledString, stringToCompile, args); // elaboriamo la stringa
+    bufferWrite(compiledString); // la aggiungiamo al buffer
     va_end(args);
 }
 
+// fa come la bprintf ma non aggiunge una riga in fondo
+// bensì sovrascrive una già esistente (all'indirizzo specificato)
+void bprintfAtIndex(int index, char *stringToCompile, ...){
+    char *compiledString = malloc(strlen(stringToCompile)); // devo allocare la memoria per la nuova stringa
+    va_list args;
+    va_start(args, stringToCompile);
+    vsprintf(compiledString, stringToCompile, args); // elaboriamo la stringa
+    buffer[index] = compiledString; // la aggiungiamo al buffer
+    va_end(args);
+}
+
+// scrive il buffer su file
 void flush(){
     out = fopen("../tCode.out", "w");
-    for (int i = 0; i < currentBufferSize; ++i)
+    for (int i = 0; i < bufferSize; ++i)
         fprintf( out, "%s", buffer[i]);
     fclose(out);
 }
 
+// metodi generazione tcode
+
 void tCode(PLine rootLine, Pnode root){
-//    out = fopen("../tCode.out", "w");
     wholeSymbolTable = rootLine;
-//    bprintf( "TCODE %d", );
     tCodeGenerator(rootLine, root);
     flush();
 }
@@ -232,45 +246,27 @@ void codeStatment(Pnode stat, PLine moduleLine){
 
 }
 
-
-
 void newTcode(int type){
-
-    bprintf( "NEW ");
-
     switch (type){
-        case T_INT:{
-            bprintf( "|int|\n");
+        case T_INT:
+            bprintf("NEW |int|\n");
             break;
-        }
-        case T_REAL:{
-            bprintf( "|float|\n");
+        case T_REAL:
+            bprintf("NEW |float|\n");
             break;
-        }
-        case T_BOOL:{
-            bprintf( "|int|\n");
+        case T_BOOL:
+            bprintf("NEW |int|\n");
             break;
-        }
-        case T_CHAR:{
-            bprintf( "|char|\n");
+        case T_CHAR:
+            bprintf("NEW |char|\n");
             break;
-        }
-        case T_STRING:{
-            bprintf( "|string|\n");
+        case T_STRING:
+            bprintf("NEW |string|\n");
             break;
-        }
     }
-
 }
 
-
-
-
-
-
-
 int unaryOP;
-
 void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
 
     if(x_term!=NULL) {
@@ -538,82 +534,68 @@ void operationCode(Pnode x_term, int type, PLine moduleLine, char* typeExpr){
 
     switch (type){
         //logic op:
-        case 24 : case 25:{
+        case 24 : case 25:
             logicOperation(x_term, type, moduleLine);
             break;
-        }
 
         //rel op:
-        case 18 : case 19: case 20: case 21: case 22: case 23:{
+        case 18 : case 19: case 20: case 21: case 22: case 23:
             relOperation(x_term,type, moduleLine, typeExpr);
             break;
-        }
 
         //math op:
-        case 13 : case 14: case 15: case 16:{
+        case 13 : case 14: case 15: case 16:
             mathOperation(x_term,type, moduleLine, typeExpr);
             break;
-        }
+
     }
 
 }
 
 void mathOperation(Pnode term, int type,  PLine moduleLine, char* typeExpr){
-    if(strcmp(typeExpr, "INT")==0 ){
-        instTypeOfExpr(term, moduleLine);
-
-        switch (type){
-            case 13 :{ // *
-                bprintf( "IMUL\n");
-                break;
-            }
-            case 14:{  // /
-                bprintf( "IDIV\n");
-                break;
-            }
-            case 15: { // -
-                bprintf( "ISUB\n");
-                break;
-            }
-            case 16: { // +
-                bprintf( "IADD\n");
-                break;
-
-            }
-        }
+    char *typeC;
+    if (strcmp(typeExpr, "INT")==0)
+        typeC = "I";
+    else if (strcmp(typeExpr, "REAL")==0)
+        typeC = "R";
+    else {
+        printf("Errore: mathoperation non riconosciuta");
+        exit(-18);
     }
-    else if(strcmp(typeExpr, "REAL")==0){
-        instTypeOfExpr(term, moduleLine);
-        switch (type){
-            case 13 :{ // *
-                bprintf( "RMUL\n");
-                break;
-            }
-            case 14:{  // /
-                bprintf( "RDIV\n");
-                break;
-            }
-            case 15: { // -
-                bprintf( "RSUB\n");
-                break;
-            }
-            case 16: { // +
-                bprintf( "RADD\n");
-                break;
 
-            }
-        }
+    instTypeOfExpr(term, moduleLine);
+
+    char *opC=NULL;
+    switch (type){
+        case 13 : // *
+            opC = "MUL";
+            break;
+        case 14:  // /
+            opC = "DIV";
+            break;
+        case 15: // -
+            opC = "SUB";
+            break;
+        case 16:  // +
+            opC = "ADD";
+            break;
     }
+
+    bprintf("%s%s\n", typeC, opC);
 
 }
 
 void relOperation(Pnode term, int type, PLine moduleLine, char* typeExpr){
 
     switch (type){
-        case 22: case 23:{
-            equalNotEqual(term, type, moduleLine);
+        case 22: // !=
+            instTypeOfExpr(term, moduleLine);
+            bprintf("EQU\n");
             break;
-        }
+        case 23: // ==
+            instTypeOfExpr(term, moduleLine);
+            bprintf("EQU\n");
+            break;
         case 18 : case 19: case 20: case 21:{
             relationOp(term, type, moduleLine, typeExpr);
             break;
@@ -622,114 +604,44 @@ void relOperation(Pnode term, int type, PLine moduleLine, char* typeExpr){
 
 }
 
-void equalNotEqual(Pnode term,int type,PLine moduleLine){
-    switch (type){
-        case 22:{ //==
-            instTypeOfExpr(term, moduleLine);
-            bprintf( "EQU\n");
-            break;
-        }
-        case 23:{ //!=
-            instTypeOfExpr(term, moduleLine);
-            bprintf( "NEQ\n");
-            break;
-        }
-    }
-}
-
 void relationOp(Pnode term, int type, PLine moduleLine, char* typeExpr){
-
-    if(strcmp(typeExpr, "INT")==0  || strcmp(typeExpr, "BOOL")==0 ){
-        instTypeOfExpr(term, moduleLine);
-
-        switch (type){
-            case 18 :{ //<=
-                bprintf( "ILE\n");
-                break;
-            }
-            case 19:{  //>=
-                bprintf( "IGE\n");
-                break;
-            }
-            case 20: { //<
-                bprintf( "ILT\n");
-                break;
-            }
-            case 21: { //>
-                bprintf( "IGT\n");
-                break;
-
-            }
-        }
-    }
-    else if(strcmp(typeExpr, "CHAR")==0){
-        instTypeOfExpr(term, moduleLine);
-        switch (type){
-            case 18 :{ //<=
-                bprintf( "CLE\n");
-                break;
-            }
-            case 19:{  //>=
-                bprintf( "CGE\n");
-                break;
-            }
-            case 20: { //<
-                bprintf( "CLT\n");
-                break;
-            }
-            case 21: { //>
-                bprintf( "CGT\n");
-                break;
-
-            }
-        }
-    }
-    else if(strcmp(typeExpr, "REAL")==0){
-        instTypeOfExpr(term, moduleLine);
-        switch (type){
-            case 18 :{ //<=
-                bprintf( "RLE\n");
-
-                break;
-            }
-            case 19:{  //>=
-                bprintf( "RGE\n");
-                break;
-            }
-            case 20: { //<
-                bprintf( "RLT\n");
-                break;
-            }
-            case 21: { //>
-                bprintf( "RGT\n");
-                break;
-
-            }
-        }
-    }
-    else if(strcmp(typeExpr, "STRING")==0){
-        instTypeOfExpr(term, moduleLine);
-        switch (type){
-            case 18 :{ //<=
-                bprintf( "SLE\n");
-                break;
-            }
-            case 19:{  //>=
-                bprintf( "SGE\n");
-                break;
-            }
-            case 20: { //<
-                bprintf( "SLT\n");
-                break;
-            }
-            case 21: { //>
-                bprintf( "SGT\n");
-                break;
-
-            }
-        }
+/**/
+    char *topo=NULL;
+    if(strcmp(typeExpr, "INT")==0  || strcmp(typeExpr, "BOOL")==0 )
+        topo = "I";
+    else if (strcmp(typeExpr, "CHAR")==0)
+        topo = "C";
+    else if(strcmp(typeExpr, "REAL")==0)
+        topo = "R";
+    else if(strcmp(typeExpr, "STRING")==0)
+        topo = "S";
+    else {
+        printf("Errore relationOP: tipo non riconosciuto");
+        exit(-17);
     }
 
+    instTypeOfExpr(term, moduleLine);
+
+    char *op=NULL;
+    switch (type) {
+        case 18: // <=
+            op = "LE";
+            break;
+        case 19: // >=
+            op = "GE";
+            break;
+        case 20: // <
+            op = "LT";
+            break;
+        case 21: // >
+            op = "GT";
+            break;
+        default:
+            printf("Errore relationOP: operazione %d sconosciuta", type);
+            exit(-17);
+    }
+
+    bprintf("%s%s\n", topo, op);
 }
 
 void logicOperation(Pnode term, int type, PLine moduleLine){
@@ -737,26 +649,22 @@ void logicOperation(Pnode term, int type, PLine moduleLine){
     switch (type){
         case 24:{ //AND
 
-            int offset = 2 + numberOfLinesExpr(term->child);
-            //il +2 include le due righe stampate del JMP e LDI
-
-            bprintf( "JMF %d\n", offset);
+            int jmfBufferAddress = bufferSize;
+            bprintf( "JMF temp\n");
             instTypeOfExpr(term->child, moduleLine);
             bprintf("JMP 2\n");
+            bprintfAtIndex(jmfBufferAddress, "JMF %d\n", bufferSize-jmfBufferAddress);
             bprintf( "LDI 0\n");
-
-
 
             break;
         }
         case 25:{ //OR
-            int exit = 1 + numberOfLinesExpr(term);
-            //il +1 fa andare dopo l'ultima riga dell'ultima espressione
             bprintf( "JMF 3\n");
             bprintf( "LDI 1\n");
-            bprintf("JMP %d\n", exit);
+            int jmpAddress = bufferSize;
+            bprintf("JMP temp\n");
             instTypeOfExpr(term, moduleLine);
-
+            bprintfAtIndex(jmpAddress, "JMP %d\n", bufferSize-jmpAddress);
 
             break;
         }
@@ -792,7 +700,6 @@ void generateCodeOFConditionalExpr(Pnode condition, PLine moduleLine){
     instTypeOfExpr(elseNode, moduleLine);
 
 }
-
 
 void generateCodeElseIfExpr(Pnode optExpr, PLine moduleLine){
     bool opt = false;
