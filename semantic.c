@@ -932,7 +932,12 @@ char* getExprType(Pnode node, PLine fatherModuleLine){ //expr punta x_term
                 typeOp = node->brother->child->child->type;
                 rightExprType = getExprType(node->brother->child->brother, fatherModuleLine);
                 break;
+            case NRELOP:
+                typeOp = node->brother->child->type;
+                rightExprType = getExprType(node->brother->brother, fatherModuleLine);
+                break;
             default:
+                printf("Errore nella parte destra dell'operazione %d", node->brother->value.ival);
                 exit(-189);
         }
 
