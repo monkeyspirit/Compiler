@@ -13,11 +13,17 @@ void newTcode(int),
      mathOperation(Pnode, int, PLine, char*),
      relOperation(Pnode, int, PLine,char*),
      logicOperation(Pnode, int, PLine),
-     equalNotEqual(Pnode, int, PLine),
      relationOp(Pnode, int, PLine, char*),
      generateCodeFormalParams(Pnode, PLine),
-     generateCodeElseIfExpr(Pnode , PLine , int),
-     generateCodeOFConditionalExpr(Pnode , PLine )  ;
+     generateCodeElseIfExpr(Pnode , PLine),
+     generateCodeOFConditionalExpr(Pnode , PLine),
+     generateCodeCast(Pnode, PLine, int),
+     generateCodeRead(Pnode, PLine),
+     generateCodeWrite(Pnode, PLine),
+     generateCodeIfStat(Pnode ,PLine),
+     generateCodeElseIfStat(Pnode, PLine);
+
+int getLocalObjectInModule(PLine);
 
 void instTypeOfExpr(Pnode , PLine );
 

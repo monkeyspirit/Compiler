@@ -1,8 +1,6 @@
 %{
 #include "def.h"
-#include "parser.h"
-#include "syntaxTree.h"
-#include "symbolTable.h"
+
 int line =	1;
 Lexval value;	
 %}
@@ -18,7 +16,7 @@ digit			[0-9]
 initialdigit	[1-9]
 charconst		\'{letter}\'
 sgn 			"-"
-intconst		{sgn}?{initialdigit}{digit}*|0
+intconst		{initialdigit}{digit}*|0
 realconst		{intconst}\.{digit}?
 strconst		\"[^\n\"]*\"
 boolconst		false|true 
@@ -79,8 +77,7 @@ not				{return(NOT);}
 %%
 
 
-char *newstring(char *s)
-{
+char *newstring(char *s) {
 	char *p;
 	p = malloc(strlen(s)+1);
 	strcpy(p, s);

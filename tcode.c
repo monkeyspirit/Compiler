@@ -4,9 +4,11 @@
 
 #include "tcode.h"
 #include "semantic.h"
-#include "counter.h"
+#include "counter(deprecato).h"
+#include "dynamicArray.h"
 
 #include <stdarg.h>
+
 
 char **buffer=NULL;
 int bufferSize=0;
@@ -196,25 +198,7 @@ void codeStatment(Pnode stat, PLine moduleLine){
                 break;
             }
             case NIF_STAT:{
-
-//                Pnode ifStat = stat->child;
-//
-//
-//                Pnode statList = ifStat->child->brother;
-//                controlOfStatment(statList->child, moduleLine);
-//
-//                if(statList->brother!=NULL &&  statList->brother->value.ival==NOPT_ELSEIF_STAT_LIST){
-//                    controlOptElseIfStatList(statList->brother, moduleLine);
-//                    statList=statList->brother;
-//                }
-//
-//
-//                if(statList->brother!=NULL && statList->brother->value.ival==NOPT_ELSE_STAT){
-//
-//                    controlOptElseStat(statList->brother, moduleLine);
-//                }
-//
-
+                generateCodeIfStat(stat->child, moduleLine);
                 break;
             }
             case NWHILE_STAT: {
@@ -233,12 +217,23 @@ void codeStatment(Pnode stat, PLine moduleLine){
                 break;
             }
             case NREAD_STAT:{
+                generateCodeRead(stat->child->child->child, moduleLine);
                 break;
             }
             case NWRITE_STAT:{
+                generateCodeWrite(stat->child->child->child, moduleLine);
                 break;
             }
-
+            case NMODULE_CALL: {
+                PLine moduleCalled = findLineById(stat->child->child->child->value.sval, moduleLine);
+                // ↑↑↑↑↑↑ forse bisogna controllare che sia esclusivamente MOD ↑↑↑↑↑↑
+                bprintf("PUSH %d %d %d\n", moduleCalled->nFormalParams, getLocalObjectInModule(moduleCalled),
+                        getGapModuleAmbient(moduleLine, moduleCalled));
+                bprintf("\t GOTO %d\n", moduleCalled->oid);
+                bprintf("POP\n");
+//
+                break;
+            }
         }
 
         stat= stat->brother;
@@ -346,9 +341,11 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
 //                            if(isFatherOfCaller(moduleCalled, moduleLine)==1){
 //                                printf("Genitore\n");
 //                            }
-                            printf("Gap: %d tra chiamato: %s e chiamante: %s\n", getGapModuleAmbient(moduleLine, moduleCalled), moduleCalled->id, moduleLine->id);
-                            bprintf( "PUSH %d -oggetti- %d\n\t GOTO %d\nPOP\n", moduleCalled->nFormalParams, getGapModuleAmbient(moduleLine, moduleCalled),
-                                    moduleCalled->oid);
+//                            printf("Gap: %d tra chiamato: %s e chiamante: %s\n", getGapModuleAmbient(moduleLine, moduleCalled), moduleCalled->id, moduleLine->id);
+                            bprintf("PUSH %d %d %d\n", moduleCalled->nFormalParams,  getLocalObjectInModule(moduleCalled), getGapModuleAmbient(moduleLine, moduleCalled));
+                            bprintf("\t GOTO %d\n", moduleCalled->oid );
+                            bprintf("POP\n");
+//
                             break;
                         }
                         case NEXPR:
@@ -364,6 +361,8 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
                             break;
                         }
                         case NTYPE: {
+                            int type = x_term->child->child->child->type;
+                            generateCodeCast(x_term->child->child->brother, moduleLine, type);
                             break;
                         }
                     }
@@ -461,7 +460,7 @@ void relOperation(Pnode term, int type, PLine moduleLine, char* typeExpr){
     switch (type){
         case 22: // !=
             instTypeOfExpr(term, moduleLine);
-            bprintf("EQU\n");
+            bprintf("NEQ\n");
             break;
         case 23: // ==
             instTypeOfExpr(term, moduleLine);
@@ -544,79 +543,248 @@ void logicOperation(Pnode term, int type, PLine moduleLine){
 
 }
 
+ListNode *lineExitCondExpr = NULL;
+
 void generateCodeOFConditionalExpr(Pnode condition, PLine moduleLine){
 
+
+
     Pnode ifNode = condition->child;
-    Pnode thenNode = condition->brother ;
+    Pnode thenNode = condition->brother->child ;
 
 
     instTypeOfExpr(ifNode, moduleLine);
-
-    int next = 2 + numberOfLinesExpr(thenNode);
-
-    bprintf( "JMF %d\n", next);
+    int jmpAddress = bufferSize;
+    bprintf( "JMF temp\n");
     instTypeOfExpr(thenNode, moduleLine);
 
     Pnode elseNode;
-    int exit=0;
 
 
-    if(condition->brother->brother->value.ival==NOPT_ELSEIF_EXPR_LIST){
+    lineExitCondExpr = addIntNode(lineExitCondExpr, bufferSize);
+    bprintf("JMP exit\n");
 
-        elseNode = condition->brother->brother->brother;
-        exit = 1 + numberOfLinesExpr(condition->brother->brother);
-        bprintf("JMP exit %d\n", exit);
+    bprintfAtIndex(jmpAddress, "JMF %d\n", bufferSize-jmpAddress);
 
-        generateCodeElseIfExpr(condition->brother->brother->child, moduleLine, exit);
+    if(condition->brother->brother->value.ival==NOPT_ELSEIF_EXPR_LIST) {
 
-        instTypeOfExpr(elseNode, moduleLine);
+        generateCodeElseIfExpr(condition->brother->brother->child, moduleLine);
 
+        condition = condition->brother;
     }
-    else{
         elseNode = condition->brother->brother;
-        exit = 1 + numberOfLinesExpr(elseNode->child);
-        bprintf("JMP exit %d\n", exit);
         instTypeOfExpr(elseNode, moduleLine);
 
+    for (; lineExitCondExpr!=NULL; lineExitCondExpr=lineExitCondExpr->next) {
+            bprintfAtIndex(lineExitCondExpr->value.ival, "JMP %d\n", bufferSize-lineExitCondExpr->value.ival);
     }
-
-
-
 
 
 }
-/*
-<<<<<<< HEAD
-void generateCodeElseIfExpr(Pnode optExpr, PLine moduleLine){
-    bool opt = false;
-=======*/
 
-void generateCodeElseIfExpr(Pnode optExpr, PLine moduleLine, int exitPlus){
+void generateCodeElseIfExpr(Pnode optExpr, PLine moduleLine){
 
 
     Pnode expr = optExpr->child;
     instTypeOfExpr(expr, moduleLine);
     Pnode then = optExpr->brother->child;
 
-    int next = 2 + numberOfLinesExpr(then);
+    int jmpAddress = bufferSize;
+    bprintf( "JMF temp\n");
 
-    bprintf( "JMF %d\n", next);
     instTypeOfExpr(then, moduleLine);
-    int exit;
+
+
+    lineExitCondExpr = addIntNode(lineExitCondExpr, bufferSize);
+    bprintf("JMP exit\n");
 
     if(optExpr->brother->brother!=NULL && optExpr->brother->brother->value.ival==NOPT_ELSEIF_EXPR_LIST){
-
-        exit = exitPlus + 1 + numberLinesCodeOFConditionalExpr(optExpr->brother->brother);
-
-        generateCodeElseIfExpr(optExpr->brother->brother, moduleLine, exit);
-
-
+        bprintfAtIndex(jmpAddress, "JMF %d\n", bufferSize-jmpAddress);
+        generateCodeElseIfExpr(optExpr->brother->brother->child, moduleLine);
     }
     else{
-        exit = exitPlus;
+        bprintfAtIndex(jmpAddress, "JMF %d\n", bufferSize-jmpAddress);
+
     }
 
-    bprintf("JMP exit %d\n", exit);
+}
+
+void generateCodeCast(Pnode cast, PLine moduleLine, int type){
+
+    instTypeOfExpr(cast, moduleLine);
+
+    switch (type){
+        case T_INT:{
+            bprintf("TOINT\n");
+            break;
+        }
+        case T_REAL:{
+            bprintf("TOREA\n");
+            break;
+        }
+    }
+
+}
+
+void generateCodeRead(Pnode id, PLine moduleLine){
+
+    while (id!=NULL){
+
+        PLine idLine = findLineById(id->value.sval, moduleLine);
+
+        int offsetEnv= getLevelModule(idLine, moduleLine)==-1?0:getLevelModule(idLine, moduleLine);
+        char type = idLine->type[0];
+            if(type>='A' && type<='Z'){
+                type = type +32;
+            }
+
+        bprintf("READ %c %d %d\n", type,offsetEnv,idLine->oid);
+
+        id = id->brother;
+    }
+
+}
+
+ListNode *charListWrite = NULL;
+
+void generateCodeWrite(Pnode expr, PLine moduleLine){
+
+    while(expr!=NULL){
+
+        char *type = getExprType(expr->child, moduleLine);
+
+        charListWrite = addCharNode(charListWrite, type[0]);
+
+        instTypeOfExpr(expr, moduleLine);
+        expr = expr->brother;
+    }
+
+    ListNode *count = charListWrite;
+    int num = 0;
+
+    for (; count!=NULL; count=count->next) {
+//        printf("Char: %c\n", count->value.cval);
+        ++num;
+    }
+//    printf("num: %d ", num);
+
+    char inverti[num];
+    int i = num-1;
+
+    while (charListWrite!=NULL ){
+//        printf("i:%d ", i);
+        inverti[i]=charListWrite->value.cval;
+        charListWrite=charListWrite->next;
+        --i;
+    }
+
+
+    char stampa[num];
+
+    int j;
+    for ( j= 0; j < num ; j++) {
+//        printf("Char: %c\n", inverti[j]);
+        stampa[j] = inverti[j];
+    }
+    stampa[j]='\0';
+
+    int c=0;
+
+    while(stampa[c]!='\0'){
+
+        if(stampa[c]>='A' && stampa[c]<='Z'){
+            stampa[c] = stampa[c] +32;
+        }
+        c++;
+    }
+
+    bprintf("WRITE \"%s\"\n", stampa);
 
 
 }
+
+int getLocalObjectInModule(PLine module){
+    int n = 0;
+
+    for (int i = 0; i < BUCKET_SIZE; ++i) {
+        PLine line = module->bucket[i];
+
+        while (line!=NULL){
+            n++;
+            line = line->next;
+        }
+
+    }
+
+    return n;
+}
+
+ListNode *lineExitIfStat = NULL;
+
+void generateCodeIfStat(Pnode if_stat, PLine moduleLine){
+
+    Pnode expr = if_stat->child;
+    instTypeOfExpr(expr, moduleLine);
+    int jmpAddress = bufferSize;
+    bprintf( "JMF temp\n");
+
+    Pnode statList = expr->brother;
+    codeStatment(statList->child, moduleLine);
+
+    lineExitIfStat = addIntNode(lineExitIfStat, bufferSize);
+    bprintf("JMP exit\n");
+
+    bprintfAtIndex(jmpAddress, "JMF %d\n", bufferSize-jmpAddress);
+
+
+    if( statList->brother!=NULL && statList->brother->value.ival==NOPT_ELSEIF_STAT_LIST) {
+
+        generateCodeElseIfStat(if_stat->child->brother->brother->child, moduleLine);
+
+        statList = statList->brother;
+    }
+
+
+    if(statList->brother!=NULL &&statList->brother->value.ival==NOPT_ELSE_STAT) {
+
+        codeStatment(statList->brother->child,moduleLine);
+
+    }
+
+    for (; lineExitIfStat!=NULL; lineExitIfStat=lineExitIfStat->next) {
+        bprintfAtIndex(lineExitIfStat->value.ival, "JMP %d\n", bufferSize-lineExitIfStat->value.ival);
+    }
+
+
+}
+
+void generateCodeElseIfStat(Pnode optExpr, PLine moduleLine){
+
+
+    Pnode expr = optExpr->child;
+    instTypeOfExpr(expr, moduleLine);
+    Pnode then = optExpr->brother->child;
+
+    int jmpAddress = bufferSize;
+    bprintf( "JMF temp\n");
+
+    codeStatment(then, moduleLine);
+
+
+    lineExitIfStat = addIntNode(lineExitIfStat, bufferSize);
+    bprintf("JMP exit\n");
+
+    if(optExpr->brother->brother!=NULL && optExpr->brother->brother->value.ival==NOPT_ELSEIF_STAT_LIST){
+        bprintfAtIndex(jmpAddress, "JMF %d\n", bufferSize-jmpAddress);
+        generateCodeElseIfStat(optExpr->brother->brother->child, moduleLine);
+    }
+    else{
+        bprintfAtIndex(jmpAddress, "JMF %d\n", bufferSize-jmpAddress);
+
+    }
+
+}
+
+
+
+
