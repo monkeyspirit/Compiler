@@ -390,136 +390,7 @@ void instTypeOfExpr(Pnode x_term, PLine moduleLine) { //expr punta x_term
         }
 
     }
-/*
-        if (x_term->child != NULL) {
-            if (x_term->child->value.ival == NFACTOR) {
-                if (x_term->child->child->type == 11) {
-                    instTypeOfExpr(x_term->child, moduleLine);
-                } else {
-                    switch (x_term->child->child->value.ival) {
-                        case NUNARYOP: {
-                            instTypeOfExpr(x_term->child->child->brother, moduleLine);
-                            switch (unaryOP) {
-                                case 1: { //int
-                                    bprintf( "IUMI\n");
-                                    break;
-                                }
-                                case 2: { //real
-                                    bprintf( "RUMI\n");
 
-                                    break;
-                                }
-                                case 3: { //bool
-                                    bprintf( "LNEG\n");
-
-                                    break;
-                                }
-                            }
-
-                            break;
-                        }
-                        case NMODULE_CALL: {
-//                            generateCodeFormalParams(x_term->child->child->child->brother->child->child, moduleLine);
-//                            PLine moduleCalled = findLineByIdAndClass(x_term->child->child->child->value.sval, "MOD",
-//                                                                      moduleLine->bucket);
-                            PLine moduleCalled = findLineById(x_term->child->child->child->value.sval, moduleLine);
-                            // ↑↑↑↑↑↑ forse bisogna controllare che sia esclusivamente MOD ↑↑↑↑↑↑
-
-//                            if(isChildOfCaller(moduleCalled, moduleLine)==1){
-//                                printf("Figlio\n");
-//                            }
-//                            if(isFatherOfCaller(moduleCalled, moduleLine)==1){
-//                                printf("Genitore\n");
-//                            }
-                            printf("Gap: %d tra chiamato: %s e chiamante: %s\n", getGapModuleAmbient(moduleLine, moduleCalled), moduleCalled->id, moduleLine->id);
-                            bprintf( "PUSH %d -oggetti- %d\n\t GOTO %d\nPOP\n", moduleCalled->nFormalParams, getGapModuleAmbient(moduleLine, moduleCalled),
-                                    moduleCalled->oid);
-                            break;
-                        }
-                        case NEXPR: {
-                            instTypeOfExpr(x_term->child->child, moduleLine);
-                            break;
-                        }
-                        case NCONSTANT: {
-                            instTypeOfExpr(x_term->child, moduleLine);
-                            break;
-                        }
-                        case NCOND_EXPR: {
-                            generateCodeOFConditionalExpr(x_term->child->child, moduleLine);
-                            break;
-                        }
-                        case NTYPE: {
-
-                            break;
-                        }
-                    }
-                }
-            } else {
-                instTypeOfExpr(x_term->child, moduleLine);
-            }
-        } else {
-            switch (x_term->type) {
-                case 6: {
-//char const
-                    bprintf( "LDC %s\n", x_term->value.sval);
-
-                    break;
-                }
-                case 7: {
-//int const
-                    bprintf( "LDI %d\n", x_term->value.ival);
-
-                    unaryOP = 1;
-                    break;
-                }
-                case 8: {
-//real const
-                    bprintf( "LDR %f\n", x_term->value.rval);
-
-                    unaryOP = 2;
-                    break;
-                }
-                case 9: {
-//string const
-                    bprintf( "LDS %s\n", x_term->value.sval);
-                    break;
-                }
-                case 10: {
-//bool const
-                    bprintf( "LDI %d\n", x_term->value.ival);
-
-                    unaryOP = 3;
-                    break;
-                }
-                case 11: {
-                    PLine id = findLineById(x_term->value.sval, moduleLine);
-
-//faccio riferimento a quello che ho già caricato
-                    bprintf( "LOD %d %d\n", getLevelModule(id, moduleLine)==-1?0:getLevelModule(id, moduleLine),id->oid);
-                    break;
-                }
-            }
-
-        }
-
-        int typeOp;
-        Pnode prox_term;
-        if (x_term->brother != NULL) {
-
-            if (x_term->value.ival == 32) {//rel term è diverso per costruzione
-                prox_term = x_term->brother->brother;
-                typeOp = x_term->brother->child->type;
-            } else {
-                prox_term = x_term->brother->child->brother;
-                typeOp = x_term->brother->child->child->type;
-            }
-
-
-            operationCode(prox_term, typeOp, moduleLine, getExprType(prox_term, moduleLine));
-
-        }
-
-*/
 }
 
 void generateCodeFormalParams(Pnode param, PLine moduleLine){
@@ -686,53 +557,66 @@ void generateCodeOFConditionalExpr(Pnode condition, PLine moduleLine){
     bprintf( "JMF %d\n", next);
     instTypeOfExpr(thenNode, moduleLine);
 
+    Pnode elseNode;
+    int exit=0;
+
+
     if(condition->brother->brother->value.ival==NOPT_ELSEIF_EXPR_LIST){
 
-        generateCodeElseIfExpr(condition->brother->brother->child, moduleLine);
+        elseNode = condition->brother->brother->brother;
+        exit = 1 + numberOfLinesExpr(condition->brother->brother);
+        bprintf("JMP exit %d\n", exit);
 
-        condition = condition->brother;
-    }
+        generateCodeElseIfExpr(condition->brother->brother->child, moduleLine, exit);
 
-    Pnode elseNode = condition->brother->brother;
+        instTypeOfExpr(elseNode, moduleLine);
 
-    int exit = 1 + numberOfLinesExpr(elseNode->child);
-    bprintf("JMP %d\n", exit);
-    instTypeOfExpr(elseNode, moduleLine);
-
-}
-
-void generateCodeElseIfExpr(Pnode optExpr, PLine moduleLine){
-    bool opt = false;
-
-   Pnode elseIf = optExpr->child;
-
-  /*  if(strcmp(typeExprELSEIF, "BOOL") != 0 ){
-        printf("Errore la condizione dell'Else If deve essere di tipo BOOL invece è %s\n", typeExprELSEIF);
-        exit(-9);
     }
     else{
+        elseNode = condition->brother->brother;
+        exit = 1 + numberOfLinesExpr(elseNode->child);
+        bprintf("JMP exit %d\n", exit);
+        instTypeOfExpr(elseNode, moduleLine);
 
-        char *typeExprThen = getExprType(optExpr->brother->child, fatherModuleLine);
+    }
 
-        char* typeExprOpt=NULL;
 
-        if(optExpr->brother->brother!=NULL && optExpr->brother->brother->value.ival==NOPT_ELSEIF_EXPR_LIST){
-            typeExprOpt = getOptElseIfExprType(optExpr->brother->brother->child, fatherModuleLine);
-            opt =true;
 
-        }
 
-        if(opt){
-            if( strcmp(typeExprThen,  typeExprOpt)==0 ){
-                return typeExprThen;
-            }
-            else{
-                printf("Errore nella condizione Else If: ... then ...[%s] elseif ...[%s]  end\n", typeExprThen,typeExprOpt );
-                exit(-9);
-            }
-        }
-        else{
-            return typeExprThen;
-        }
-    }*/
+
+}
+/*
+<<<<<<< HEAD
+void generateCodeElseIfExpr(Pnode optExpr, PLine moduleLine){
+    bool opt = false;
+=======*/
+
+void generateCodeElseIfExpr(Pnode optExpr, PLine moduleLine, int exitPlus){
+
+
+    Pnode expr = optExpr->child;
+    instTypeOfExpr(expr, moduleLine);
+    Pnode then = optExpr->brother->child;
+
+    int next = 2 + numberOfLinesExpr(then);
+
+    bprintf( "JMF %d\n", next);
+    instTypeOfExpr(then, moduleLine);
+    int exit;
+
+    if(optExpr->brother->brother!=NULL && optExpr->brother->brother->value.ival==NOPT_ELSEIF_EXPR_LIST){
+
+        exit = exitPlus + 1 + numberLinesCodeOFConditionalExpr(optExpr->brother->brother);
+
+        generateCodeElseIfExpr(optExpr->brother->brother, moduleLine, exit);
+
+
+    }
+    else{
+        exit = exitPlus;
+    }
+
+    bprintf("JMP exit %d\n", exit);
+
+
 }

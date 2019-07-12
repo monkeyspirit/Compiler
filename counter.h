@@ -8,8 +8,9 @@
 #include "def.h"
 
 int  opertationNumLines(Pnode , int),
-     logicOperationCounter(Pnode),
-     relOperationCounter(Pnode);
+     numberLinesCodeOFConditionalExprElseif(Pnode),
+        numberLinesCodeOFConditionalExpr(Pnode),
+        numberOfLinesExprOnly(Pnode);
 
 
 int numberOfLinesExpr(Pnode node);

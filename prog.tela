@@ -1,3 +1,4 @@
+
 module main (): void
     var b:bool; s:string; i:int; r:real;
 
