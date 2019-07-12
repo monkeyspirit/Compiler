@@ -16,7 +16,7 @@ digit			[0-9]
 initialdigit	[1-9]
 charconst		\'{letter}\'
 sgn 			"-"
-intconst		{sgn}?{initialdigit}{digit}*|0
+intconst		{initialdigit}{digit}*|0
 realconst		{intconst}\.{digit}?
 strconst		\"[^\n\"]*\"
 boolconst		false|true 
