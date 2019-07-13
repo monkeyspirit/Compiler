@@ -3,7 +3,7 @@ module main (): void
 begin main
     read(i);
     if true then
-        i = i;
+        main();
     elseif true then
         i=i;
     elseif i>i then

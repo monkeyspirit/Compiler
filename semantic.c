@@ -46,9 +46,6 @@ int getGapModuleAmbient(PLine caller, PLine called){
 
 }
 
-int objectInBuckets(PLine *bucket){
-
-}
 
 
 int getLevelModule(PLine module, PLine table){

@@ -54,12 +54,39 @@ void flush(){
 }
 
 // metodi generazione tcode
+ListNode *modListEntry=NULL;
 
 void genTCode(PLine rootLine, Pnode root){
     wholeSymbolTable = rootLine;
     genModuleTCode(root, rootLine);
+//    subsEntryPModuleCall();
     flush();
 }
+
+void subsEntryPModuleCall(){
+
+    for (; modListEntry!=NULL; modListEntry=modListEntry->next) {
+        int entryPoint = getEntryPMod(modListEntry->value.modOid);
+        if(entryPoint==-1){
+            printf("ERROR");
+        }
+        //bprintfAtIndex(modListEntry->value.ival, "GOTO %d\n", entryPoint);
+    }
+}
+
+int getEntryPMod(int oid){
+
+//
+//
+//    for(int i=0; i<bufferSize; i++){
+//        if(strcmp(buffer[i], stringa)==0){
+//            return i;
+//        }
+//    }
+
+    return -1;
+}
+
 
 void genModuleTCode(Pnode moduleNode, PLine fatherModuleLine){
 
@@ -88,7 +115,7 @@ void genModuleTCode(Pnode moduleNode, PLine fatherModuleLine){
             paramNode = paramNode->brother;
         }
         */
-        genModuleParamsTCode(iterNode->child, fatherModuleLine);
+//        Non so seci va ----- > genModuleParamsTCode(iterNode->child, fatherModuleLine);
 
         iterNode = iterNode->brother;
     }
@@ -145,6 +172,8 @@ void genModuleTCode(Pnode moduleNode, PLine fatherModuleLine){
 
             while(idNode != NULL){
                 genExprTCode(expr, fatherModuleLine);
+                PLine idLine = findLineById(idNode->value.sval, fatherModuleLine);
+                bprintf( "STO %d %d\n",getLevelModule(idLine, fatherModuleLine)==-1?0:getLevelModule(idLine, fatherModuleLine), idLine->oid);
                 idNode = idNode->brother;
             }
 
@@ -198,14 +227,11 @@ void genStatListTCode(Pnode statListNode, PLine fatherModuleLine){
                 break;
             }
             case NWHILE_STAT: {
-
-//                controlOfStatment(stat->child->child->brother->child, moduleLine);
+                genWhileStatTCode(statNode->child, fatherModuleLine);
                 break;
-
-
             }
             case NRETURN_STAT: {
-
+                genReturnStatTCode(statNode->child, fatherModuleLine);
 //                Pnode returnStat = stat->child;
 //                char* moduleType = moduleLine->type;
 //                char* typeExpr;
@@ -220,14 +246,15 @@ void genStatListTCode(Pnode statListNode, PLine fatherModuleLine){
                 genWriteStatTCode(statNode->child, fatherModuleLine);
                 break;
             }
-            case NMODULE_CALL: {/*
+            case NMODULE_CALL: {
                 PLine moduleCalled = findLineById(statNode->child->child->value.sval, fatherModuleLine);
                 // ↑↑↑↑↑↑ forse bisogna controllare che sia esclusivamente MOD ↑↑↑↑↑↑
-                bprintf("PUSH %d %d %d\n", moduleCalled->nFormalParams, getLocalObjectInModule(moduleCalled),
+                genModuleExprTCode(statNode->child, fatherModuleLine);
+                bprintf("PUSH %d %d %d\n", moduleCalled->nFormalParams, countModuleBucketLines(moduleCalled),
                         getGapModuleAmbient(fatherModuleLine, moduleCalled));
-                bprintf("\t GOTO %d\n", moduleCalled->oid);
-                bprintf("POP\n");*/
-//
+                modListEntry = addModEntryNode(modListEntry, bufferSize, moduleCalled->oid);
+                bprintf("\t GOTO temp\n");
+                bprintf("POP\n");
                 break;
             }
         }
@@ -240,22 +267,23 @@ void genStatListTCode(Pnode statListNode, PLine fatherModuleLine){
 void genNewTCode(int type){
     switch (type){
         case T_INT:
-            bprintf("NEW |int|\n");
+            bprintf("NEW %d\n", sizeof(int));
             break;
         case T_REAL:
-            bprintf("NEW |float|\n");
+            bprintf("NEW %d\n", sizeof(float));
             break;
         case T_BOOL:
-            bprintf("NEW |int|\n");
+            bprintf("NEW %d\n", sizeof(int));
             break;
         case T_CHAR:
-            bprintf("NEW |char|\n");
+            bprintf("NEW %d\n", sizeof(char));
             break;
         case T_STRING:
-            bprintf("NEW |string|\n");
+            bprintf("NEW %d\n", sizeof(char*));
             break;
     }
 }
+
 int countModuleBucketLines(PLine module){
     int n = 0;
 
@@ -273,6 +301,7 @@ int countModuleBucketLines(PLine module){
 }
 
 int unaryOP;
+
 void genExprTCode(Pnode x_term, PLine moduleLine) { //expr punta x_term
 
     if(x_term!=NULL) {
@@ -340,21 +369,14 @@ void genExprTCode(Pnode x_term, PLine moduleLine) { //expr punta x_term
                             break;
                         }
                         case NMODULE_CALL: {
-                            //                            generateCodeFormalParams(x_term->child->child->child->brother->child->child, moduleLine);
-//                            PLine moduleCalled = findLineByIdAndClass(x_term->child->child->child->value.sval, "MOD",
-//                                                                      moduleLine->bucket);
-                            PLine moduleCalled = findLineById(x_term->child->child->child->value.sval, moduleLine);
+                             PLine moduleCalled = findLineById(x_term->child->child->child->value.sval, moduleLine);
                             // ↑↑↑↑↑↑ forse bisogna controllare che sia esclusivamente MOD ↑↑↑↑↑↑
 
-//                            if(isChildOfCaller(moduleCalled, moduleLine)==1){
-//                                printf("Figlio\n");
-//                            }
-//                            if(isFatherOfCaller(moduleCalled, moduleLine)==1){
-//                                printf("Genitore\n");
-//                            }
-//                            printf("Gap: %d tra chiamato: %s e chiamante: %s\n", getGapModuleAmbient(moduleLine, moduleCalled), moduleCalled->id, moduleLine->id);
+                            genModuleExprTCode(x_term->child->child, moduleLine);
+
                             bprintf("PUSH %d %d %d\n", moduleCalled->nFormalParams, countModuleBucketLines(moduleCalled), getGapModuleAmbient(moduleLine, moduleCalled));
-                            bprintf("\t GOTO %d\n", moduleCalled->oid );
+                            modListEntry = addModEntryNode(modListEntry, bufferSize, moduleCalled->oid);
+                            bprintf("\t GOTO temp\n");
                             bprintf("POP\n");
 //
                             break;
@@ -454,6 +476,7 @@ void instTypeOfExpr2(Pnode x_term, PLine fatherModuleLine) {
                 break;
             }
             case NMODULE_CALL:
+
                 break;
             default:
                 genExprTCode(x_term->child, fatherModuleLine);
@@ -485,13 +508,17 @@ void instTypeOfExpr2(Pnode x_term, PLine fatherModuleLine) {
     }
 }
 
-void genModuleParamsTCode(Pnode paramListNode, PLine moduleLine){
-    Pnode paramNode = paramListNode->child;
-    while (paramNode!=NULL){
+void genModuleExprTCode(Pnode moduleCallStat, PLine moduleLine){
 
-        // DA IMPLEMENTARE
+    if(moduleCallStat->child->brother!=NULL){
 
-        paramNode = paramNode->brother;
+        Pnode expr = moduleCallStat->child->brother->child->child;
+
+        while(expr!=NULL){
+            genExprTCode(expr, moduleLine);
+            expr=expr->brother;
+        }
+
     }
 }
 
@@ -797,7 +824,6 @@ void genWriteStatTCode(Pnode writeStatNode, PLine moduleLine){
 
 }
 
-
 ListNode *lineExitIfStat = NULL;
 
 void genIfStatTCode(Pnode if_stat, PLine moduleLine){
@@ -816,19 +842,19 @@ void genIfStatTCode(Pnode if_stat, PLine moduleLine){
 
     bprintfAtIndex(jmpAddress, "JMF %d\n", bufferSize-jmpAddress);
 
-    if( statList->brother!=NULL)
-        if(statList->brother->value.ival==NOPT_ELSEIF_STAT_LIST) {
+    if( statList->brother!=NULL) {
+        if (statList->brother->value.ival == NOPT_ELSEIF_STAT_LIST) {
 
             genElseIfStatTCode(statList->brother, moduleLine);
 
             statList = statList->brother;
         }
-        if(statList->brother != NULL && statList->brother->value.ival==NOPT_ELSE_STAT) {
+        if (statList->brother != NULL && statList->brother->value.ival == NOPT_ELSE_STAT) {
 
             genStatListTCode(statList->brother, moduleLine);
 
         }
-
+    }
     for (; lineExitIfStat!=NULL; lineExitIfStat=lineExitIfStat->next) {
         bprintfAtIndex(lineExitIfStat->value.ival, "JMP %d\n", bufferSize-lineExitIfStat->value.ival);
     }
@@ -857,6 +883,34 @@ void genElseIfStatTCode(Pnode optElseStatNode, PLine moduleLine){
 
 }
 
+void genWhileStatTCode(Pnode whileStat, PLine moduleLine){
+
+    Pnode expr = whileStat->child;
+
+    int jmpUp = bufferSize;
+
+    genExprTCode(expr, moduleLine);
+
+    int jmpAddress = bufferSize;
+    bprintf( "JMF temp\n");
+
+    Pnode statList = expr->brother;
+    genStatListTCode(statList, moduleLine);
+
+    bprintf("JMP %d\n", bufferSize-jmpUp);
+
+    bprintfAtIndex(jmpAddress, "JMF %d\n", bufferSize-jmpAddress);
 
 
+}
 
+void genReturnStatTCode(Pnode returnStat, PLine moduleLine){
+
+    if(returnStat->child!=NULL){
+        Pnode expr = returnStat->child->child;
+        genExprTCode(expr, moduleLine);
+
+    }
+
+    bprintf("RETURN\n");
+}

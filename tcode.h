@@ -12,7 +12,7 @@ void genNewTCode(int),
     logicOperation(Pnode, int, PLine),
     relationOp(Pnode, int, PLine, char*),
     genModuleTCode(Pnode , PLine),
-    genModuleParamsTCode(Pnode, PLine),
+    genModuleExprTCode(Pnode, PLine),
     genElseIfExprTCode(Pnode , PLine),
     genCondExprTCode(Pnode , PLine),
     genCastTCode(Pnode, PLine, int),
@@ -20,8 +20,13 @@ void genNewTCode(int),
     genWriteStatTCode(Pnode, PLine),
     genIfStatTCode(Pnode ,PLine),
     genElseIfStatTCode(Pnode, PLine),
-    genExprTCode(Pnode x_term, PLine moduleLine);
+    genExprTCode(Pnode x_term, PLine moduleLine),
+    genWhileStatTCode(Pnode, PLine),
+    genReturnStatTCode(Pnode, PLine);
 
 int countModuleBucketLines(PLine module);
+int getEntryPMod(int oid);
+
+void subsEntryPModuleCall();
 
 #endif //COMPILER_TCODE_H

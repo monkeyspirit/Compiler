@@ -25,3 +25,16 @@ ListNode* addCharNode(ListNode *list, char line){
 
     return newnode;
 }
+
+ListNode* addModEntryNode(ListNode *list, int line, int oid){
+
+    ListNode *newnode;
+
+    newnode = malloc(sizeof(ListNode));
+    newnode->value.ival=line;
+    newnode->value.modOid=oid;
+    newnode->next = list;
+
+    return newnode;
+
+}

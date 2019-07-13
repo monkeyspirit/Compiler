@@ -8,6 +8,7 @@
 #include "def.h"
 
 typedef union {
+    int modOid;
     int ival;
     char cval;
 } ArrayVal;
@@ -19,6 +20,7 @@ typedef struct node{
 
 ListNode* addIntNode(ListNode *list, int line);
 ListNode* addCharNode(ListNode *list, char line);
+ListNode* addModEntryNode(ListNode *list, int line, int modOid);
 
 
 
