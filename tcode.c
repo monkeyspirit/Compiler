@@ -57,13 +57,14 @@ void flush(){
 
 int getEntryPMod(int oid){
 
-//
-//
-//    for(int i=0; i<bufferSize; i++){
-//        if(strcmp(buffer[i], stringa)==0){
-//            return i;
-//        }
-//    }
+    char stringa[20];
+
+    sprintf(stringa, "MOD %d\n", oid);
+    for(int i=0; i<bufferSize; i++){
+        if(strcmp(buffer[i], stringa)==0){
+            return i;
+        }
+    }
 
     return -1;
 }
@@ -71,13 +72,15 @@ int getEntryPMod(int oid){
 void subsEntryPModuleCall(){
 
     for (; modListEntry!=NULL; modListEntry=modListEntry->next) {
-        int entryPoint = getEntryPMod(modListEntry->value.modOid);
+        int entryPoint = getEntryPMod(modListEntry->modOid);
         if(entryPoint==-1){
             printf("ERROR");
         }
-        //bprintfAtIndex(modListEntry->value.ival, "GOTO %d\n", entryPoint);
+        bprintfAtIndex(modListEntry->value.ival, "\t GOTO %d\n", entryPoint);
     }
 }
+
+
 
 int countModuleBucketLines(PLine moduleLine){
     int n = 0;
@@ -384,6 +387,7 @@ void genExprTCode(Pnode exprNode, PLine fatherModuleLine) { //expr punta x_term
                 PLine moduleCalled = findLineById(exprNode->child->value.sval, fatherModuleLine);
 
                 bprintf("PUSH %d %d %d\n", moduleCalled->nFormalParams, countModuleBucketLines(moduleCalled), getGapModuleAmbient(fatherModuleLine, moduleCalled));
+                modListEntry = addModEntryNode(modListEntry, bufferSize, moduleCalled->oid);
                 bprintf("\t GOTO %d\n", moduleCalled->oid );
                 bprintf("POP\n");
             }
@@ -695,7 +699,6 @@ void genModuleTCode(Pnode moduleNode, PLine fatherModuleLine){
     if(iterNode -> value.ival==NOPT_PARAM_LIST){
         /*
         paramNode = iterNode->child->child;
-
         while (paramNode != NULL) {
             paramNode = paramNode->brother;
         }
@@ -793,6 +796,6 @@ void genModuleTCode(Pnode moduleNode, PLine fatherModuleLine){
 void genTCode(PLine rootLine, Pnode root){
     wholeSymbolTable = rootLine;
     genModuleTCode(root, rootLine);
-//    subsEntryPModuleCall();
+    subsEntryPModuleCall();
     flush();
 }

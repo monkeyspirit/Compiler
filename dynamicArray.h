@@ -8,13 +8,13 @@
 #include "def.h"
 
 typedef union {
-    int modOid;
     int ival;
     char cval;
 } ArrayVal;
 
 typedef struct node{
     ArrayVal value; //contiene il valore
+    int modOid;
     struct node *next; //punta al nodo successivo
 } ListNode;
 

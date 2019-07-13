@@ -32,7 +32,7 @@ ListNode* addModEntryNode(ListNode *list, int line, int oid){
 
     newnode = malloc(sizeof(ListNode));
     newnode->value.ival=line;
-    newnode->value.modOid=oid;
+    newnode->modOid=oid;
     newnode->next = list;
 
     return newnode;

@@ -104,7 +104,7 @@ PLine createModuleLine(Pnode moduleNode) {
     Pnode iterNode = moduleNode->child; // nodo che itera nel modulo
     moduleLine->id = iterNode->value.sval; // setta l'id
     moduleLine->class = tableClasses[1]; // setta la classe
-    moduleLine->oid = ++global_oid;
+    moduleLine->oid = global_oid++;
 
     iterNode = iterNode->brother;
 
@@ -118,7 +118,7 @@ PLine createModuleLine(Pnode moduleNode) {
         Pnode paramNode = iterNode->child->child;
         while (paramNode != NULL) { // cicliamo su tutti i parametri
             PLine paramLine = createParamLine(paramNode);
-            paramLine->oid = ++local_oid;
+            paramLine->oid = local_oid++;
             insertLine(moduleLine->bucket, paramLine); // li inseriamo nel bucket
             moduleLine->formalParams[moduleLine->nFormalParams++] = paramLine; // li inserisco tra i riferimenti ai formali
             // moduleLine->numParam++;
@@ -142,7 +142,7 @@ PLine createModuleLine(Pnode moduleNode) {
             Pnode idNode = declNode->child->child;
             while(idNode != NULL){ // cicliamo su tutte le variabili
                 PLine varLine = createVarLine(idNode, decl_type);
-                varLine->oid = ++local_oid;
+                varLine->oid = local_oid++;
                 insertLine(moduleLine->bucket, varLine);
                 idNode = idNode->brother;
             }
@@ -162,7 +162,7 @@ PLine createModuleLine(Pnode moduleNode) {
             Pnode idNode = constDeclNode->child->child->child;
             while(idNode != NULL){
                 PLine constLine = createConstLine(idNode, decl_type);
-                constLine->oid = ++local_oid;
+                constLine->oid = local_oid++;
                 insertLine(moduleLine->bucket, constLine);
                 idNode = idNode->brother;
             }
