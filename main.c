@@ -19,7 +19,7 @@ int main(int nArgs, char  **args) {
 
     semanticControl(root->child, rootLine);
 
-//    tCode(rootLine, root->child);
+    genTCode(rootLine, root->child);
 
     return(0);
 }

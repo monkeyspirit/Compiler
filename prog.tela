@@ -1,49 +1,14 @@
-module H (p1: int, p2: string): bool
-    var p, y, z: int; xx: real;
-    veroofalso,a,b,c: bool;
-    msg: string;
-    const MAX:int = 5; d: bool = (b and (6+1)>(7-1)) or (a>b); RR: char = 'a';
-
-    module f1(t: int, p:bool):int
-        var c:int;
-        k,l:bool;
-
-
-
-    begin f1
-        veroofalso = H(c,msg);
-        return MAX;
-    end f1
-
-begin H
-
-    xx = 3.1;
-    #write(z,a, msg);
-    #read(a,p,xx);
-    #p = (z * (z + p) - (y * y) );
-    #p1 = z -  z;
-    #veroofalso =(b and (6+1)>(7+1)) or a;
-    if a then
-        p = f1(p, H(p,msg));
-        veroofalso =  a and false;
-        if a then
-            p=8;
-        end;
-    elseif b then
-        p=8;
-        p=8;
-
+module main (): void
+    var i:int;
+begin main
+    read(i);
+    if true then
+        i = i;
+    elseif true then
+        i=i;
+    elseif i>i then
+        i=i;
     else
-        p = 8;
+        i=i+1;
     end;
-
-    while (a) do
-        p=8;
-        veroofalso =  a and false;
-    end;
-    #p = int (xx);
-    #veroofalso = a;
-    #veroofalso =  a and f1(z,a);
-    return false;
-
-end H
+end main

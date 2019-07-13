@@ -8,6 +8,10 @@ module main (p1: int, p2: string): int
 
 begin main
 
+    p1 = p1*2+1+2;
+    if true then
+        return 1;
+    end;
     hello = sayHello();
     write(hello);
     return 1;
