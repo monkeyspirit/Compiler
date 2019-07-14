@@ -522,7 +522,7 @@ void genWhileStatTCode(Pnode whileStat, PLine fatherModuleLine){
     Pnode statList = expr->brother;
     genStatListTCode(statList, fatherModuleLine);
 
-    bprintf("JMP %d\n", bufferSize-jmpUp);
+    bprintf("JMP %d\n", -(bufferSize-jmpUp));
 
     bprintfAtIndex(jmpAddress, "JMF %d\n", bufferSize-jmpAddress);
 
