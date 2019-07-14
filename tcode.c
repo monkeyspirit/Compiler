@@ -500,7 +500,7 @@ void genIfStatTCode(Pnode if_stat, PLine fatherModuleLine){
         }
         if (statList->brother != NULL && statList->brother->value.ival == NOPT_ELSE_STAT) {
 
-            genStatListTCode(statList->brother, fatherModuleLine);
+            genStatListTCode(statList->brother->child, fatherModuleLine);
 
         }
     }
