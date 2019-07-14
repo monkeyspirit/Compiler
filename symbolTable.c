@@ -232,8 +232,8 @@ void printTable(PLine table[], int indent){
 
 // stampa tutto a partire dalla rootline
 void displayTable(){
-    char *outSymbolTable = malloc(sizeof(char*));
-    sprintf(outSymbolTable, "../%s.symboltable", telaFileName);
+    char *outSymbolTable= malloc(sizeof(char*));
+    sprintf(outSymbolTable, "%s.symboltable", telaFileName);
     out = fopen(outSymbolTable, "w");
     printLine(rootLine, 0);
     printTable(rootLine->bucket, 1);

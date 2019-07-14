@@ -5,15 +5,17 @@
 #include "symbolTable.h"
 #include "semantic.h"
 #include "tcode.h"
+#include <stdio.h>
 
 int main(int nArgs, char  **args) {
-//    telaFileName = args[nArgs-1]; // l'ultimo argomento da linea di comando sarà il nome del file
+    telaFileName = args[nArgs-1]; // l'ultimo argomento da linea di comando sarà il nome del file
 
-    telaFileName = "prog";
+//    telaFileName = "prog";
 
     Pnode root = parse();
 
     syntaxTree(root); // stampa su file l'albero sintattico
+
 
     PLine rootLine = symbolTable(root);
     displayTable();
