@@ -114,7 +114,7 @@ void mathOperation(Pnode term, int type,  PLine fatherModuleLine, char* typeExpr
     genExprTCode(term, fatherModuleLine);
 
     char *opC=NULL;
-    switch (type){
+    switch (type) {
         case 13 : // *
             opC = "MUL";
             break;
@@ -531,10 +531,10 @@ void genWhileStatTCode(Pnode whileStat, PLine fatherModuleLine){
 
 void genReturnStatTCode(Pnode returnStat, PLine fatherModuleLine){
 
-    if(returnStat->child!=NULL){
+//    if(returnStat->child!=NULL){
+    if(returnStat->child->child!=NULL){
         Pnode expr = returnStat->child->child;
         genExprTCode(expr, fatherModuleLine);
-
     }
 
     bprintf("RETURN\n");
