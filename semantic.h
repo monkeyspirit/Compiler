@@ -7,7 +7,7 @@
 
 PLine findLineById(char*, PLine);
 void semanticControl(Pnode, PLine);
-void  statListControl(Pnode, PLine);
+bool  statListControl(Pnode, PLine);
 char *getExprType(Pnode, PLine);
 int isChildDirectly(PLine, PLine);
 int getLevelModule(PLine, PLine);

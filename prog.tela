@@ -1,13 +1,32 @@
 module main (): void
     var i:int;
+    s: string;
+
+    module say(p1: int): int
+    var i:int;
+
+    begin say
+    i = 8 + 5;
+    return i;
+    end say
+
+    module some(p1:string):string
+    var msg:string;
+
+    begin some
+    msg = some("ciao");
+    return msg;
+    end some
+
 begin main
     read(i);
+    write(i, s);
     if true then
         main();
-    elseif true then
-        i=i;
-    elseif i>i then
-        i=i;
+    elsif true then
+        i = say(i);
+    elsif i>i then
+        s=some("Ciao");
     else
         i=i+1;
     end;

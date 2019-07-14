@@ -23,9 +23,9 @@ int getGapModuleAmbient(PLine caller, PLine called){
 
     //m1 chiama m2
 
-    if(caller == called && caller == wholeSymbolTable){
-        return 0;
-    }else{
+//    if(caller == called && caller == wholeSymbolTable){
+//        return -1;
+//    }else{
         //m1 genitore di m2
         if(isChildDirectly(called, caller)!=0){
             return 0;
@@ -41,7 +41,7 @@ int getGapModuleAmbient(PLine caller, PLine called){
 
              /*...*/
         }
-    }
+//    }
 
 
 }
@@ -350,8 +350,10 @@ void optElseIfStatListControl(Pnode optElseIfStatListNode, PLine fatherModuleLin
 
 }
 
+
 // metodo per l'analisi semantica di ogni stat
-void statListControl(Pnode firstStatNode, PLine fatherModuleLine){
+bool statListControl(Pnode firstStatNode, PLine fatherModuleLine){
+    bool thereIsReturn = false;
 
     Pnode statNode = firstStatNode;
     while(statNode!=NULL) { // cicliamo le stat
@@ -424,6 +426,8 @@ void statListControl(Pnode firstStatNode, PLine fatherModuleLine){
                     exit(-9);
                 }
 
+                thereIsReturn = true;
+
             }
                 break;
 
@@ -473,6 +477,7 @@ void statListControl(Pnode firstStatNode, PLine fatherModuleLine){
         statNode= statNode->brother;
     }
 
+    return thereIsReturn;
 }
 
 // metodo per l'analisi di un modulo (analizza costanti, sottomoduli ricorsivamente e statements)
@@ -565,6 +570,14 @@ void moduleControl(Pnode moduleNode, PLine fatherModuleLine){
     }
 
     statListControl(iterNode->child->brother->child, fatherModuleLine); //Gli passo il primo stat
+
+    if(strcmp(fatherModuleLine->type, "VOID") != 0 ){
+        if(!statListControl(iterNode->child->brother->child, fatherModuleLine)){
+            printf("Errore: il modulo \"%s\" è di tipi %s ma manca l'operazione di return", fatherModuleLine->id, fatherModuleLine->type);
+            exit(-7);
+        }
+    }
+
 
 }
 

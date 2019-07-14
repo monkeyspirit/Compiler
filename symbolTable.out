@@ -1,0 +1,21 @@
+[12] H , cls:MOD , tp:BOOL , oid=0 , parms(#=2):p1 p2 
+	[0] xx , cls:VAR , tp:REAL , oid=5
+	[0] MAX , cls:CON , tp:INT , oid=11
+	[0] d , cls:CON , tp:BOOL , oid=12
+	[1] p1 , cls:PAR , tp:INT , oid=0
+	[1] y , cls:VAR , tp:INT , oid=3
+	[1] f1 , cls:MOD , tp:INT , oid=1 , parms(#=2):t p 
+		[7] k , cls:VAR , tp:BOOL , oid=3
+		[8] l , cls:VAR , tp:BOOL , oid=4
+		[12] p , cls:PAR , tp:BOOL , oid=1
+		[16] t , cls:PAR , tp:INT , oid=0
+		[19] c , cls:VAR , tp:INT , oid=2
+	[2] p2 , cls:PAR , tp:STRING , oid=1
+	[2] z , cls:VAR , tp:INT , oid=4
+	[3] veroofalso , cls:VAR , tp:BOOL , oid=6
+	[7] msg , cls:VAR , tp:STRING , oid=10
+	[12] p , cls:VAR , tp:INT , oid=2
+	[14] RR , cls:CON , tp:CHAR , oid=13
+	[17] a , cls:VAR , tp:BOOL , oid=7
+	[18] b , cls:VAR , tp:BOOL , oid=8
+	[19] c , cls:VAR , tp:BOOL , oid=9

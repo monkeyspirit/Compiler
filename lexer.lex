@@ -46,7 +46,7 @@ end				{return(END);}
 if				{return(IF);}
 then			{return(THEN);}
 else 			{return(ELSE);}
-elseif 			{return(ELSEIF);}
+elsif 			{return(ELSEIF);}
 while			{return(WHILE);}
 do				{return(DO);}
 return 			{return(RETURN);}

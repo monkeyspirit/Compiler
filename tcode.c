@@ -585,39 +585,29 @@ void genWriteStatTCode(Pnode writeStatNode, PLine fatherModuleLine){
 //        printf("Char: %c\n", count->value.cval);
         ++num;
     }
-//    printf("num: %d ", num);
 
     char inverti[num];
-    int i = num-1;
+    int i = 0;
 
     while (charListWrite!=NULL ){
 //        printf("i:%d ", i);
         inverti[i]=charListWrite->value.cval;
         charListWrite=charListWrite->next;
-        --i;
+        i++;
     }
-
-
-    char stampa[num];
-
-    int j;
-    for ( j= 0; j < num ; j++) {
-//        printf("Char: %c\n", inverti[j]);
-        stampa[j] = inverti[j];
-    }
-    stampa[j]='\0';
+    inverti[num]='\0';
 
     int c=0;
 
-    while(stampa[c]!='\0'){
+    while(inverti[c]!='\0'){
 
-        if(stampa[c]>='A' && stampa[c]<='Z'){
-            stampa[c] = stampa[c] +32;
+        if(inverti[c]>='A' && inverti[c]<='Z'){
+            inverti[c] = inverti[c] +32;
         }
         c++;
     }
 
-    bprintf("WRITE \"%s\"\n", stampa);
+    bprintf("WRITE \"%s\"\n", inverti);
 
 
 }
@@ -799,7 +789,14 @@ void genModuleTCode(Pnode moduleNode, PLine fatherModuleLine){
 
 void genTCode(PLine rootLine, Pnode root){
     wholeSymbolTable = rootLine;
+    int size = bufferSize;
+    bprintf("TCODE temp\n");
+    bprintf("PUSH %d %d -1\n", rootLine->nFormalParams, countModuleBucketLines(rootLine));
+    modListEntry = addModEntryNode(modListEntry, bufferSize, rootLine->oid);
+    bprintf("\t GOTO temp\n");
+    bprintf("POP\n");
     genModuleTCode(root, rootLine);
     subsEntryPModuleCall();
+    bprintfAtIndex(size, "TCODE %d\n", bufferSize);
     flush();
 }
