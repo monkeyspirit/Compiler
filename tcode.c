@@ -407,6 +407,7 @@ void genExprTCode(Pnode exprNode, PLine fatherModuleLine) { //expr punta x_term
         int typeOp;
         switch (exprNode->brother->value.ival) {
             case NSTAT_LIST:
+            case NEXPR:
                 return;
             case NREL_TERM1:
             case NLOW_TERM1:
