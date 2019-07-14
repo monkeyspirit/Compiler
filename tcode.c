@@ -354,11 +354,11 @@ void genExprTCode(Pnode exprNode, PLine fatherModuleLine) { //expr punta x_term
             case NUNARYOP:
                 genExprTCode(exprNode->brother, fatherModuleLine);
                 char* type = getExprType(exprNode->brother, fatherModuleLine);
-                if (strcmp(type, "INT"))
+                if (strcmp(type, "INT")==0)
                     bprintf( "IUMI\n");
-                else if (strcmp(type, "REAL"))
+                else if (strcmp(type, "REAL")==0)
                     bprintf( "RUMI\n");
-                else if (strcmp(type, "BOOL"))
+                else if (strcmp(type, "BOOL")==0)
                     bprintf( "LNEG\n");
                 else {
                     printf("Errore grave generazione operatore unario...");
