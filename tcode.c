@@ -176,11 +176,11 @@ void relationOp(Pnode term, int type, PLine fatherModuleLine, char* typeExpr){
 void relOperation(Pnode term, int type, PLine fatherModuleLine, char* typeExpr){
 
     switch (type){
-        case 22: // !=
+        case 23: // !=
             genExprTCode(term, fatherModuleLine);
             bprintf("NEQ\n");
             break;
-        case 23: // ==
+        case 22: // ==
             genExprTCode(term, fatherModuleLine);
             bprintf("EQU\n");
             break;
