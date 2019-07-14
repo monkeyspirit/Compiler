@@ -8,7 +8,8 @@
 
 int main(int nArgs, char  **args) {
 //    telaFileName = args[nArgs-1]; // l'ultimo argomento da linea di comando sarà il nome del file
-    telaFileName = "../prog2.tela";
+
+    telaFileName = "prog";
 
     Pnode root = parse();
 

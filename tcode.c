@@ -49,7 +49,10 @@ void bprintfAtIndex(int index, char *stringToCompile, ...){
 
 // scrive il buffer su file
 void flush(){
-    out = fopen("../tCode.out", "w");
+    char *tcodeFileName = malloc(sizeof(char*));
+    sprintf(tcodeFileName, "../%s.tcode", telaFileName);
+
+    out = fopen(tcodeFileName, "w");
     for (int i = 0; i < bufferSize; ++i)
         fprintf( out, "%s", buffer[i]);
     fclose(out);

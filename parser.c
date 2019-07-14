@@ -877,7 +877,9 @@ Pnode opt_elseif_expr_list() {
 
 
 Pnode parse() {
-    yyin = fopen(telaFileName, "r");
+    char * telaFixedFileName = malloc(sizeof(char *));
+    sprintf(telaFixedFileName, "../%s.tela", telaFileName);
+    yyin = fopen(telaFixedFileName, "r");
 //    yyout = fopen("../yyout", "w");
 
 	next();
