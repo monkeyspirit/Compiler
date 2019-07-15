@@ -75,7 +75,7 @@ int getEntryPMod(int oid){
 void subsEntryPModuleCall(){
 
     for (; modListEntry!=NULL; modListEntry=modListEntry->next) {
-        int entryPoint = getEntryPMod(modListEntry->modOid);
+        int entryPoint = getEntryPMod(modListEntry->modOid)+1;
         if(entryPoint==-1){
             printf("ERROR");
         }
@@ -766,25 +766,38 @@ void genModuleTCode(Pnode moduleNode, PLine fatherModuleLine){
         iterNode = iterNode->brother;                                        //PUNTO A OPT-MODULE/MODULE BODY
     }
 
+    modNode = NULL;
 
     if(iterNode->value.ival==NOPT_MODULE_LIST){
 
         modNode = iterNode->child;
 
-        while (modNode != NULL) {
-
-            /* .... */
-
-//            PLine nextModule = findLineByIdAndClass(modNode->child->value.sval, rootLine->class, rootLine->bucket);
-            PLine nextModule = findLineById(modNode->child->value.sval, fatherModuleLine);
-            genModuleTCode(modNode, nextModule);
-            modNode = modNode->brother;
-        }
+//        while (modNode != NULL) {
+//
+//            /* .... */
+//
+////            PLine nextModule = findLineByIdAndClass(modNode->child->value.sval, rootLine->class, rootLine->bucket);
+//            PLine nextModule = findLineById(modNode->child->value.sval, fatherModuleLine);
+//            genModuleTCode(modNode, nextModule);
+//            modNode = modNode->brother;
+//        }
 
         iterNode = iterNode->brother;
     }
 
+
     genStatListTCode(iterNode->child->brother, fatherModuleLine);
+
+    while (modNode != NULL) {
+
+        /* .... */
+
+//            PLine nextModule = findLineByIdAndClass(modNode->child->value.sval, rootLine->class, rootLine->bucket);
+        PLine nextModule = findLineById(modNode->child->value.sval, fatherModuleLine);
+        genModuleTCode(modNode, nextModule);
+        modNode = modNode->brother;
+    }
+
 }
 
 void mainModule(PLine rootLine, char **arg, int nArgs){
@@ -837,6 +850,7 @@ void genTCode(PLine rootLine, Pnode root, char **arg, int nArgs){
     bprintf("\t GOTO temp\n");
     bprintf("POP\n");
     bprintf("HALT\n");
+
     genModuleTCode(root, rootLine);
     subsEntryPModuleCall();
     bprintfAtIndex(size, "TCODE %d\n", bufferSize);
