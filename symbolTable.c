@@ -232,7 +232,7 @@ void printTable(PLine table[], int indent){
 
 // stampa tutto a partire dalla rootline
 void displayTable(){
-    char *outSymbolTable= malloc(sizeof(char*));
+    char *outSymbolTable= malloc(64);
     sprintf(outSymbolTable, "%s.symboltable", telaFileName);
     out = fopen(outSymbolTable, "w");
     printLine(rootLine, 0);

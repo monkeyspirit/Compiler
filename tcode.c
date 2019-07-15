@@ -49,7 +49,7 @@ void bprintfAtIndex(int index, char *stringToCompile, ...){
 
 // scrive il buffer su file
 void flush(){
-    char *tcodeFileName = malloc(sizeof(char*));
+    char *tcodeFileName = malloc(64);
     sprintf(tcodeFileName, "%s.tcode", telaFileName);
 
     out = fopen(tcodeFileName, "w");
@@ -800,33 +800,58 @@ void genModuleTCode(Pnode moduleNode, PLine fatherModuleLine){
 
 }
 
-void mainModule(PLine rootLine, char **arg, int nArgs){
+void genMainModuleParams(PLine rootLine, char **argv, int argc){
 
-    if(rootLine->nFormalParams!=(nArgs-2)){
+    if(rootLine->nFormalParams!=(argc-2)){
         printf("Errore il numero di parametri non corrisponde a quello dichiarato\n");
         exit(-2);
     }
 
+
+    for (int i = 0; i < rootLine->nFormalParams; ++i){
+        if(strcmp("INT", rootLine->formalParams[i]->type)==0 || strcmp("BOOL", rootLine->formalParams[i]->type)==0) {
+            int integer;
+            sscanf(argv[i+2], "%d", &integer);
+            bprintf("LDI %d\n", integer);
+        } else if(strcmp("REAL", rootLine->formalParams[i]->type)==0) {
+            float real;
+            sscanf(argv[i+2], "%f", &real);
+            bprintf("LDR %f\n", real);
+        } else if(strcmp("CHAR", rootLine->formalParams[i]->type)==0) {
+            char charachter;
+            sscanf(argv[i+2], "'%c'", &charachter);
+            bprintf("LDC %c\n", charachter);
+        } else if(strcmp("STRING", rootLine->formalParams[i]->type)==0) {
+            char *string;
+            sscanf(argv[i+2], "%s", string);
+            bprintf("LDS \"%s\"\n", string);
+        }
+
+        PLine paramLine =findLineByOid(i, rootLine);
+        bprintf("STO %d %d\n",getLevelModule(paramLine, rootLine)==-1?0:getLevelModule(paramLine, rootLine), paramLine->oid);
+
+    }
+/*
     PLine *formal = rootLine->formalParams;
     for (int i = 0; i < rootLine->nFormalParams; ++i){
         if(strcmp("INT", formal[i]->type) == 0){
-            int a = atoi(arg[i]);
+            int a = atoi(argv[i]);
             bprintf("LDI %d\n",a);
         }
         else if(strcmp("BOOL", formal[i]->type) == 0){
-            int b = atoi(arg[i]);
+            int b = atoi(argv[i]);
             bprintf("LDI %d\n", b);
         }
         else if(strcmp("REAL", formal[i]->type) == 0){
-            float f = atof(arg[i]);
+            float f = atof(argv[i]);
             bprintf("LDR %f\n", f);
         }
         else if(strcmp("CHAR", formal[i]->type) == 0){
-            char c = arg[i][0];
+            char c = argv[i][0];
             bprintf("LDC %s\n", c);
         }
         else if(strcmp("STRING", formal[i]->type) == 0){
-            char* s = arg[i];
+            char* s = argv[i];
             bprintf("LDS \"%s\"\n", s);
         }
 
@@ -834,16 +859,16 @@ void mainModule(PLine rootLine, char **arg, int nArgs){
         bprintf( "STO %d %d\n",getLevelModule(paramLine, rootLine)==-1?0:getLevelModule(paramLine, rootLine), paramLine->oid);
 
 
-    }
+    }*/
 
 }
 
-void genTCode(PLine rootLine, Pnode root, char **arg, int nArgs){
+void genTCode(PLine rootLine, Pnode root, char **argv, int argc){
     wholeSymbolTable = rootLine;
     int size = bufferSize;
     bprintf("TCODE temp\n");
 
-    mainModule(rootLine, arg, nArgs);
+    genMainModuleParams(rootLine, argv, argc);
 
     bprintf("PUSH %d %d -1\n", rootLine->nFormalParams, countModuleBucketLines(rootLine));
     modListEntry = addModEntryNode(modListEntry, bufferSize, rootLine->oid);

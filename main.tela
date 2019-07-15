@@ -1,8 +1,10 @@
 module main (p1: int, p2:string): int
     var hello: string;
+    const cc:char='a';
 
     module sayHello(): string
     begin sayHello
+        p2="dad";
         return "Hello";
     end sayHello
 

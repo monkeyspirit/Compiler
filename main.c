@@ -10,28 +10,21 @@
 
 
 
-int main(int nArgs, char  **args) {
-    telaFileName = args[1]; // l'ultimo argomento da linea di comando sarà il nome del file
+int main(int argc, char  **argv) {
 
-    char *arg[nArgs-2];
+    telaFileName = argv[1]; // l'ultimo argomento da linea di comando sarà il nome del file
 
-    for (int i = 2; i <nArgs ; ++i) {
-        arg[i-2] = args[i];
-    }
-
-//    telaFileName = "main";
+//    telaFileName = "../main";
     Pnode root = parse();
 
     syntaxTree(root); // stampa su file l'albero sintattico
 
-
     PLine rootLine = symbolTable(root);
     displayTable();
 
-
     semanticControl(root->child, rootLine);
 
-    genTCode(rootLine, root->child, arg, nArgs);
+    genTCode(rootLine, root->child, argv, argc);
 
     return(0);
 }
