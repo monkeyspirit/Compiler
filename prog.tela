@@ -2,41 +2,18 @@ module main (): void
     var i:int;
     s: string;
 
-    module say(p1: int, c:int): int
-    var i:int;
+    module prova(): int
+    var h:int;
 
-    begin say
-    i = say(i, i);
-        return i;
-    end say
+    begin prova
+    	h =5 + i;
+        return h;
+    end prova
 
-    module some(p2: string, p3:int): int
-    var k: int;
-
-    begin some
-        return i;
-    end some
-
-    module thing(p4: bool): void
-    var k:bool;
-
-    begin thing
-        k=not p4;
-    end thing
-
-
+   
 begin main
-    read(i);
+    
 
-    i = -3;
-
-    if true then
-        main();
-    elsif true then
-        i = say(i, some(s, say(3,3*9+5)));
-    elsif i>i then
-        s="Ciao";
-    else
-        i=i+1;
-    end;
+    i = 5;
+    return;	
 end main

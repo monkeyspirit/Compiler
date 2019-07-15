@@ -58,14 +58,14 @@ int getLevelModule(PLine module, PLine table){
             if(module==line){
                 return 0;
             }
-            if(getLevelModule(module, line)!=-1){
+            if(getLevelModule(module, line)!=1){
                 return 1+getLevelModule(module, line);
             }
             line = line->next;
         }
     }
 
-    return -1;
+    return 1;
 
 }
 

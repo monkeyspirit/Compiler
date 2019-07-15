@@ -75,7 +75,7 @@ int getEntryPMod(int oid){
 void subsEntryPModuleCall(){
 
     for (; modListEntry!=NULL; modListEntry=modListEntry->next) {
-        int entryPoint = getEntryPMod(modListEntry->modOid)+1;
+        int entryPoint = getEntryPMod(modListEntry->modOid);
         if(entryPoint==-1){
             printf("ERROR");
         }
@@ -91,7 +91,7 @@ int countModuleBucketLines(PLine moduleLine){
     for (int i = 0; i < BUCKET_SIZE; ++i) {
         PLine line = moduleLine->bucket[i];
 
-        while (line!=NULL){
+        while (line!=NULL && strcmp(line->class, "MOD")!=0){
             n++;
             line = line->next;
         }
@@ -343,7 +343,7 @@ void genExprTCode(Pnode exprNode, PLine fatherModuleLine) { //expr punta x_term
                 break;
             case T_ID:{
                 PLine id = findLineById(exprNode->value.sval, fatherModuleLine);
-                bprintf( "LOD %d %d\n", getLevelModule(id, fatherModuleLine)==-1?0:getLevelModule(id, fatherModuleLine),id->oid);
+                bprintf( "LOD %d %d\n", getLevelModule(id, fatherModuleLine),id->oid);
             }
                 break;
 
@@ -551,7 +551,7 @@ void genReadStatTCode(Pnode readStatNode, PLine fatherModuleLine){
 
         PLine idLine = findLineById(id->value.sval, fatherModuleLine);
 
-        int offsetEnv= getLevelModule(idLine, fatherModuleLine)==-1?0:getLevelModule(idLine, fatherModuleLine);
+        int offsetEnv= getLevelModule(idLine, fatherModuleLine);
         char type = idLine->type[0];
         if(type>='A' && type<='Z'){
             type = type +32;
@@ -626,7 +626,7 @@ void genStatListTCode(Pnode statListNode, PLine fatherModuleLine){
                 PLine id = findLineById(assignStat->child->value.sval, fatherModuleLine);
                 // ↑↑↑↑↑↑ forse bisogna controllare che siano esclusivamente PAR o VAR ↑↑↑↑↑↑
                 genExprTCode(assignStat->child->brother->child, fatherModuleLine);
-                bprintf( "STO %d %d\n",getLevelModule(id, fatherModuleLine)==-1?0:getLevelModule(id, fatherModuleLine), id->oid);
+                bprintf( "STO %d %d\n",getLevelModule(id, fatherModuleLine), id->oid);
                 break;
             }
             case NIF_STAT:{
@@ -755,7 +755,7 @@ void genModuleTCode(Pnode moduleNode, PLine fatherModuleLine){
             while(idNode != NULL){
                 genExprTCode(expr, fatherModuleLine);
                 PLine idLine = findLineById(idNode->value.sval, fatherModuleLine);
-                bprintf( "STO %d %d\n",getLevelModule(idLine, fatherModuleLine)==-1?0:getLevelModule(idLine, fatherModuleLine), idLine->oid);
+                bprintf( "STO %d %d\n",getLevelModule(idLine, fatherModuleLine), idLine->oid);
                 idNode = idNode->brother;
             }
 
@@ -828,7 +828,7 @@ void genMainModuleParams(PLine rootLine, char **argv, int argc){
         }
 
         PLine paramLine =findLineByOid(i, rootLine);
-        bprintf("STO %d %d\n",getLevelModule(paramLine, rootLine)==-1?0:getLevelModule(paramLine, rootLine), paramLine->oid);
+        bprintf("STO %d %d\n",getLevelModule(paramLine, rootLine), paramLine->oid);
 
     }
 /*
