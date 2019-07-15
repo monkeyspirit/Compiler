@@ -1,4 +1,4 @@
-module main (p1: int, p2:int): int
+module main (p1: int, p2:string): int
     var hello: string;
 
     module sayHello(): string

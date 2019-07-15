@@ -827,7 +827,7 @@ void mainModule(PLine rootLine, char **arg, int nArgs){
         }
         else if(strcmp("STRING", formal[i]->type) == 0){
             char* s = arg[i];
-            bprintf("LDS %s\n", s);
+            bprintf("LDS \"%s\"\n", s);
         }
 
         PLine paramLine =findLineByOid(i, rootLine);
