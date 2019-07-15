@@ -1,4 +1,4 @@
-module main (p1: int, p2: string): int
+module main (p1: int, p2:int): int
     var hello: string;
 
     module sayHello(): string
@@ -14,6 +14,6 @@ begin main
     end;
     hello = sayHello();
     write(hello);
-    return 1;
+    return 0;
 
 end main

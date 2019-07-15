@@ -6,6 +6,7 @@
 #include <stdbool.h>
 
 PLine findLineById(char*, PLine);
+PLine findLineByOid(int, PLine);
 void semanticControl(Pnode, PLine);
 bool  statListControl(Pnode, PLine);
 char *getExprType(Pnode, PLine);

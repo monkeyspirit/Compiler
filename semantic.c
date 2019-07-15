@@ -190,6 +190,23 @@ PLine findLineById(char* id, PLine fatherModuleLine){
     exit(-5);
 }
 
+PLine findLineByOid(int oid, PLine fatherModuleLine){
+
+    for(int i=0; i<BUCKET_SIZE; i++){
+        PLine toControl = fatherModuleLine->bucket[i];
+        while(toControl!=NULL){
+
+            if( oid == toControl->oid)
+                return toControl;
+
+            toControl = toControl->next;
+        }
+    }
+
+
+    exit(-5);
+}
+
 
 // Analisi semantica
 
@@ -218,7 +235,7 @@ char* checkOperationAndGetType(int op, char *typeExpr1, char *typeExpr2){
                 return typeExpr1;
             }
             else{
-                printf("Errore nell'espressione relazionale: richiesti tipi uguali o INT o REAL, invece sono inseriti un %s e un %s\n", typeExpr1, typeExpr2);
+                printf("Errore nell'espressione matematica: richiesti tipi uguali o INT o REAL, invece sono inseriti un %s e un %s\n", typeExpr1, typeExpr2);
                 exit(-8);
             }
         default:

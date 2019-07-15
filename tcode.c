@@ -787,14 +787,56 @@ void genModuleTCode(Pnode moduleNode, PLine fatherModuleLine){
     genStatListTCode(iterNode->child->brother, fatherModuleLine);
 }
 
-void genTCode(PLine rootLine, Pnode root){
+void mainModule(PLine rootLine, char **arg, int nArgs){
+
+    if(rootLine->nFormalParams!=(nArgs-2)){
+        printf("Errore il numero di parametri non corrisponde a quello dichiarato\n");
+        exit(-2);
+    }
+
+    PLine *formal = rootLine->formalParams;
+    for (int i = 0; i < rootLine->nFormalParams; ++i){
+        if(strcmp("INT", formal[i]->type) == 0){
+            int a = atoi(arg[i]);
+            bprintf("LDI %d\n",a);
+        }
+        else if(strcmp("BOOL", formal[i]->type) == 0){
+            int b = atoi(arg[i]);
+            bprintf("LDI %d\n", b);
+        }
+        else if(strcmp("REAL", formal[i]->type) == 0){
+            float f = atof(arg[i]);
+            bprintf("LDR %f\n", f);
+        }
+        else if(strcmp("CHAR", formal[i]->type) == 0){
+            char c = arg[i][0];
+            bprintf("LDC %s\n", c);
+        }
+        else if(strcmp("STRING", formal[i]->type) == 0){
+            char* s = arg[i];
+            bprintf("LDS %s\n", s);
+        }
+
+        PLine paramLine =findLineByOid(i, rootLine);
+        bprintf( "STO %d %d\n",getLevelModule(paramLine, rootLine)==-1?0:getLevelModule(paramLine, rootLine), paramLine->oid);
+
+
+    }
+
+}
+
+void genTCode(PLine rootLine, Pnode root, char **arg, int nArgs){
     wholeSymbolTable = rootLine;
     int size = bufferSize;
     bprintf("TCODE temp\n");
+
+    mainModule(rootLine, arg, nArgs);
+
     bprintf("PUSH %d %d -1\n", rootLine->nFormalParams, countModuleBucketLines(rootLine));
     modListEntry = addModEntryNode(modListEntry, bufferSize, rootLine->oid);
     bprintf("\t GOTO temp\n");
     bprintf("POP\n");
+    bprintf("HALT\n");
     genModuleTCode(root, rootLine);
     subsEntryPModuleCall();
     bprintfAtIndex(size, "TCODE %d\n", bufferSize);
