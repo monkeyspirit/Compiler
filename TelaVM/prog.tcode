@@ -1,0 +1,32 @@
+TCODE 32
+PUSH 0 3 -1
+	 GOTO 5
+POP
+HALT
+MOD 0
+NEW 4
+NEW 4
+NEW 8
+READ i 0 0
+LOD 0 0
+LDI 5
+EQU
+JMF 6
+LDS "mammaaaaaa a"
+STO 0 2
+LOD 0 2
+WRITE "s"
+JMP 14
+LOD 0 0
+LDI 8
+EQU
+JMF 6
+LDS "conte a"
+STO 0 2
+LOD 0 2
+WRITE "s"
+JMP 5
+LDS "pollo a"
+STO 0 2
+LOD 0 2
+WRITE "s"
