@@ -343,7 +343,7 @@ void genExprTCode(Pnode exprNode, PLine fatherModuleLine) { //expr punta x_term
                 break;
             case T_ID:{
                 PLine id = findLineById(exprNode->value.sval, fatherModuleLine);
-                bprintf( "LOD %d %d\n", getLevelModule(id, fatherModuleLine),id->oid);
+                bprintf( "LOD %d %d\n", getEnvOffset(id, fatherModuleLine),id->oid);
             }
                 break;
 
@@ -551,7 +551,7 @@ void genReadStatTCode(Pnode readStatNode, PLine fatherModuleLine){
 
         PLine idLine = findLineById(id->value.sval, fatherModuleLine);
 
-        int offsetEnv= getLevelModule(idLine, fatherModuleLine);
+        int offsetEnv= getEnvOffset(idLine, fatherModuleLine);
         char type = idLine->type[0];
         if(type>='A' && type<='Z'){
             type = type +32;
@@ -626,7 +626,7 @@ void genStatListTCode(Pnode statListNode, PLine fatherModuleLine){
                 PLine id = findLineById(assignStat->child->value.sval, fatherModuleLine);
                 // ↑↑↑↑↑↑ forse bisogna controllare che siano esclusivamente PAR o VAR ↑↑↑↑↑↑
                 genExprTCode(assignStat->child->brother->child, fatherModuleLine);
-                bprintf( "STO %d %d\n",getLevelModule(id, fatherModuleLine), id->oid);
+                bprintf( "STO %d %d\n", getEnvOffset(id, fatherModuleLine) , id->oid);
                 break;
             }
             case NIF_STAT:{
@@ -755,7 +755,7 @@ void genModuleTCode(Pnode moduleNode, PLine fatherModuleLine){
             while(idNode != NULL){
                 genExprTCode(expr, fatherModuleLine);
                 PLine idLine = findLineById(idNode->value.sval, fatherModuleLine);
-                bprintf( "STO %d %d\n",getLevelModule(idLine, fatherModuleLine), idLine->oid);
+                bprintf( "STO 0 %d\n", idLine->oid);
                 idNode = idNode->brother;
             }
 
@@ -828,7 +828,7 @@ void genMainModuleParams(PLine rootLine, char **argv, int argc){
         }
 
         PLine paramLine =findLineByOid(i, rootLine);
-        bprintf("STO %d %d\n",getLevelModule(paramLine, rootLine), paramLine->oid);
+        bprintf("STO 0 %d\n", paramLine->oid);
 
     }
 /*

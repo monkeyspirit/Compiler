@@ -48,24 +48,22 @@ int getGapModuleAmbient(PLine caller, PLine called){
 
 
 
-int getLevelModule(PLine module, PLine table){
-
+int getLevelModule(PLine idLine, PLine fatherModuleLine) {
 
     for (int i = 0; i <BUCKET_SIZE ; ++i) {
-        PLine line = table->bucket[i];
+        PLine line = fatherModuleLine->bucket[i];
         while(line!=NULL){
-
-            if(module==line){
+            if(idLine==line)
                 return 0;
-            }
-            if(getLevelModule(module, line)!=1){
-                return 1+getLevelModule(module, line);
-            }
+
+            if(getLevelModule(idLine, line)!=-1)
+                return 1+getLevelModule(idLine, line);
+
             line = line->next;
         }
     }
 
-    return 1;
+    return -1;
 
 }
 
@@ -127,6 +125,8 @@ PLine getFather(PLine child, PLine table){
 
 int isBrother(PLine module1, PLine module2){
 
+    return getFather(module1, wholeSymbolTable)==getFather(module2, wholeSymbolTable);
+
     PLine fatherM1 = getFather(module1, wholeSymbolTable);
     PLine fatherM2 = getFather(module2, wholeSymbolTable);
 
@@ -160,6 +160,10 @@ PLine findModuleFather(PLine moduleLine, int childModuleOid) {
     return NULL;
 }
 
+int getEnvOffset(PLine id, PLine moduleLine) {
+    return 1 + getLevelModule(moduleLine, wholeSymbolTable) - getLevelModule(id, wholeSymbolTable) ;
+}
+
 // cerca gerarchicamente (in risalita) nella symboltable una riga con un dato id
 PLine findLineById(char* id, PLine fatherModuleLine){
 
@@ -179,7 +183,7 @@ PLine findLineById(char* id, PLine fatherModuleLine){
         if(fatherModule!=NULL) {
             return findLineById(id, fatherModule);
         } else
-            printf("PROBLEMONE GROSSO COME UNA * DI CASA");
+            printf("PROBLEMONE GROSSO COME UNA CASA");
 
     }
 

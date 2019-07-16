@@ -14,5 +14,6 @@ int isChildDirectly(PLine, PLine);
 int getLevelModule(PLine, PLine);
 int isBrother(PLine, PLine);
 int getGapModuleAmbient(PLine, PLine);
+int getEnvOffset(PLine, PLine);
 PLine getFather(PLine, PLine);
 #endif
