@@ -370,11 +370,11 @@ void optElseIfStatListControl(Pnode optElseIfStatListNode, PLine fatherModuleLin
     }
 
 }
-
+bool thereIsReturn;
 
 // metodo per l'analisi semantica di ogni stat
 bool statListControl(Pnode firstStatNode, PLine fatherModuleLine){
-    bool thereIsReturn = false;
+
 
     Pnode statNode = firstStatNode;
     while(statNode!=NULL) { // cicliamo le stat
@@ -385,7 +385,7 @@ bool statListControl(Pnode firstStatNode, PLine fatherModuleLine){
             case NASSIGN_STAT: {
                 Pnode assignStat = statNode->child;
                 PLine leftOperand = findLineById(assignStat->child->value.sval, fatherModuleLine);
-                if (strcmp(leftOperand->class, "CON")==0 || strcmp(leftOperand->class, "MOD")==0){
+                if (strcmp(leftOperand->class, "CON") == 0 || strcmp(leftOperand->class, "MOD") == 0) {
                     printf("Errore: l'assegnamento puo' essere fatto solo a VAR e PAR trovato %s", leftOperand->class);
                     exit(-12);
                 }
@@ -397,60 +397,66 @@ bool statListControl(Pnode firstStatNode, PLine fatherModuleLine){
                            assignStat->child->value.sval, fatherModuleLine->id, type, typeExpr);
                     exit(-9);
                 }
-            }
+
                 break;
+            }
 
             case NIF_STAT: {
 
                 Pnode ifStat = statNode->child;
                 char *type = getExprType(ifStat->child->child, fatherModuleLine);
-                if(strcmp(type, "BOOL")!=0){
-                    printf("Errore nell'If Stat nel corpo del modulo %s: richiesto un BOOL invece è presente %s\n", fatherModuleLine->id, type);
+                if (strcmp(type, "BOOL") != 0) {
+                    printf("Errore nell'If Stat nel corpo del modulo %s: richiesto un BOOL invece è presente %s\n",
+                           fatherModuleLine->id, type);
                     exit(-9);
                 }
 
                 Pnode statList = ifStat->child->brother;
                 statListControl(statList->child, fatherModuleLine);
 
-                if(statList->brother!=NULL) {
+                if (statList->brother != NULL) {
                     if (statList->brother->value.ival == NOPT_ELSEIF_STAT_LIST) {
                         optElseIfStatListControl(statList->brother, fatherModuleLine);
 //                        statList = statList->brother;
                     } else if (statList->brother->value.ival == NOPT_ELSE_STAT)
                         statListControl(statList->brother->child->child, fatherModuleLine);
                 }
-            }
+
                 break;
+            }
 
-            case NWHILE_STAT:
+            case NWHILE_STAT: {
 
-                if(strcmp(getExprType(statNode->child->child->child, fatherModuleLine), "BOOL")!=0) {
+                if (strcmp(getExprType(statNode->child->child->child, fatherModuleLine), "BOOL") != 0) {
                     printf("Errore nella condizione del ciclo while, richiesto un BOOL ma trovato un %s\n",
                            getExprType(statNode->child->child->child, fatherModuleLine));
                     exit(-72);
                 }
                 statListControl(statNode->child->child->brother->child, fatherModuleLine);
                 break;
+            }
 
             case NRETURN_STAT: {
 
                 Pnode returnStat = statNode->child;
                 char *moduleType = fatherModuleLine->type, *typeExpr;
 
-                if(returnStat->child->child==NULL)
+                if (returnStat->child->child == NULL)
                     typeExpr = "VOID";
                 else
                     typeExpr = getExprType(returnStat->child->child, fatherModuleLine);
 
                 if (strcmp(moduleType, typeExpr) != 0) {
-                    printf("Errore nell'operazione di return nel corpo del modulo %s: richiesto %s invece è presente %s\n", fatherModuleLine->id, moduleType, typeExpr);
+                    printf("Errore nell'operazione di return nel corpo del modulo %s: richiesto %s invece è presente %s\n",
+                           fatherModuleLine->id, moduleType, typeExpr);
                     exit(-9);
                 }
 
                 thereIsReturn = true;
 
-            }
+
                 break;
+            }
 
             case NREAD_STAT: {
                 Pnode idNode = statNode->child->child->child;
@@ -463,31 +469,36 @@ bool statListControl(Pnode firstStatNode, PLine fatherModuleLine){
                     }
                     idNode = idNode->brother;
                 }
-            }
-                break;
 
-            case NWRITE_STAT:{
+                break;
+            }
+
+            case NWRITE_STAT: {
                 Pnode exprNode = statNode->child->child->child;
                 while (exprNode != NULL) {
-                    getExprType(exprNode->child, fatherModuleLine); // non serve veramente il tipo... la uso solo perchè fa i controlli
+                    getExprType(exprNode->child,
+                                fatherModuleLine); // non serve veramente il tipo... la uso solo perchè fa i controlli
 
                     exprNode = exprNode->brother;
                 }
-            }
+
                 break;
+            }
 
             case NMODULE_CALL: {
 
                 PLine calledModuleLine = findLineById(statNode->child->child->value.sval, fatherModuleLine);
-                if (strcmp(calledModuleLine->class, "MOD") != 0){
-                    printf("Errore: l'id %s non risulta essere un modulo ma un %s", calledModuleLine->id, calledModuleLine->class);
+                if (strcmp(calledModuleLine->class, "MOD") != 0) {
+                    printf("Errore: l'id %s non risulta essere un modulo ma un %s", calledModuleLine->id,
+                           calledModuleLine->class);
                     exit(-11);
                 }
                 checkModuleCallParams(statNode->child->child->brother,
                                       calledModuleLine,
                                       fatherModuleLine);
-            }
+
                 break;
+            }
 
             default:
                 printf("stat non riconosciuta");
@@ -590,10 +601,11 @@ void moduleControl(Pnode moduleNode, PLine fatherModuleLine){
         exit(-2);
     }
 
+    thereIsReturn = false;
     statListControl(iterNode->child->brother->child, fatherModuleLine); //Gli passo il primo stat
 
     if(strcmp(fatherModuleLine->type, "VOID") != 0 ){
-        if(!statListControl(iterNode->child->brother->child, fatherModuleLine)){
+        if(statListControl(iterNode->child->brother->child, fatherModuleLine)==false){
             printf("Errore: il modulo \"%s\" è di tipi %s ma manca l'operazione di return", fatherModuleLine->id, fatherModuleLine->type);
             exit(-7);
         }

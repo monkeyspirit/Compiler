@@ -388,16 +388,14 @@ void genExprTCode(Pnode exprNode, PLine fatherModuleLine) { //expr punta x_term
 //                  generateCodeFormalParams(x_term->child->child->child->brother->child->child, moduleLine);
 
                 PLine moduleCalled = findLineById(exprNode->child->value.sval, fatherModuleLine);
-
+                genModuleExprTCode(exprNode, fatherModuleLine);
                 bprintf("PUSH %d %d %d\n", moduleCalled->nFormalParams, countModuleBucketLines(moduleCalled), getGapModuleAmbient(fatherModuleLine, moduleCalled));
                 modListEntry = addModEntryNode(modListEntry, bufferSize, moduleCalled->oid);
                 bprintf("\t GOTO %d\n", moduleCalled->oid );
                 bprintf("POP\n");
             }
                 break;
-                printf("MODULE_CALL ANCORA DA IMPLEMENTARE");
-                exit(-1);
-                break;
+
             default:
                 genExprTCode(exprNode->child, fatherModuleLine);
         }
