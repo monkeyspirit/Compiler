@@ -810,19 +810,41 @@ void genMainModuleParams(PLine rootLine, char **argv, int argc){
         if(strcmp("INT", rootLine->formalParams[i]->type)==0 || strcmp("BOOL", rootLine->formalParams[i]->type)==0) {
             int integer;
             sscanf(argv[i+2], "%d", &integer);
+
+            char *provadel9 = malloc(64);
+            sprintf(provadel9, "%d", integer);
+            if(strcmp(argv[i+2], provadel9)!=0){
+                printf("Errore nei parametri del modulo principale:\n"
+                       "Ci si aspetta un int, trovato questo \"%s\"", argv[i+2]);
+                exit(-1);
+            }
+
             bprintf("LDI %d\n", integer);
         } else if(strcmp("REAL", rootLine->formalParams[i]->type)==0) {
-            float real = strtof(argv[i+2], NULL);
+            char **quelchecedopo = malloc(64);
+            float real = strtof(argv[i+2], quelchecedopo);
+            if(strcmp("", quelchecedopo[0])!=0){
+                printf("Errore nei parametri del modulo principale:\n"
+                       "Ci si aspetta un float, trovato questo \"%s\"", argv[i+2]);
+                exit(-1);
+            }
 //            sscanf(argv[i+2], "%f", &real);
             bprintf("LDR %f\n", real);
         } else if(strcmp("CHAR", rootLine->formalParams[i]->type)==0) {
             char charachter;
             sscanf(argv[i+2], "%c", &charachter);
+
+            char *provadel9 = malloc(64);
+            sprintf(provadel9, "%c", charachter);
+            if(strcmp(argv[i+2], provadel9)!=0){
+                printf("Errore nei parametri del modulo principale:\n"
+                       "Ci si aspetta un char, trovato questo \"%s\"", argv[i+2]);
+                exit(-1);
+            }
+
             bprintf("LDC '%c'\n", charachter);
         } else if(strcmp("STRING", rootLine->formalParams[i]->type)==0) {
-            char *string=malloc(64);
-            sscanf(argv[i+2], "%s", string);
-            bprintf("LDS \"%s\"\n", string);
+            bprintf("LDS \"%s\"\n", argv[i+2]);
         }
 
         PLine paramLine =findLineByOid(i, rootLine);
