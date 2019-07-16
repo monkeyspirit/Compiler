@@ -812,15 +812,15 @@ void genMainModuleParams(PLine rootLine, char **argv, int argc){
             sscanf(argv[i+2], "%d", &integer);
             bprintf("LDI %d\n", integer);
         } else if(strcmp("REAL", rootLine->formalParams[i]->type)==0) {
-            float real;
-            sscanf(argv[i+2], "%f", &real);
+            float real = strtof(argv[i+2], NULL);
+//            sscanf(argv[i+2], "%f", &real);
             bprintf("LDR %f\n", real);
         } else if(strcmp("CHAR", rootLine->formalParams[i]->type)==0) {
             char charachter;
-            sscanf(argv[i+2], "'%c'", &charachter);
-            bprintf("LDC %c\n", charachter);
+            sscanf(argv[i+2], "%c", &charachter);
+            bprintf("LDC '%c'\n", charachter);
         } else if(strcmp("STRING", rootLine->formalParams[i]->type)==0) {
-            char *string;
+            char *string=malloc(64);
             sscanf(argv[i+2], "%s", string);
             bprintf("LDS \"%s\"\n", string);
         }
