@@ -295,20 +295,23 @@ void execute(VirtualMachine* vm, Op* operation) {
     }
 }
 
-int main(int argc, char **argv) {
-    char* codePath = "code.code";
-    if (argc == 2)
-        codePath = argv[1];
-    if (argc > 2)
+int main(int args, char** argv) {
+    
+    char* codePath = malloc(50);
+    strcpy(codePath, "code.code");
+    if (args == 2)
+        strcpy(codePath, argv[1]);
+    if (args > 2)
         {
             printf("Too many parameters for this vmachine\nexecution stopped");
             exit(1);
         }
-    printf("TelaVM versione 2.48\n");
+    
+    
+    printf("TelaVM versione 2.54\n");
     VirtualMachine* vm = malloc(sizeof(VirtualMachine));
     *vm = newVM(); 
-    printf("Code file: %s\n", codePath);
-    initList(vm->list, codePath);
+    initList(vm->list, "code.code");
     printf("--Execution--\n\n");
     while(vm->list->currentOperation < vm->list->rows) {
         Op instruction= getNextOperation(vm->list);
@@ -316,3 +319,18 @@ int main(int argc, char **argv) {
     }
     return 0;
 }
+
+
+
+    /*int argc, char **argv*/
+    /*
+    char* codePath = malloc(50);
+    strcpy(codePath, "code.code");
+    if (argc == 2)
+        strcpy(codePath, argv[1]);
+    if (argc > 2)
+        {
+            printf("Too many parameters for this vmachine\nexecution stopped");
+            exit(1);
+        }
+    */
