@@ -848,8 +848,8 @@ void genMainModuleParams(PLine rootLine, char **argv, int argc){
             bprintf("LDS \"%s\"\n", argv[i+2]);
         }
 
-        PLine paramLine =findLineByOid(i, rootLine);
-        bprintf("STO 0 %d\n", paramLine->oid);
+//        PLine paramLine =findLineByOid(i, rootLine);
+//        bprintf("STO 0 %d\n", paramLine->oid);
 
     }
 /*
