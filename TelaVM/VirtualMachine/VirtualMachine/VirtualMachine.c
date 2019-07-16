@@ -297,7 +297,7 @@ void execute(VirtualMachine* vm, Op* operation) {
 
 int main(int args, char** argv) {
     
-    char* codePath = malloc(50);
+    char* codePath = calloc(50,1);
     strcpy(codePath, "code.code");
     if (args == 2)
         strcpy(codePath, argv[1]);
@@ -308,10 +308,10 @@ int main(int args, char** argv) {
         }
     
     
-    printf("TelaVM versione 2.54\n");
+    printf("TelaVM versione 2.55\n");
     VirtualMachine* vm = malloc(sizeof(VirtualMachine));
     *vm = newVM(); 
-    initList(vm->list, "code.code");
+    initList(vm->list, codePath);
     printf("--Execution--\n\n");
     while(vm->list->currentOperation < vm->list->rows) {
         Op instruction= getNextOperation(vm->list);
