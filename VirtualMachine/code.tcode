@@ -1,0 +1,29 @@
+TCODE 29
+PUSH 0 5 -1
+	 GOTO 5
+POP
+HALT
+MOD 0
+NEW 4
+NEW 4
+NEW 8
+NEW 8
+NEW 8
+LDS "Hello!"
+STO 0 4
+LOD 0 4
+WRITE "s"
+READ s 0 2
+LOD 0 2
+WRITE "s"
+READ s 0 3
+LOD 0 3
+WRITE "s"
+LOD 0 2
+LOD 0 3
+EQU
+JMF 4
+LDS "ugualiiiii"
+WRITE "s"
+JMP 1
+RETURN

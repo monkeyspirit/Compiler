@@ -1,0 +1,17 @@
+module alfa(): void
+  var
+    n, m: int;
+    str1, str2: string;
+  const
+    msg: string = "Hello!";
+begin alfa
+  write(msg);
+  read(str1);
+  write(str1);
+  read(str2);
+  write(str2);
+  if str1 == str2 then
+    write("ugualiiiii");
+  end;
+  return;
+end alfa
