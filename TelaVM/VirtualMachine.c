@@ -24,6 +24,7 @@ VirtualMachine newVM(){
 
 void READf (StringDB* sdb, Interpreter* gfl, char type, int jumps, int oID) {
     Union u;
+    printf("\ninput: ");
     switch (type) {
         case 'c' : {
             char value;
@@ -61,10 +62,10 @@ void WRITEf (ExeStack* exe, char* params) {
     int i = 0; char p;
     while( ( p = params[i]) != '\0' ) {
         switch (p) {
-            case 'i' : printf("%d", pullExeInt(exe)); break;
-            case 'r' : printf("%f", pullExeReal(exe));break;
-            case 's' : printf("%s", pullExeString(exe)); break;
-            case 'c' : printf("%c", pullExeChar(exe));
+            case 'i' : printf("output: %d\n", pullExeInt(exe)); break;
+            case 'r' : printf("output: %f\n", pullExeReal(exe));break;
+            case 's' : printf("output: %s\n", pullExeString(exe)); break;
+            case 'c' : printf("output: %c\n", pullExeChar(exe));
             
         }
         i++;
@@ -91,13 +92,12 @@ void execute(VirtualMachine* vm, Op* operation) {
         
         case LDR : {
             float first = operation->arg1.data.real;
-            pushExeInt (vm->gfl->exe, first);
+            pushExeReal (vm->gfl->exe, first);
         }break;
         
         case LDS : {
             char* first = operation->arg1.data.string;
             first = getStringPointer(vm->sdb, first);
-            free(operation->arg1.data.string);
             pushExeString (vm->gfl->exe, first);
         }break;
         
@@ -295,17 +295,24 @@ void execute(VirtualMachine* vm, Op* operation) {
     }
 }
 
-int main() {
-    
+int main(int argc, char **argv) {
+    char* codePath = "code.code";
+    if (argc == 2)
+        codePath = argv[1];
+    if (argc > 2)
+        {
+            printf("Too many parameters for this vmachine\nexecution stopped");
+            exit(1);
+        }
+    printf("TelaVM versione 2.48\n");
     VirtualMachine* vm = malloc(sizeof(VirtualMachine));
     *vm = newVM(); 
-    initList(vm->list, "code.code");
-    debugOp(vm->list);
-    
+    printf("Code file: %s\n", codePath);
+    initList(vm->list, codePath);
+    printf("--Execution--\n\n");
     while(vm->list->currentOperation < vm->list->rows) {
         Op instruction= getNextOperation(vm->list);
         execute (vm, &instruction);
-        
     }
-
+    return 0;
 }
