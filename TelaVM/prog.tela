@@ -1,0 +1,18 @@
+module main (): void
+    var
+    i:int; ciao:int;
+    s: string;
+    
+    begin main
+        read(i);
+        if i == 5 then
+            s = "mammaaaaaa a";
+            write(s);
+        elsif i == 8 then
+            s = "conte a";
+            write(s);
+        else
+            s = "pollo a";
+            write(s);
+        end;
+    end main
