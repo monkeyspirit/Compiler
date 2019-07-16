@@ -23,6 +23,7 @@ ListNode *lineExitCondExpr = NULL;
 // aggiunge una strina al buffer e aumenta il bufferSize
 void bufferWrite(char *lineToWrite){
     buffer = realloc(buffer, sizeof(char*) * (bufferSize+1)); // rialloco la memoria
+    buffer[bufferSize] = malloc(sizeof(*lineToWrite)+1);
     buffer[bufferSize++] = lineToWrite; // aggiungo la rica
 }
 
