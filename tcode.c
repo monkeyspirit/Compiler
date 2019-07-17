@@ -77,7 +77,7 @@ void subsEntryPModuleCall(){
         if(entryPoint==-1){
             printf("ERROR");
         }
-        bprintfAtIndex(modListEntry->value.ival, "\t GOTO %d\n", entryPoint);
+        bprintfAtIndex(modListEntry->value.ival, "GOTO %d\n", entryPoint);
     }
 }
 
@@ -389,7 +389,7 @@ void genExprTCode(Pnode exprNode, PLine fatherModuleLine) { //expr punta x_term
                 genModuleExprTCode(exprNode, fatherModuleLine);
                 bprintf("PUSH %d %d %d\n", moduleCalled->nFormalParams, countModuleBucketLines(moduleCalled), getGapModuleAmbient(fatherModuleLine, moduleCalled));
                 modListEntry = addModEntryNode(modListEntry, bufferSize, moduleCalled->oid);
-                bprintf("\t GOTO %d\n", moduleCalled->oid );
+                bprintf("GOTO temp\n");
                 bprintf("POP\n");
             }
                 break;
@@ -656,7 +656,7 @@ void genStatListTCode(Pnode statListNode, PLine fatherModuleLine){
                 bprintf("PUSH %d %d %d\n", moduleCalled->nFormalParams, countModuleBucketLines(moduleCalled),
                         getGapModuleAmbient(fatherModuleLine, moduleCalled));
                 modListEntry = addModEntryNode(modListEntry, bufferSize, moduleCalled->oid);
-                bprintf("\t GOTO temp\n");
+                bprintf("GOTO temp\n");
                 bprintf("POP\n");
                 break;
             }
@@ -857,7 +857,7 @@ void genTCode(PLine rootLine, Pnode root, char **argv, int argc){
 
     bprintf("PUSH %d %d -1\n", rootLine->nFormalParams, countModuleBucketLines(rootLine));
     modListEntry = addModEntryNode(modListEntry, bufferSize, rootLine->oid);
-    bprintf("\t GOTO temp\n");
+    bprintf("GOTO temp\n");
     bprintf("POP\n");
     bprintf("HALT\n");
 
