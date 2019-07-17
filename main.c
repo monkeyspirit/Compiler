@@ -7,8 +7,6 @@
 #include "tcode.h"
 #include "dynamicArray.h"
 #include <stdio.h>
-#include <io.h>
-
 
 
 int main(int argc, char  **argv) {
@@ -17,10 +15,6 @@ int main(int argc, char  **argv) {
 
 //    telaFileName = "../main";
     Pnode root = parse();
-
-    char *folderName = malloc(64);
-    sprintf(folderName, "%s-compile-extra", telaFileName);
-    mkdir(folderName); // creo la cartella per i file extra
 
     syntaxTree(root); // stampa su file l'albero sintattico
 
