@@ -11,6 +11,11 @@
 
 int main(int argc, char  **argv) {
 
+    if (argc < 2) {
+        printf("Errore: specificare il nome di un file tela da compilare (senza estensione)");
+        exit(1);
+    }
+
     telaFileName = argv[1]; // l'ultimo argomento da linea di comando sarà il nome del file
 
 //    telaFileName = "../main";

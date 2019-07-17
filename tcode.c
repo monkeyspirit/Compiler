@@ -1,6 +1,3 @@
-//
-// Created by maria on 10/07/19.
-//
 
 #include "tcode.h"
 #include "semantic.h"
@@ -802,7 +799,8 @@ void genModuleTCode(Pnode moduleNode, PLine fatherModuleLine){
 void genMainModuleParams(PLine rootLine, char **argv, int argc){
 
     if(rootLine->nFormalParams!=(argc-2)){
-        printf("Errore il numero di parametri non corrisponde a quello dichiarato\n");
+        printf("Errore: il numero di parametri passati (%d) non corrisponde a quello dichiarato (%d)\n",
+                argc-2, rootLine->nFormalParams);
         exit(-2);
     }
 
@@ -848,45 +846,11 @@ void genMainModuleParams(PLine rootLine, char **argv, int argc){
             bprintf("LDS \"%s\"\n", argv[i+2]);
         }
 
-//        PLine paramLine =findLineByOid(i, rootLine);
-//        bprintf("STO 0 %d\n", paramLine->oid);
-
-    }
-/*
-    PLine *formal = rootLine->formalParams;
-    for (int i = 0; i < rootLine->nFormalParams; ++i){
-        if(strcmp("INT", formal[i]->type) == 0){
-            int a = atoi(argv[i]);
-            bprintf("LDI %d\n",a);
-        }
-        else if(strcmp("BOOL", formal[i]->type) == 0){
-            int b = atoi(argv[i]);
-            bprintf("LDI %d\n", b);
-        }
-        else if(strcmp("REAL", formal[i]->type) == 0){
-            float f = atof(argv[i]);
-            bprintf("LDR %f\n", f);
-        }
-        else if(strcmp("CHAR", formal[i]->type) == 0){
-            char c = argv[i][0];
-            bprintf("LDC %s\n", c);
-        }
-        else if(strcmp("STRING", formal[i]->type) == 0){
-            char* s = argv[i];
-            bprintf("LDS \"%s\"\n", s);
-        }
-
-        PLine paramLine =findLineByOid(i, rootLine);
-        bprintf( "STO %d %d\n",getLevelModule(paramLine, rootLine)==-1?0:getLevelModule(paramLine, rootLine), paramLine->oid);
-
-
-    }*/
-
-}
+    }}
 
 void genTCode(PLine rootLine, Pnode root, char **argv, int argc){
     wholeSymbolTable = rootLine;
-    int size = bufferSize;
+
     bprintf("TCODE temp\n");
 
     genMainModuleParams(rootLine, argv, argc);
@@ -899,6 +863,6 @@ void genTCode(PLine rootLine, Pnode root, char **argv, int argc){
 
     genModuleTCode(root, rootLine);
     subsEntryPModuleCall();
-    bprintfAtIndex(size, "TCODE %d\n", bufferSize);
+    bprintfAtIndex(0, "TCODE %d\n", bufferSize);
     flush();
 }
