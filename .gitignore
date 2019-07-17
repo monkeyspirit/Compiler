@@ -1,5 +1,5 @@
 .idea
-cmake-build-debug
+cmake-build*
 *.syntaxtree
 *.symboltable
 *.tcode

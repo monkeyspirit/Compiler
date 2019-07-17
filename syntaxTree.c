@@ -88,7 +88,7 @@ char* tabNonTerm[] =
 
 void syntaxTree(Pnode root){
     char *outTreeFileName = malloc(64);
-    sprintf(outTreeFileName, "%s.syntaxtree", telaFileName);
+    sprintf(outTreeFileName, "%s-compile-extra\\%s.syntaxtree", telaFileName, telaFileName);
      treePrint(fopen(outTreeFileName, "w"), root, 0);
 }
 

@@ -1,1 +1,0 @@
-/usr/bin/cc -O3 -DNDEBUG   CMakeFiles/main.dir/main.c.o CMakeFiles/main.dir/semantic.c.o CMakeFiles/main.dir/syntaxTree.c.o CMakeFiles/main.dir/lexer.c.o CMakeFiles/main.dir/parser.c.o CMakeFiles/main.dir/symbolTable.c.o CMakeFiles/main.dir/tcode.c.o CMakeFiles/main.dir/dynamicArray.c.o  -o main 
