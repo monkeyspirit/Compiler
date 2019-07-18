@@ -28,7 +28,7 @@ VirtualMachine newVM(){
 
 void READf (StringDB* sdb, Interpreter* gfl, char type, int jumps, int oID) {
     Union u;
-    printf("\ninput: ");
+    printf("input: ");
     switch (type) {
         case 'c' : {
             char value;
@@ -57,7 +57,6 @@ void READf (StringDB* sdb, Interpreter* gfl, char type, int jumps, int oID) {
         }
         
     }
-    
     pushExeUnion(gfl->exe, u);
     STOf(gfl, jumps, oID);
 }
@@ -372,6 +371,7 @@ void execute(VirtualMachine* vm, Op* operation) {
         }break;
         
         case HALT : {
+            printf("\n--Execution completed--");
             exit(0);
         }
         
@@ -391,19 +391,21 @@ int main(int args, char** argv) {
     yylex();
     fclose(out);
     
-    printf("TelaVM versione 3.19\n");
+    printf("TelaVM versione 3.21\n");
     VirtualMachine* vm = malloc(sizeof(VirtualMachine));
     *vm = newVM(); 
     vm->params = argv+2;
     vm->parsLeft = args-2;
     initList(vm->list, "code.code");
     //debugOp(vm->list);
-    printf("--Execution--\n\n");
+    printf("--Execution started--\n\n");
     
     while(vm->list->currentOperation < vm->list->rows) {
         Op instruction= getNextOperation(vm->list);
         execute (vm, &instruction);
     } 
+    
+    
     return 0; 
 }
 
