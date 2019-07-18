@@ -813,16 +813,24 @@ void genModuleTCode(Pnode moduleNode, PLine fatherModuleLine){
 
 }
 
-void genMainModuleParams(PLine rootLine, char **argv, int argc){
-
+void genMainModuleParams(PLine rootLine){
+/*
     if(rootLine->nFormalParams!=(argc-2)){
         printf("Errore: il numero di parametri passati (%d) non corrisponde a quello dichiarato (%d)\n",
                 argc-2, rootLine->nFormalParams);
         exit(-2);
     }
-
+*/
 
     for (int i = 0; i < rootLine->nFormalParams; ++i){
+
+        char chartype = rootLine->formalParams[i]->type[0];
+        if(chartype>='A' && chartype<='Z')
+            chartype = chartype +32;
+
+        bprintf("READ %c %d %d\n", chartype, -1, -1);
+/*
+
         if(strcmp("INT", rootLine->formalParams[i]->type)==0 || strcmp("BOOL", rootLine->formalParams[i]->type)==0) {
             int integer;
             sscanf(argv[i+2], "%d", &integer);
@@ -862,15 +870,16 @@ void genMainModuleParams(PLine rootLine, char **argv, int argc){
         } else if(strcmp("STRING", rootLine->formalParams[i]->type)==0) {
             bprintf("LDS \"%s\"\n", argv[i+2]);
         }
+*/
+    }
+}
 
-    }}
-
-void genTCode(PLine rootLine, Pnode root, char **argv, int argc){
+void genTCode(PLine rootLine, Pnode root){
     wholeSymbolTable = rootLine;
 
     bprintf("TCODE temp\n");
 
-    genMainModuleParams(rootLine, argv, argc);
+    genMainModuleParams(rootLine);
 
     bprintf("PUSH %d %d -1\n", rootLine->nFormalParams, countModuleBucketLines(rootLine));
     modListEntry = addModEntryNode(modListEntry, bufferSize, rootLine->oid);

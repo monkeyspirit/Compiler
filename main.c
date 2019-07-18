@@ -28,7 +28,7 @@ int main(int argc, char  **argv) {
 
     semanticControl(root->child, rootLine);
 
-    genTCode(rootLine, root->child, argv, argc);
+    genTCode(rootLine, root->child);
 
     return(0);
 }
