@@ -563,7 +563,7 @@ void genReadStatTCode(Pnode readStatNode, PLine fatherModuleLine){
 ListNode *charListWrite = NULL;
 void genWriteStatTCode(Pnode writeStatNode, PLine fatherModuleLine){
 
-    Pnode expr = writeStatNode->child->child;
+   Pnode expr = writeStatNode->child->child;
     while(expr!=NULL){
 
         char *type = getExprType(expr->child, fatherModuleLine);
@@ -581,29 +581,40 @@ void genWriteStatTCode(Pnode writeStatNode, PLine fatherModuleLine){
 //        printf("Char: %c\n", count->value.cval);
         ++num;
     }
+//    printf("num: %d ", num);
 
     char inverti[num];
-    int i = 0;
+    int i = num-1;
 
     while (charListWrite!=NULL ){
 //        printf("i:%d ", i);
         inverti[i]=charListWrite->value.cval;
         charListWrite=charListWrite->next;
-        i++;
+        --i;
     }
-    inverti[num]='\0';
+
+
+    char stampa[num];
+
+    int j;
+    for ( j= 0; j < num ; j++) {
+//        printf("Char: %c\n", inverti[j]);
+        stampa[j] = inverti[j];
+    }
+    stampa[j]='\0';
 
     int c=0;
 
-    while(inverti[c]!='\0'){
+    while(stampa[c]!='\0'){
 
-        if(inverti[c]>='A' && inverti[c]<='Z'){
-            inverti[c] = inverti[c] +32;
+        if(stampa[c]>='A' && stampa[c]<='Z'){
+            stampa[c] = stampa[c] +32;
         }
         c++;
     }
 
-    bprintf("WRITE \"%s\"\n", inverti);
+    bprintf("WRITE \"%s\"\n", stampa);
+
 
 
 }
