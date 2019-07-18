@@ -618,6 +618,7 @@ void genWriteStatTCode(Pnode writeStatNode, PLine fatherModuleLine){
 
 
 }
+bool thereIsReturn;
 
 void genStatListTCode(Pnode statListNode, PLine fatherModuleLine){
 
@@ -649,7 +650,7 @@ void genStatListTCode(Pnode statListNode, PLine fatherModuleLine){
 //                Pnode returnStat = stat->child;
 //                char* moduleType = moduleLine->type;
 //                char* typeExpr;
-
+		thereIsReturn = true;
                 break;
             }
             case NREAD_STAT:{
@@ -792,8 +793,13 @@ void genModuleTCode(Pnode moduleNode, PLine fatherModuleLine){
         iterNode = iterNode->brother;
     }
 
+    thereIsReturn = false;
 
     genStatListTCode(iterNode->child->brother, fatherModuleLine);
+
+    if(thereIsReturn==false){
+	bprintf("RETURN\n");
+    }
 
     while (modNode != NULL) {
 

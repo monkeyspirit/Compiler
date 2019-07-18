@@ -1,0 +1,20 @@
+module prog(): void
+	module p(): void
+   		 var n: int;
+
+    		 module q(): void
+   		 begin q
+     		 write(n);
+   		 end q
+
+   		 module r(n: int): void
+	         begin r
+     			 q();
+   		 end r
+	 begin p
+   		 n = 1;
+   		 r(2);
+ 	 end p
+begin prog
+	 p();
+end prog
