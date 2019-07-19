@@ -28,7 +28,6 @@ VirtualMachine newVM(){
 
 void READf (StringDB* sdb, Interpreter* gfl, char type, int jumps, int oID) {
     Union u;
-    printf("input: ");
     switch (type) {
         case 'c' : {
             char value;
@@ -65,7 +64,7 @@ void READf (StringDB* sdb, Interpreter* gfl, char type, int jumps, int oID) {
 
 void READfromArgs(VirtualMachine* vm, char type){
     if (vm->parsLeft <= 0){
-        perror("ERROR: Numero di argomenti non sufficienti, esecuzione terminata");
+        printf("ERROR: Numero di argomenti non sufficienti, esecuzione terminata");
         exit(1);
     }
     StringDB* sdb = vm->sdb;
@@ -135,18 +134,18 @@ void WRITEf (ExeStack* exe, char* params) {
     for ( int i = 0; i < length; i++){
         Union current = temp[(length-1)-i];
         switch (params[i]) {
-            case 'i' : printf("output: %d\n", current.data.integer); break;
-            case 'r' : printf("output: %f\n", current.data.real);break;
+            case 'i' : printf("%d\n", current.data.integer); break;
+            case 'r' : printf("%f\n", current.data.real);break;
             case 's' : 
             {
                 char* stringa;
                 stringa = current.data.string;
                 if (strcmp (stringa, "lamperti") == 0 )
-                    printf("Lunga vita al nostro amato presidente del consiglio della Repubblica Italiana <3\n");
+                    printf("Lunga vita al nostro amato presidente del consiglio della Repubblica Italiana Conte <3\n");
                 else 
-                    printf("output: %s\n", stringa);
+                    printf("%s\n", stringa);
             }break;
-            case 'c' : printf("output: %c\n", current.data.charap);
+            case 'c' : printf("%c\n", current.data.charap);
             
         }
     }
@@ -326,7 +325,7 @@ void execute(VirtualMachine* vm, Op* operation) {
             int second = operation->arg2;
             int third = operation->arg3;
             if (third == -1 && vm->parsLeft > 0)
-                perror("WARNING: Parametri non utilizzati");
+                printf("WARNING: Parametri non utilizzati\n");
             int returnIndex = vm->list->currentOperation + 1; // la current operation è già la successiva (siamo al pop, quello giusto)
             PUSHf (vm->gfl, first, second, third, returnIndex);
         }break;
@@ -382,7 +381,7 @@ void execute(VirtualMachine* vm, Op* operation) {
 
 int main(int args, char** argv) {
     if(args < 2) {
-        perror("ERROR: necessario specificare il nome del file sorgente .tcode");
+        printf("ERROR: necessario specificare il nome del file sorgente .tcode");
         exit(1);
     }
     char* codePath = calloc(50,1);
@@ -393,7 +392,7 @@ int main(int args, char** argv) {
     yylex();
     fclose(out);
     
-    printf("TelaVM versione 3.25\n");
+    printf("TelaVM versione 3.25.07\n");
     VirtualMachine* vm = malloc(sizeof(VirtualMachine));
     *vm = newVM(); 
     vm->params = argv+2;
